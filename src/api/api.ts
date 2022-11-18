@@ -1,6 +1,8 @@
 import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
 
 import { Settings, RequestMethods } from "../types/";
+import { IAzureArrayResponse } from "../types/azure/azure";
+import { IProject } from "../types/azure/project";
 
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
@@ -8,55 +10,61 @@ const isResponseError = (response: Response) =>
 export const test = async (client: IDeskproClient) => {
   const fetch = await proxyFetch(client);
 
-  const params = new URLSearchParams({
-    client_assertion_type:
-      "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-    client_assertion: "__client_secret__",
-    grant_type: "refresh_token",
-    assertion: '__global_access_token.json("[refresh_token]")__',
-    redirect_uri: new URL(
-      await client.getStaticOAuth2CallbackUrlValue()
-    ).toString(),
-  });
-
-  const refreshRequestOptions: RequestInit = {
-    method: "POST",
-    body: params.toString(),
+  const options: RequestInit = {
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer __global_access_token.json("[access_token]")__`,
     },
   };
 
-  const refreshRes = await fetch(
-    "https://bd27-89-114-79-106.eu.ngrok.io",
-    refreshRequestOptions
-  );
+  const endpoint = "/_apis/ConnectionData";
 
-  const refreshData = await refreshRes.json();
+  let response = await fetch(`https://dev.azure.com/${endpoint}`, options);
 
-  await client.setState<string>(
-    "oauth/global/access_token",
-    refreshData.access_token,
-    {
-      backend: true,
-    }
-  );
+  if ([400, 401, 203].includes(response.status)) {
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer [[oauth/global/access_token]]`,
+    };
+
+    response = await fetch(`https://dev.azure.com/${endpoint}`, options);
+  }
+
+  return response.json();
 };
 
-export const getWorkItems = (client: IDeskproClient, settings: Settings) =>
+export const getWorkItems = (
+  client: IDeskproClient,
+  settings: Settings,
+  project: string
+) =>
   defaultRequest(
     client,
-    settings,
-    "_apis/graph/users?api-version=7.0-preview.1",
+    `/${settings.organization}/${project}/_apis/wit/workitemsbatch?api-version=5.1`,
+    "POST"
+  );
+
+export const getTeamsList = (
+  client: IDeskproClient,
+  settings: Settings
+): Promise<IAzureArrayResponse<IProject>> =>
+  defaultRequest(
+    client,
+    `/${settings.organization}/_apis/teams?api-version=7.0-preview.3`,
     "GET"
   );
 
-export const getProjectList = (client: IDeskproClient, settings: Settings) =>
-  defaultRequest(client, settings, "_apis/projects?api-version=7.0", "GET");
+export const getProjectList = (
+  client: IDeskproClient,
+  settings: Settings
+): Promise<IAzureArrayResponse<IProject>> =>
+  defaultRequest(
+    client,
+    `/${settings.organization}/_apis/projects?api-version=7.0`,
+    "GET"
+  );
 
 const defaultRequest = async (
   client: IDeskproClient,
-  settings: Settings,
   endpoint: string,
   method: RequestMethods,
   data?: unknown
@@ -66,8 +74,6 @@ const defaultRequest = async (
   const options: RequestInit = {
     method,
     headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
       Authorization: `Bearer __global_access_token.json("[access_token]")__`,
     },
   };
@@ -76,37 +82,24 @@ const defaultRequest = async (
     options.body = JSON.stringify(data);
   }
 
-  let response = await fetch(
-    `https://dev.azure.com/${settings.organization}/${endpoint}`,
-    options
-  );
+  let response = await fetch(`https://dev.azure.com${endpoint}`, options);
 
-  if ([400, 401].includes(response.status)) {
+  if ([400, 401, 203].includes(response.status)) {
     options.headers = {
       ...options.headers,
       Authorization: `Bearer [[oauth/global/access_token]]`,
     };
 
-    response = await fetch(
-      `https://dev.azure.com/${settings.organization}/${endpoint}`,
-      options
-    );
+    response = await fetch(`https://dev.azure.com${endpoint}`, options);
 
-    if ([400, 401].includes(response.status)) {
-      const params = new URLSearchParams({
-        client_assertion_type:
-          "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-        client_assertion: "__client_secret__",
-        grant_type: "refresh_token",
-        assertion: '__global_access_token.json("[refresh_token]")__',
-        redirect_uri: new URL(
-          await client.getStaticOAuth2CallbackUrlValue()
-        ).toString(),
-      });
-
+    if ([400, 401, 203].includes(response.status)) {
       const refreshRequestOptions: RequestInit = {
         method: "POST",
-        body: params.toString(),
+        body: `client_assertion_type=${encodeURIComponent(
+          "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+        )}&client_assertion=__client_secret__&grant_type=refresh_token&assertion=__global_access_token.json("[refresh_token]")__&redirect_uri=${encodeURIComponent(
+          new URL(await client.getStaticOAuth2CallbackUrlValue()).toString()
+        )}`,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -126,10 +119,7 @@ const defaultRequest = async (
         }
       );
 
-      response = await fetch(
-        `https://dev.azure.com/${settings.organization}/${endpoint}`,
-        options
-      );
+      response = await fetch(`https://dev.azure.com${endpoint}`, options);
     }
   }
 

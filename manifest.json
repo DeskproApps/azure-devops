@@ -35,7 +35,7 @@
       "title": "",
       "type": "app_embedded",
       "options": {
-        "entrypoint": "http://localhost:3000/#/globalauth"
+        "entrypoint": "#/globalauth"
       },
       "isRequired": true,
       "isBackendOnly": true
@@ -49,22 +49,6 @@
           "GET",
           "POST",
           "PUT"
-        ],
-        "timeout": 10
-      },
-      {
-        "url": "https://bd27-89-114-79-106.eu.ngrok.io",
-        "methods": [
-          "GET",
-          "POST",
-          "PUT"
-        ],
-        "timeout": 10
-      },
-      {
-        "url": "https://graph.microsoft.com/.*",
-        "methods": [
-          "GET"
         ],
         "timeout": 10
       },
