@@ -13,6 +13,7 @@ export const DeskproContextProvider: React.FC = ({ children }) => {
 
   useDeskproAppEvents({
     onChange: (c: Context) => {
+      console.log(c);
       const data = c?.data;
 
       if (data?.currentAgent) {

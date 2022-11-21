@@ -1,10 +1,5 @@
 import { IDeskproClient, useDeskproAppClient } from "@deskpro/app-sdk";
-import {
-  QueryKey,
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQuery, UseQueryOptions, UseQueryResult } from "react-query";
 
 export const timeSince = (date: Date) => {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -34,11 +29,16 @@ export const timeSince = (date: Date) => {
 };
 
 export function useQueryWithClient<TQueryFnData = unknown>(
-  queryKey: QueryKey,
+  queryKey: string | readonly unknown[],
   queryFn: (client: IDeskproClient) => Promise<TQueryFnData>,
-  option?: Omit<
-    UseQueryOptions<TQueryFnData, unknown, TQueryFnData, QueryKey>,
-    "queryKey" | "queryFn" | "initialData"
+  options?: Omit<
+    UseQueryOptions<
+      TQueryFnData,
+      unknown,
+      TQueryFnData,
+      string | readonly unknown[]
+    >,
+    "queryKey" | "queryFn"
   >
 ): UseQueryResult<TQueryFnData> {
   const { client } = useDeskproAppClient();
@@ -48,6 +48,17 @@ export function useQueryWithClient<TQueryFnData = unknown>(
   return useQuery(
     key,
     () => (client && queryFn(client)) as Promise<TQueryFnData>,
-    option
+    {
+      ...(options ?? {}),
+      enabled: options?.enabled ? !!client : !!client && options?.enabled,
+    } as Omit<
+      UseQueryOptions<
+        TQueryFnData,
+        unknown,
+        TQueryFnData,
+        string | readonly unknown[]
+      >,
+      "queryKey" | "queryFn"
+    >
   );
 }

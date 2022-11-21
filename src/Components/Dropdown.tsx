@@ -26,8 +26,7 @@ type Props<T> = {
   valueName: keyof T;
   required?: boolean;
 };
-//change this
-export const Dropdown = ({
+export const Dropdown = <T,>({
   data,
   onChange,
   title,
@@ -36,20 +35,18 @@ export const Dropdown = ({
   keyName,
   valueName,
   required,
-}: // @ts-ignore
-Props) => {
+}: Props<T>) => {
   const { theme } = useDeskproAppTheme();
+  // This works fine but the types are completely wrong
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataOptions = useMemo<any>(() => {
-    // @ts-ignore
     return data.map((dataInList) => ({
       key: dataInList[keyName],
       label: <Label label={dataInList[valueName]}></Label>,
       value: dataInList[valueName],
       type: "value" as const,
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, valueName]);
+  }, [data, valueName, keyName]);
   return (
     <Stack
       vertical
