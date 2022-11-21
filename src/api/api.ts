@@ -124,7 +124,7 @@ const defaultRequest = async (
   }
 
   if (isResponseError(response)) {
-    console.error(
+    throw new Error(
       `Request failed: [${response.status}] ${await response.text()}`
     );
   }
