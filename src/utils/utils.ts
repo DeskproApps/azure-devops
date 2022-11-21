@@ -34,7 +34,7 @@ export const timeSince = (date: Date) => {
 };
 
 export function useQueryWithClient<TQueryFnData = unknown>(
-  queryKey: string[],
+  queryKey: QueryKey,
   queryFn: (client: IDeskproClient) => Promise<TQueryFnData>,
   option?: Omit<
     UseQueryOptions<TQueryFnData, unknown, TQueryFnData, QueryKey>,
