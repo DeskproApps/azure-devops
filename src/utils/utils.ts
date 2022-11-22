@@ -51,6 +51,7 @@ export function useQueryWithClient<TQueryFnData = unknown>(
     {
       ...(options ?? {}),
       enabled: options?.enabled ? !!client : !!client && options?.enabled,
+      suspense: false,
     } as Omit<
       UseQueryOptions<
         TQueryFnData,

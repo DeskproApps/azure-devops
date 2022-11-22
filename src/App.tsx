@@ -12,6 +12,7 @@ import { ErrorFallback } from "./Components/ErrorFallback";
 import { GlobalAuth } from "./pages/GlobalAuth";
 import { FindOrCreateItems } from "./pages/FindOrCreateItems";
 import { ItemDetails } from "./pages/ItemDetails";
+import { Main } from "./pages/Main";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
 // @ts-ignore */}
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
-          <Route index path="/" element={<FindOrCreateItems />} />
+          <Route index path="/" element={<Main />} />
           <Route path="/itemdetails" element={<ItemDetails />} />
           <Route path="/globalauth" element={<GlobalAuth />} />
           <Route path="itemmenu" element={<FindOrCreateItems />} />

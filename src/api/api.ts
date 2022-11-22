@@ -3,44 +3,60 @@ import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
 import { Settings, RequestMethods } from "../types/";
 import { IAzureArrayResponse } from "../types/azure/azure";
 import { IProject } from "../types/azure/project";
+import { IAzureWorkItemPost } from "../types/azure/workItem";
 
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
 
-export const test = async (client: IDeskproClient) => {
-  const fetch = await proxyFetch(client);
-
-  const options: RequestInit = {
-    headers: {
-      Authorization: `Bearer __global_access_token.json("[access_token]")__`,
-    },
-  };
-
-  const endpoint = "/_apis/ConnectionData";
-
-  let response = await fetch(`https://dev.azure.com/${endpoint}`, options);
-
-  if ([400, 401, 203].includes(response.status)) {
-    options.headers = {
-      ...options.headers,
-      Authorization: `Bearer [[oauth/global/access_token]]`,
-    };
-
-    response = await fetch(`https://dev.azure.com/${endpoint}`, options);
-  }
-
-  return response.json();
+export const getWorkItemsByIds = async (
+  client: IDeskproClient,
+  settings: Settings,
+  data: number[]
+) => {
+  return defaultRequest(
+    client,
+    `/${settings.organization}/_apis/wit/workitemsbatch?api-version=7.0`,
+    "POST",
+    {
+      ids: data,
+    }
+  );
 };
 
-export const getWorkItems = (
+export const getWorkItemsByWiql = async (
   client: IDeskproClient,
   settings: Settings,
   project: string
-) =>
+) => {
+  const wiqlData = await defaultRequest(
+    client,
+    `/${settings.organization}/${project}/_apis/wit/wiql?api-version=7.0`,
+    "POST",
+    {
+      query: "SELECT [System.Id] FROM workitems",
+    }
+  );
+
+  return defaultRequest(
+    client,
+    `/${settings.organization}/${project}/_apis/wit/workitemsbatch?api-version=7.0`,
+    "POST",
+    {
+      ids: wiqlData.workItems.map((wi: { id: number }) => wi.id),
+    }
+  );
+};
+
+export const postWorkItem = (
+  client: IDeskproClient,
+  settings: Settings,
+  data: IAzureWorkItemPost
+): Promise<IAzureArrayResponse<IProject>> =>
   defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitemsbatch?api-version=5.1`,
-    "POST"
+    `/${settings.organization}/${data.project}/_apis/wit/workitems/${data.type}?api-version=7.0`,
+    "POST",
+    data
   );
 
 export const getTeamsList = (
@@ -74,6 +90,7 @@ const defaultRequest = async (
   const options: RequestInit = {
     method,
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer __global_access_token.json("[access_token]")__`,
     },
   };
