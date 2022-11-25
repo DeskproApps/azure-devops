@@ -8,27 +8,29 @@ export interface IAzureWorkItem {
 }
 
 export interface IAzureWorkItemPost {
-  project: string;
-  type: string;
-  title: string;
-  assignee: string;
-  state: string;
-  area: string;
-  reason: string;
-  iteration: string;
-  repro_steps: string;
-  system_info: string;
-  story_points: string;
-  priority: string;
-  severity: string;
-  activity: string;
-  original_estimate: string;
-  remaining: string;
-  completed: string;
-  tags: string;
+  "System.TeamProject": string;
+  "System.WorkItemType": string;
+  "System.Title": string;
+  "System.AssignedTo"?: System;
+  "System.AreaPath"?: string;
+  "System.Reason"?: string;
+  "System.State"?: string;
+  "System.IterationPath"?: string;
+  "Microsoft.VSTS.Common.ValueArea"?: string;
+  "Microsoft.VSTS.TCM.ReproSteps"?: string;
+  "Microsoft.VSTS.TCM.SystemInfo"?: string;
+  "Microsoft.VSTS.Scheduling.StoryPoints"?: string;
+  "Microsoft.VSTS.Common.Priority"?: string;
+  "Microsoft.VSTS.Common.Severity"?: string;
+  "Microsoft.VSTS.Common.Activity"?: string;
+  "Microsoft.VSTS.Scheduling.OriginalEstimate"?: string;
+  "Microsoft.VSTS.Scheduling.RemainingWork"?: string;
+  "Microsoft.VSTS.Scheduling.CompletedWork"?: string;
+  "System.Tags"?: string;
 }
 
 export interface IAzureWorkItemFields {
+  "Microsoft.VSTS.Common.ValueArea": string;
   "System.AreaPath": string;
   "System.TeamProject": string;
   "System.IterationPath": string;
@@ -44,6 +46,7 @@ export interface IAzureWorkItemFields {
   "System.Title": string;
   "Microsoft.VSTS.Common.StateChangeDate": string;
   "Microsoft.VSTS.Common.Priority": number;
+  "Microsoft.VSTS.Scheduling.FinishDate": string;
   "Microsoft.VSTS.Scheduling.TargetDate": string;
   "Microsoft.VSTS.Scheduling.StartDate": string;
   "System.Description": string;
@@ -66,4 +69,16 @@ export interface Links {
 
 export interface Avatar {
   href: string;
+}
+
+export interface IAzureWorkItemType {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  inherits: null;
+  class: string;
+  color: string;
+  icon: string;
+  isDisabled: boolean;
 }

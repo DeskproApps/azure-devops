@@ -7,10 +7,11 @@ import {
 } from "@deskpro/app-sdk";
 
 import { GreyTitle } from "../../styles";
-import { useNavigate } from "react-router-dom";
 import { ItemPersistentData } from "./ItemPersistentData";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useState } from "react";
+import { useDeskpro } from "../../hooks/deskproContext";
+import { LogoAndLinkButton } from "../LogoAndLinkButton";
 interface Props {
   item: IAzureWorkItem;
   checkedList: number[];
@@ -20,16 +21,16 @@ interface Props {
 
 export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
   const [ticketCount, setTicketCount] = useState<number | null>(null);
-
-  const navigate = useNavigate();
+  const deskproData = useDeskpro();
 
   useInitialisedDeskproAppClient((client) => {
     (async () => {
       setTicketCount(
-        await client.entityAssociationCountEntities(
-          "linkedAzureItem",
-          item.id.toString()
-        )
+        (
+          await client.getState<number>(
+            `azure/items/${item.fields["System.TeamProject"]}/${item.id}`
+          )
+        )[0]?.data ?? 0
       );
     })();
   });
@@ -46,7 +47,7 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
           }}
         />
       )}
-      <Stack gap={5}>
+      <Stack gap={5} style={{ width: "100%" }}>
         <Checkbox
           style={{ margin: "6px" }}
           checked={checkedList.includes(item.id)}
@@ -63,17 +64,32 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
           size={14}
         />
         <Stack vertical style={{ width: "100%" }} gap={12}>
-          <Stack>
+          <Stack
+            style={{
+              alignItems: "center",
+              width: "100%",
+              justifyContent: "space-between",
+            }}
+          >
             <h1
               style={{
                 color: "#3A8DDE",
                 fontSize: "12px",
                 cursor: "pointer",
               }}
-              onClick={() => navigate("/itemdetails/" + item.id)}
+              onClick={() =>
+                window.open(
+                  `https://dev.azure.com/${deskproData?.settings.organization}/${item.fields["System.TeamProject"]}/_workitems/edit/${item.id}/`
+                )
+              }
             >
               <b>{item.fields["System.Title"]}</b>
             </h1>
+            <LogoAndLinkButton
+              organizationId={deskproData?.settings.organization as string}
+              itemId={item.id}
+              projectId={item.fields["System.TeamProject"]}
+            />
           </Stack>
           <ItemPersistentData item={item} />
           <Stack vertical>

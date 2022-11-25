@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider } from "react-query";
 import "virtual:windi.css";
+import "./main.css";
 
 import App from "./App";
 import { DeskproContextProvider } from "./hooks/deskproContext";

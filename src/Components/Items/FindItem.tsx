@@ -5,6 +5,7 @@ import {
   Button,
   LoadingSpinner,
   useDeskproAppClient,
+  useDeskproAppEvents,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -13,10 +14,11 @@ import useDebounce from "../../utils/debounce";
 import { Dropdown } from "../Dropdown";
 import { WorkItem } from "./WorkItem";
 import { useDeskpro } from "../../hooks/deskproContext";
-import { getProjectList, getWorkItemsByWiql } from "../../api/api";
-import { useQueryWithClient } from "../../utils/utils";
+import { getProjectList, getWorkItemListByWiql } from "../../api/api";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useNavigate } from "react-router-dom";
+import { useQueryWithClient } from "../../utils/query";
+import { HorizontalDivider } from "../HorizontalDivider";
 
 export const FindItem = () => {
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ export const FindItem = () => {
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Find Items");
 
-    client.registerElement("pipedriveHomeButton", {
+    client.registerElement("azureHomeButton", {
       type: "home_button",
       payload: {
         type: "changePage",
@@ -39,9 +41,20 @@ export const FindItem = () => {
       },
     });
 
-    client.registerElement("pipedriveRefreshButton", {
+    client.registerElement("azureRefreshButton", {
       type: "refresh_button",
     });
+
+    client.deregisterElement("azureMenuButton");
+  });
+
+  useDeskproAppEvents({
+    onElementEvent(id) {
+      switch (id) {
+        case "azureHomeButton":
+          navigate("/redirect");
+      }
+    },
   });
 
   const projectList = useQueryWithClient(
@@ -53,7 +66,7 @@ export const FindItem = () => {
   const workItemListReq = useQueryWithClient(
     ["workItemList", deskproData, selectedProject],
     (client) =>
-      getWorkItemsByWiql(
+      getWorkItemListByWiql(
         client,
         deskproData?.settings || {},
         selectedProject as string
@@ -87,7 +100,7 @@ export const FindItem = () => {
         item.fields["System.Title"]
           .toLowerCase()
           .includes(debouncedValue.toLowerCase())
-      )
+      ) ?? []
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue]);
@@ -98,17 +111,29 @@ export const FindItem = () => {
     await Promise.all(
       checkedList.map(async (id) => {
         await client
-          ?.getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+          .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
           .set(id.toString());
 
-        await client
-          ?.getEntityAssociation("linkedAzureItems", id.toString())
-          .set(deskproData.ticket.id);
+        await client.setState(
+          `azure/items/${selectedProject}/${id}`,
+          (((
+            await client.getState(`azure/items/${selectedProject}/${id}`)
+          )[0]?.data as number) ?? 0) + 1
+        );
       })
     );
-
     navigate("/");
   };
+
+  useDeskproAppEvents({
+    onElementEvent(id) {
+      switch (id) {
+        case "azureMenuButton":
+          navigate("/itemmenu");
+          break;
+      }
+    },
+  });
 
   const checkedListLength = checkedList?.length;
 
@@ -119,7 +144,7 @@ export const FindItem = () => {
       </Stack>
     );
   }
-  console.log(workItemListReq.isLoading);
+
   return (
     <Stack gap={10} style={{ width: "100%" }} vertical>
       <Input
@@ -137,25 +162,13 @@ export const FindItem = () => {
         valueName="name"
         data={projectList?.data?.value ?? []}
       ></Dropdown>
-      <Stack
-        vertical
-        style={{
-          width: "100%",
-        }}
-      >
-        <Button
-          onClick={linkIssue}
-          disabled={checkedListLength === 0}
-          text="Link Issue"
-        ></Button>
-      </Stack>
       {workItemListReq.isLoading ? (
         <Stack justify="center" style={{ width: "100%" }}>
           <LoadingSpinner />
         </Stack>
       ) : (
         workItemList?.length !== 0 && (
-          <Stack vertical style={{ width: "100%" }}>
+          <Stack vertical style={{ width: "100%" }} gap={6}>
             {workItemList?.map((item: IAzureWorkItem, i: number) => (
               <WorkItem
                 item={item}
@@ -165,6 +178,14 @@ export const FindItem = () => {
                 i={i}
               />
             ))}
+            <Stack vertical style={{ width: "100%" }}>
+              <HorizontalDivider />
+              <Button
+                onClick={linkIssue}
+                disabled={checkedListLength === 0}
+                text="Link Issue"
+              ></Button>
+            </Stack>
           </Stack>
         )
       )}

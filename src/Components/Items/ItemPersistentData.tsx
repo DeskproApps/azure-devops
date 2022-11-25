@@ -1,10 +1,12 @@
-import { Avatar, Tag, RoundedLabelTag, LabelColors } from "@deskpro/deskpro-ui";
-import { Stack, useDeskproAppTheme, P1 } from "@deskpro/app-sdk";
+import { Tag, RoundedLabelTag, LabelColors, Avatar } from "@deskpro/deskpro-ui";
+import { Stack, P1, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
 import { GreyTitle } from "../../styles";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { IAzureWorkItem } from "../../types/azure/workItem";
+import { useDeskpro } from "../../hooks/deskproContext";
+import { getAvatar, getStateDefinitionList } from "../../api/api";
 
 const colors: LabelColors[] = [
   {
@@ -29,14 +31,49 @@ interface Props {
 }
 
 export const ItemPersistentData = ({ item }: Props) => {
-  const { theme } = useDeskproAppTheme();
+  const deskproData = useDeskpro();
 
-  const usedColors = useMemo(() => {
+  const [statusColor, setStatusColor] = useState("#808080");
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  const usedColorsTags = useMemo(() => {
     return new Array(item.fields["System.Tags"]?.split("; ")?.length)
       .fill(1)
       .map(() => colors[Math.floor(Math.random() * colors?.length)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useInitialisedDeskproAppClient((client) => {
+    (async () => {
+      if (!deskproData) return;
+      Promise.all([
+        (async () => {
+          const colorData = await getStateDefinitionList(
+            client,
+            deskproData.settings,
+            item.fields["System.TeamProject"],
+            item.fields["System.WorkItemType"]
+          );
+
+          setStatusColor(
+            "#" +
+              colorData?.value
+                .find((e) => e.name === item.fields["System.State"])
+                ?.color.toUpperCase() ?? "#808080"
+          );
+        })(),
+        (async () => {
+          const avatar = await getAvatar(
+            client,
+            deskproData.settings,
+            item.fields["System.AssignedTo"].descriptor
+          );
+
+          setAvatar(avatar.value);
+        })(),
+      ]);
+    })();
+  });
 
   return (
     <Stack vertical style={{ width: "100%" }} gap={12}>
@@ -49,11 +86,7 @@ export const ItemPersistentData = ({ item }: Props) => {
           <RoundedLabelTag
             key={1}
             label={item.fields["System.State"]}
-            backgroundColor={
-              item.fields["System.State"] === "New"
-                ? theme.colors.green100
-                : theme.colors.red100
-            }
+            backgroundColor={statusColor}
             textColor="white"
           />
         }
@@ -69,10 +102,14 @@ export const ItemPersistentData = ({ item }: Props) => {
       <Stack vertical>
         <GreyTitle>Assignee</GreyTitle>
         <Stack gap={5} align="center">
-          <Avatar
-            size={20}
-            imageUrl={item.fields["System.AssignedTo"].imageUrl}
-          />
+          {avatar ? (
+            <img
+              src={`data:image/jpeg;base64,${avatar}`}
+              style={{ width: "20px", height: "20px", borderRadius: "100%" }}
+            />
+          ) : (
+            <Avatar />
+          )}
           <P1>{item.fields["System.AssignedTo"].displayName}</P1>
         </Stack>
       </Stack>
@@ -86,7 +123,7 @@ export const ItemPersistentData = ({ item }: Props) => {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 // I dont need the close icon
-                <Tag color={usedColors[k]} label={tag} key={k}></Tag>
+                <Tag color={usedColorsTags[k]} label={tag} key={k}></Tag>
               );
             })}
         </Stack>
