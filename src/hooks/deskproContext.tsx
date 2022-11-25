@@ -16,7 +16,11 @@ export const DeskproContextProvider: React.FC = ({ children }) => {
       const data = c?.data;
 
       if (data?.currentAgent) {
-        const stateData = { user: data.currentAgent, settings: c.settings };
+        const stateData = {
+          user: data.currentAgent,
+          settings: c.settings,
+          ticket: c.data.ticket,
+        };
 
         setDeskproData(stateData);
       }

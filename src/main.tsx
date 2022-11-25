@@ -1,8 +1,9 @@
-import { DeskproAppProvider, Spinner } from "@deskpro/app-sdk";
-import React, { Suspense } from "react";
+import { DeskproAppProvider } from "@deskpro/app-sdk";
+import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClientProvider } from "react-query";
 import "virtual:windi.css";
+import "./main.css";
 
 import App from "./App";
 import { DeskproContextProvider } from "./hooks/deskproContext";
@@ -12,11 +13,9 @@ ReactDOM.render(
   <React.StrictMode>
     <DeskproContextProvider>
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<Spinner></Spinner>}>
-          <DeskproAppProvider>
-            <App />
-          </DeskproAppProvider>
-        </Suspense>
+        <DeskproAppProvider>
+          <App />
+        </DeskproAppProvider>
       </QueryClientProvider>
     </DeskproContextProvider>
   </React.StrictMode>,

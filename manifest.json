@@ -1,7 +1,7 @@
 {
-  "name": "@deskpro-apps/azure",
-  "title": "Azure",
-  "description": "Use Azure",
+  "name": "@deskpro-apps/azure_devops",
+  "title": "Azure Devops",
+  "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
   "version": "1.0.1",
   "scope": "agent",
   "hasDevMode": true,
@@ -12,6 +12,13 @@
       "entrypoint": "index.html"
     }
   ],
+  "entityAssociations": {
+    "linkedAzureItems": {
+      "entity": "ticket",
+      "type": "external_id",
+      "title": "Linked Tickets"
+    }
+  },
   "settings": {
     "app_id": {
       "title": "Azure App Id",

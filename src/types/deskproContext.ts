@@ -14,4 +14,7 @@ export default interface IDeskproContext {
   settings: {
     [key: string]: string;
   };
+  ticket: {
+    [key: string]: string;
+  };
 }

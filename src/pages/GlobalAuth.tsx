@@ -1,5 +1,6 @@
 import {
   Button,
+  H1,
   H2,
   Input,
   P1,
@@ -9,9 +10,12 @@ import {
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useGlobalAuth } from "../hooks/UseGlobalAuth";
+import { useState } from "react";
 
 export const GlobalAuth = () => {
   const { theme } = useDeskproAppTheme();
+
+  const [completed, setCompleted] = useState(false);
 
   const { callbackUrl, signIn } = useGlobalAuth();
 
@@ -48,7 +52,14 @@ export const GlobalAuth = () => {
           </P1>
         </>
       )}
-      <Button text="Sign In" onClick={signIn}></Button>
+      <Button
+        text="Sign In"
+        onClick={async () => {
+          const status = await signIn();
+          setCompleted(status);
+        }}
+      ></Button>
+      {completed && <H1>Authorization has been completed</H1>}
     </Stack>
   );
 };

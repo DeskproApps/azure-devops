@@ -1,4 +1,4 @@
-export interface IProject {
+export interface IAzureProject {
   id: string;
   name: string;
   url: string;

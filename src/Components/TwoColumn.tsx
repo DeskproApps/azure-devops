@@ -33,6 +33,7 @@ const TwoColumn: FC<Props> = ({
     </Stack>
     <Stack
       style={{
+        alignItems: "center",
         alignSelf: "center",
         position: "absolute",
         marginLeft: "100px",

@@ -72,17 +72,23 @@ export const useGlobalAuth = () => {
   );
 
   const signIn = async () => {
-    if (!callbackUrl || !poll) return;
+    if (!callbackUrl || !poll) return false;
 
     window.open(
       `https://app.vssps.visualstudio.com/oauth2/authorize?client_id=${
         settings?.app_id
       }&response_type=Assertion&state=${key}&scope=${encodeURIComponent(
-        "vso.graph_manage vso.profile_write vso.project_manage vso.work_full"
+        "vso.graph vso.project vso.work"
       )}&redirect_uri=${encodeURIComponent(callbackUrl)}`
     );
 
-    setAccessCode((await poll()).token);
+    const token = (await poll())?.token;
+
+    if (!token) return false;
+
+    setAccessCode(token);
+
+    return true;
   };
 
   useInitialisedDeskproAppClient(
