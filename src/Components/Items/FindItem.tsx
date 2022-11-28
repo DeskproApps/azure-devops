@@ -14,22 +14,31 @@ import useDebounce from "../../utils/debounce";
 import { Dropdown } from "../Dropdown";
 import { WorkItem } from "./WorkItem";
 import { useDeskpro } from "../../hooks/deskproContext";
-import { getProjectList, getWorkItemListByWiql } from "../../api/api";
+import {
+  defaultRequest,
+  getProjectList,
+  getWorkItemListByWiql,
+} from "../../api/api";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useNavigate } from "react-router-dom";
 import { useQueryWithClient } from "../../utils/query";
 import { HorizontalDivider } from "../HorizontalDivider";
+import { CheckedList } from "../../types/checkedList";
 
 export const FindItem = () => {
   const navigate = useNavigate();
   const deskproData = useDeskpro();
   const { client } = useDeskproAppClient();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [originalWorkItemList, setOriginalWorkItemList] = useState<
+    IAzureWorkItem[]
+  >([]);
   const [workItemList, setWorkItemList] = useState<IAzureWorkItem[]>([]);
-  const [checkedList, setCheckedList] = useState<number[]>([]);
+  const [checkedList, setCheckedList] = useState<CheckedList>({});
   const [inputText, setInputText] = useState<string>("");
   const { debouncedValue } = useDebounce(inputText, 300);
-
+  const [ran, setRan] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Find Items");
 
@@ -45,7 +54,7 @@ export const FindItem = () => {
       type: "refresh_button",
     });
 
-    client.deregisterElement("azureMenuButton");
+    client.deregisterElement("azurePlusButton");
   });
 
   useDeskproAppEvents({
@@ -63,81 +72,99 @@ export const FindItem = () => {
     { enabled: !!deskproData }
   );
 
-  const workItemListReq = useQueryWithClient(
-    ["workItemList", deskproData, selectedProject],
-    (client) =>
-      getWorkItemListByWiql(
-        client,
-        deskproData?.settings || {},
-        selectedProject as string
-      ),
-    {
-      enabled: !!selectedProject && !!deskproData,
-      async onSuccess(data) {
-        if (!client || !deskproData) return;
+  useInitialisedDeskproAppClient(
+    (client) => {
+      if (!deskproData) return;
 
-        const values = await client
-          .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-          .list();
+      if (!ran && projectList.isSuccess) {
+        (async () => {
+          const workItems = await Promise.all(
+            projectList.data.value.map(async (project) => {
+              const itemIds = await getWorkItemListByWiql(
+                client,
+                deskproData?.settings || {},
+                `SELECT * FROM workItems WHERE [System.TeamProject] = "${project.name}"`
+              );
 
-        values.forEach((value) => {
-          data.value.splice(
-            data.value.findIndex(
-              (item: IAzureWorkItem) => item.id === Number(value)
-            ),
-            1
+              const values = await client
+                .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+                .list();
+
+              values.forEach((value) => {
+                itemIds.workItems.splice(
+                  itemIds.workItems.findIndex(
+                    (item: IAzureWorkItem) => item.id === Number(value)
+                  ),
+                  1
+                );
+              });
+
+              if (itemIds.workItems.length === 0) return [];
+
+              const items = await defaultRequest(
+                client,
+                `/${deskproData?.settings.organization}/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
+                "POST",
+                {
+                  ids: itemIds.workItems.map((wi: { id: number }) => wi.id),
+                }
+              );
+
+              return items.value;
+            })
           );
-        });
+          setRan(true);
+          setLoading(false);
+          setOriginalWorkItemList(workItems.flat());
+          setWorkItemList(workItems.flat());
+        })();
+      }
 
-        setWorkItemList(data.value);
-      },
-    }
+      setWorkItemList(
+        originalWorkItemList?.filter((item) =>
+          item.fields["System.Title"]
+            .toLowerCase()
+            .includes(debouncedValue.toLowerCase())
+        ) ?? []
+      );
+    },
+    [debouncedValue, ran, projectList.isSuccess]
   );
-
-  useEffect(() => {
-    setWorkItemList(
-      workItemListReq?.data?.value?.filter((item: IAzureWorkItem) =>
-        item.fields["System.Title"]
-          .toLowerCase()
-          .includes(debouncedValue.toLowerCase())
-      ) ?? []
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue]);
 
   const linkIssue = async () => {
     if (!deskproData || !client) return;
 
     await Promise.all(
-      checkedList.map(async (id) => {
-        await client
-          .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-          .set(id.toString());
+      Object.keys(checkedList).map((projectId) => {
+        return checkedList[projectId].map(async (id) => {
+          await client
+            .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+            .set(id.toString());
 
-        await client.setState(
-          `azure/items/${selectedProject}/${id}`,
-          (((
-            await client.getState(`azure/items/${selectedProject}/${id}`)
-          )[0]?.data as number) ?? 0) + 1
-        );
+          await client.setState(
+            `azure/items/${projectId}/${id}`,
+            (((
+              await client.getState(`azure/items/${projectId}/${id}`)
+            )[0]?.data as number) ?? 0) + 1
+          );
+        });
       })
     );
     navigate("/");
   };
 
-  useDeskproAppEvents({
-    onElementEvent(id) {
-      switch (id) {
-        case "azureMenuButton":
-          navigate("/itemmenu");
-          break;
-      }
-    },
-  });
+  useEffect(() => {
+    if (!selectedProject) return;
 
-  const checkedListLength = checkedList?.length;
+    setWorkItemList(
+      originalWorkItemList.filter(
+        (item) => item.fields["System.TeamProject"] === selectedProject
+      )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProject]);
 
-  if (projectList.isLoading) {
+  if (loading) {
     return (
       <Stack justify="center" style={{ width: "100%" }}>
         <LoadingSpinner />
@@ -162,32 +189,28 @@ export const FindItem = () => {
         valueName="name"
         data={projectList?.data?.value ?? []}
       ></Dropdown>
-      {workItemListReq.isLoading ? (
-        <Stack justify="center" style={{ width: "100%" }}>
-          <LoadingSpinner />
-        </Stack>
-      ) : (
-        workItemList?.length !== 0 && (
-          <Stack vertical style={{ width: "100%" }} gap={6}>
-            {workItemList?.map((item: IAzureWorkItem, i: number) => (
+      {workItemList?.length !== 0 && (
+        <Stack vertical style={{ width: "100%" }} gap={6}>
+          {workItemList?.map((item: IAzureWorkItem, i: number) => {
+            return (
               <WorkItem
                 item={item}
                 checkedList={checkedList}
-                setCheckedList={() => setCheckedList([...checkedList, item.id])}
+                setCheckedList={setCheckedList}
                 key={i}
                 i={i}
               />
-            ))}
-            <Stack vertical style={{ width: "100%" }}>
-              <HorizontalDivider />
-              <Button
-                onClick={linkIssue}
-                disabled={checkedListLength === 0}
-                text="Link Issue"
-              ></Button>
-            </Stack>
+            );
+          })}
+          <Stack vertical style={{ width: "100%" }}>
+            <HorizontalDivider />
+            <Button
+              onClick={linkIssue}
+              disabled={Object.values(checkedList ?? []).flat().length === 0}
+              text="Link Issue"
+            ></Button>
           </Stack>
-        )
+        </Stack>
       )}
     </Stack>
   );

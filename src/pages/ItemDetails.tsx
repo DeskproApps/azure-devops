@@ -35,7 +35,15 @@ export const ItemDetails = () => {
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Work Item Details");
 
-    client.deregisterElement("azureMenuButton");
+    client.registerElement("azureHomeButton", {
+      type: "home_button",
+      payload: {
+        type: "changePage",
+        page: "/",
+      },
+    });
+
+    client.deregisterElement("azurePlusButton");
 
     client.registerElement("azureMenuButton", {
       type: "menu",

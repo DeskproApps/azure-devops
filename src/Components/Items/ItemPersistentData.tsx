@@ -1,12 +1,14 @@
 import { Tag, RoundedLabelTag, LabelColors, Avatar } from "@deskpro/deskpro-ui";
-import { Stack, P1, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
+import { Stack, P1 } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
 import { GreyTitle } from "../../styles";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useDeskpro } from "../../hooks/deskproContext";
 import { getAvatar, getStateDefinitionList } from "../../api/api";
+import { useQueryWithClient } from "../../utils/query";
+import { Settings } from "../../types";
 
 const colors: LabelColors[] = [
   {
@@ -24,6 +26,11 @@ const colors: LabelColors[] = [
     backgroundColor: "#F4E9F0",
     textColor: "#4C4F50",
   },
+  {
+    borderColor: "#F2C94C",
+    backgroundColor: "#FEF9E7",
+    textColor: "#4C4F50",
+  },
 ];
 
 interface Props {
@@ -33,47 +40,39 @@ interface Props {
 export const ItemPersistentData = ({ item }: Props) => {
   const deskproData = useDeskpro();
 
-  const [statusColor, setStatusColor] = useState("#808080");
-  const [avatar, setAvatar] = useState<string | null>(null);
-
   const usedColorsTags = useMemo(() => {
     return new Array(item.fields["System.Tags"]?.split("; ")?.length)
       .fill(1)
       .map(() => colors[Math.floor(Math.random() * colors?.length)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [item.id]);
 
-  useInitialisedDeskproAppClient((client) => {
-    (async () => {
-      if (!deskproData) return;
-      Promise.all([
-        (async () => {
-          const colorData = await getStateDefinitionList(
-            client,
-            deskproData.settings,
-            item.fields["System.TeamProject"],
-            item.fields["System.WorkItemType"]
-          );
+  const avatar = useQueryWithClient(
+    ["avatar", item.fields["System.AssignedTo"].descriptor],
+    (client) =>
+      getAvatar(
+        client,
+        deskproData?.settings as Settings,
+        item.fields["System.AssignedTo"].descriptor
+      ),
+    {
+      enabled: !!deskproData && !!item.fields["System.AssignedTo"].descriptor,
+    }
+  );
 
-          setStatusColor(
-            "#" +
-              colorData?.value
-                .find((e) => e.name === item.fields["System.State"])
-                ?.color.toUpperCase() ?? "#808080"
-          );
-        })(),
-        (async () => {
-          const avatar = await getAvatar(
-            client,
-            deskproData.settings,
-            item.fields["System.AssignedTo"].descriptor
-          );
-
-          setAvatar(avatar.value);
-        })(),
-      ]);
-    })();
-  });
+  const statusColor = useQueryWithClient(
+    ["avatar", item.fields["System.TeamProject"]],
+    (client) =>
+      getStateDefinitionList(
+        client,
+        deskproData?.settings as Settings,
+        item.fields["System.TeamProject"],
+        item.fields["System.WorkItemType"]
+      ),
+    {
+      enabled: !!deskproData && !!item.fields,
+    }
+  );
 
   return (
     <Stack vertical style={{ width: "100%" }} gap={12}>
@@ -86,7 +85,14 @@ export const ItemPersistentData = ({ item }: Props) => {
           <RoundedLabelTag
             key={1}
             label={item.fields["System.State"]}
-            backgroundColor={statusColor}
+            backgroundColor={
+              statusColor
+                ? "#" +
+                  statusColor.data?.value
+                    .find((e) => e.name === item.fields["System.State"])
+                    ?.color.toUpperCase()
+                : "#808080"
+            }
             textColor="white"
           />
         }
@@ -102,9 +108,9 @@ export const ItemPersistentData = ({ item }: Props) => {
       <Stack vertical>
         <GreyTitle>Assignee</GreyTitle>
         <Stack gap={5} align="center">
-          {avatar ? (
+          {avatar.data ? (
             <img
-              src={`data:image/jpeg;base64,${avatar}`}
+              src={`data:image/jpeg;base64,${avatar.data.value}`}
               style={{ width: "20px", height: "20px", borderRadius: "100%" }}
             />
           ) : (

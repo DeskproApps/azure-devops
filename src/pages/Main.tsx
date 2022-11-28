@@ -1,7 +1,6 @@
 import {
   H2,
   IDeskproClient,
-  Input,
   LoadingSpinner,
   Stack,
   useDeskproAppClient,
@@ -10,7 +9,6 @@ import {
 } from "@deskpro/app-sdk";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 import { getWorkItemListByIds } from "../api/api";
 import { useDeskpro } from "../hooks/deskproContext";
@@ -27,8 +25,6 @@ export const Main = () => {
   const { client } = useDeskproAppClient();
   const [itemIds, setItemIds] = useState<number[]>([]);
   const [linkedCountArr, setLinkedCountArr] = useState<number[]>([]);
-  const [inputText, setInputText] = useState<string>("");
-
   const deskproData = useDeskpro();
 
   useInitialisedDeskproAppClient(
@@ -43,13 +39,8 @@ export const Main = () => {
         type: "refresh_button",
       });
 
-      client.registerElement("azureMenuButton", {
-        type: "menu",
-        items: [
-          {
-            title: "Find/Create Item",
-          },
-        ],
+      client.registerElement("azurePlusButton", {
+        type: "plus_button",
       });
 
       (async () => {
@@ -81,7 +72,7 @@ export const Main = () => {
   useDeskproAppEvents({
     onElementEvent(id) {
       switch (id) {
-        case "azureMenuButton":
+        case "azurePlusButton":
           navigate("/itemmenu");
           break;
         case "azureHomeButton":
@@ -124,14 +115,6 @@ export const Main = () => {
   return (
     <Stack vertical style={{ margin: "5px 8px" }}>
       <Stack gap={5} style={{ width: "100%", marginTop: "5px" }} vertical>
-        <Input
-          onChange={(e) => setInputText(e.target.value)}
-          value={inputText}
-          placeholder="Enter item details"
-          type="text"
-          leftIcon={faMagnifyingGlass}
-        />
-        <HorizontalDivider />
         {tickets.data?.value.map((item, i) => (
           <Stack vertical style={{ width: "100%" }} gap={12} key={i}>
             <Stack

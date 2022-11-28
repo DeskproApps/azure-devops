@@ -19,7 +19,7 @@ import {
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
 
-export const getAvatar = async (
+const getAvatar = async (
   client: IDeskproClient,
   settings: Settings,
   userId: string
@@ -31,7 +31,7 @@ export const getAvatar = async (
   );
 };
 
-export const getWorkItemListByIds = async (
+const getWorkItemListByIds = async (
   client: IDeskproClient,
   settings: Settings,
   data: number[]
@@ -46,19 +46,8 @@ export const getWorkItemListByIds = async (
   );
 };
 
-export const getProjectById = async (
-  client: IDeskproClient,
-  settings: Settings,
-  id: string
-): Promise<IAzureArrayResponse<IAzureProject>> => {
-  return defaultRequest(
-    client,
-    `/${settings.organization}/_apis/projects/${id}/properties?api-version=6.0-preview.1`,
-    "GET"
-  );
-};
 // check type for this
-export const getWorkItemTypeStates = async (
+const getWorkItemTypeStates = async (
   client: IDeskproClient,
   settings: Settings,
   processId: string,
@@ -71,29 +60,7 @@ export const getWorkItemTypeStates = async (
   );
 };
 
-export const getProcessList = async (
-  client: IDeskproClient,
-  settings: Settings
-): Promise<IAzureArrayResponse<IAzureProcess[]>> => {
-  return defaultRequest(
-    client,
-    `/${settings.organization}/_apis/process/processes?api-version=7.0`,
-    "GET"
-  );
-};
-
-export const getUsersList = async (
-  client: IDeskproClient,
-  settings: Settings
-): Promise<IAzureArrayResponse<IAzureUser[]>> => {
-  return defaultRequest(
-    client,
-    `/${settings.organization}/_apis/graph/users?api-version=7.0-preview.1`,
-    "GET"
-  );
-};
-
-export const getWorkItemById = async (
+const getWorkItemById = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
@@ -106,7 +73,7 @@ export const getWorkItemById = async (
   );
 };
 
-export const getStateDefinitionList = async (
+const getStateDefinitionList = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
@@ -119,7 +86,7 @@ export const getStateDefinitionList = async (
   );
 };
 
-export const getCommentsByItemId = async (
+const getCommentsByItemId = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
@@ -132,7 +99,7 @@ export const getCommentsByItemId = async (
   );
 };
 
-export const getWorkItemTypes = async (
+const getWorkItemTypes = async (
   client: IDeskproClient,
   settings: Settings,
   processId: string
@@ -144,7 +111,7 @@ export const getWorkItemTypes = async (
   );
 };
 // check type for this
-export const getWorkItemTypeCategories = async (
+const getWorkItemTypeCategories = async (
   client: IDeskproClient,
   settings: Settings,
   project: string
@@ -156,31 +123,23 @@ export const getWorkItemTypeCategories = async (
   );
 };
 
-export const getWorkItemListByWiql = async (
+const getWorkItemListByWiql = async (
   client: IDeskproClient,
   settings: Settings,
-  project: string
-): Promise<IAzureArrayResponse<IAzureWorkItem[]>> => {
-  const wiqlData = await defaultRequest(
+  query: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> => {
+  return await defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/wiql?api-version=7.0`,
+    `/${settings.organization}/_apis/wit/wiql?api-version=7.0`,
     "POST",
     {
-      query: "SELECT [System.Id] FROM workitems",
-    }
-  );
-
-  return defaultRequest(
-    client,
-    `/${settings.organization}/${project}/_apis/wit/workitemsbatch?api-version=7.0`,
-    "POST",
-    {
-      ids: wiqlData.workItems.map((wi: { id: number }) => wi.id),
+      query,
     }
   );
 };
 
-export const postWorkItem = (
+const postWorkItem = (
   client: IDeskproClient,
   settings: Settings,
   data: IAzureWorkItemPost
@@ -192,7 +151,7 @@ export const postWorkItem = (
     data
   );
 
-export const getTeamsList = (
+const getTeamsList = (
   client: IDeskproClient,
   settings: Settings
 ): Promise<IAzureArrayResponse<IAzureTeam[]>> =>
@@ -202,7 +161,7 @@ export const getTeamsList = (
     "GET"
   );
 
-export const getIterationList = (
+const getIterationList = (
   client: IDeskproClient,
   settings: Settings,
   project: string
@@ -213,7 +172,7 @@ export const getIterationList = (
     "GET"
   );
 
-export const getProjectList = (
+const getProjectList = (
   client: IDeskproClient,
   settings: Settings
 ): Promise<IAzureArrayResponse<IAzureProject[]>> =>
@@ -303,4 +262,21 @@ const defaultRequest = async (
   }
 
   return response.json();
+};
+
+export {
+  defaultRequest,
+  getAvatar,
+  getStateDefinitionList,
+  getWorkItemTypes,
+  getCommentsByItemId,
+  getWorkItemTypeStates,
+  getWorkItemTypeCategories,
+  getWorkItemListByWiql,
+  postWorkItem,
+  getTeamsList,
+  getIterationList,
+  getProjectList,
+  getWorkItemById,
+  getWorkItemListByIds,
 };

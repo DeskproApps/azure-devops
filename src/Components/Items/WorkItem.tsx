@@ -12,10 +12,11 @@ import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useState } from "react";
 import { useDeskpro } from "../../hooks/deskproContext";
 import { LogoAndLinkButton } from "../LogoAndLinkButton";
+import { CheckedList } from "../../types/checkedList";
 interface Props {
   item: IAzureWorkItem;
-  checkedList: number[];
-  setCheckedList: (value: React.SetStateAction<number[]>) => void;
+  checkedList: CheckedList;
+  setCheckedList: (value: React.SetStateAction<CheckedList>) => void;
   i: number;
 }
 
@@ -50,14 +51,26 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
       <Stack gap={5} style={{ width: "100%" }}>
         <Checkbox
           style={{ margin: "6px" }}
-          checked={checkedList.includes(item.id)}
+          checked={
+            checkedList[item.fields["System.TeamProject"]]?.includes(item.id) ??
+            false
+          }
           onChange={() =>
-            setCheckedList((prevValue: number[]) => {
-              if (prevValue.includes(item.id)) {
-                return prevValue.filter((id) => id !== item.id);
+            setCheckedList((prevValue: CheckedList) => {
+              prevValue[item.fields["System.TeamProject"]] =
+                prevValue[item.fields["System.TeamProject"]] ?? [];
+
+              const teamValue = prevValue[item.fields["System.TeamProject"]];
+
+              if (teamValue?.includes(item.id)) {
+                prevValue[item.fields["System.TeamProject"]].splice(
+                  teamValue.indexOf(item.id),
+                  1
+                );
               } else {
-                return [...prevValue, item.id];
+                teamValue.push(item.id);
               }
+              return { ...prevValue };
             })
           }
           id="option4"
