@@ -1,28 +1,82 @@
 {
-  "name": "@deskpro-apps/my_app",
-  "title": "My App",
-  "description": "My Deskpro app",
-  "version": "1.0.0",
+  "name": "@deskpro-apps/azure_devops",
+  "title": "Azure Devops",
+  "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
+  "version": "1.0.2",
   "scope": "agent",
+  "hasDevMode": true,
   "isSingleInstall": false,
-  "targets": [{
-    "target": "ticket_sidebar",
-    "entrypoint": "index.html"
-  }],
+  "targets": [
+    {
+      "target": "ticket_sidebar",
+      "entrypoint": "index.html"
+    }
+  ],
+  "entityAssociations": {
+    "linkedAzureItems": {
+      "entity": "ticket",
+      "type": "external_id",
+      "title": "Linked Tickets"
+    }
+  },
   "settings": {
-    "example": {
-      "title": "Example Setting",
-      "description": "Example backend only setting",
+    "app_id": {
+      "title": "Azure App Id",
       "type": "string",
-      "isRequired": false,
+      "isRequired": true,
+      "isBackendOnly": false
+    },
+    "client_secret": {
+      "title": "Azure Client Secret",
+      "type": "string",
+      "isRequired": true,
+      "isBackendOnly": true
+    },
+    "organization": {
+      "title": "Azure Organization Name",
+      "type": "string",
+      "isRequired": true,
+      "isBackendOnly": false
+    },
+    "global_access_token": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/globalauth"
+      },
+      "isRequired": true,
       "isBackendOnly": true
     }
   },
   "proxy": {
-    "whitelist": [{
-      "url": "https://example.com/.*",
-      "methods": ["GET", "POST", "PUT"],
-      "timeout": 10
-    }]
+    "whitelist": [
+      {
+        "url": "https://dev.azure.com/.*",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT"
+        ],
+        "timeout": 10
+      },
+      {
+        "url": "https://vssps.dev.azure.com/.*",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT"
+        ],
+        "timeout": 10
+      },
+      {
+        "url": "https://app.vssps.visualstudio.com/.*",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT"
+        ],
+        "timeout": 10
+      }
+    ]
   }
 }
