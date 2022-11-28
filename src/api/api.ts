@@ -5,11 +5,9 @@ import { IAzureAvatar } from "../types/azure/avatar";
 import { IAzureArrayResponse } from "../types/azure/azure";
 import { IAzureComment } from "../types/azure/comment";
 import { IAzureIteration } from "../types/azure/iteration";
-import { IAzureProcess } from "../types/azure/process";
 import { IAzureProject } from "../types/azure/project";
 import { IAzureState } from "../types/azure/state";
 import { IAzureTeam } from "../types/azure/team";
-import { IAzureUser } from "../types/azure/user";
 import {
   IAzureWorkItem,
   IAzureWorkItemPost,
