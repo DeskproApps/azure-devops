@@ -47,16 +47,18 @@ export const ItemPersistentData = ({ item }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id]);
 
+  const assignedTo = item.fields["System.AssignedTo"];
+
   const avatar = useQueryWithClient(
-    ["avatar", item.fields["System.AssignedTo"].descriptor],
+    ["avatar", assignedTo?.descriptor],
     (client) =>
       getAvatar(
         client,
         deskproData?.settings as Settings,
-        item.fields["System.AssignedTo"].descriptor
+        assignedTo?.descriptor as string
       ),
     {
-      enabled: !!deskproData && !!item.fields["System.AssignedTo"].descriptor,
+      enabled: !!deskproData && !!assignedTo,
     }
   );
 
@@ -105,35 +107,39 @@ export const ItemPersistentData = ({ item }: Props) => {
         rightLabel="Reason"
         rightText={item.fields["System.Reason"]}
       ></TwoColumn>
-      <Stack vertical>
-        <GreyTitle>Assignee</GreyTitle>
-        <Stack gap={5} align="center">
-          {avatar.data ? (
-            <img
-              src={`data:image/jpeg;base64,${avatar.data.value}`}
-              style={{ width: "20px", height: "20px", borderRadius: "100%" }}
-            />
-          ) : (
-            <Avatar />
-          )}
-          <P1>{item.fields["System.AssignedTo"].displayName}</P1>
+      {assignedTo && (
+        <Stack vertical>
+          <GreyTitle>Assignee</GreyTitle>
+          <Stack gap={5} align="center">
+            {avatar.data ? (
+              <img
+                src={`data:image/jpeg;base64,${avatar.data.value}`}
+                style={{ width: "20px", height: "20px", borderRadius: "100%" }}
+              />
+            ) : (
+              <Avatar />
+            )}
+            <P1>{assignedTo.displayName}</P1>
+          </Stack>
         </Stack>
-      </Stack>
-      <Stack vertical>
-        <GreyTitle>Tags</GreyTitle>
-        <Stack gap={5} style={{ marginTop: "2px" }}>
-          {item.fields["System.Tags"]
-            ?.split("; ")
-            ?.map((tag: string, k: number) => {
-              return (
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                // I dont need the close icon
-                <Tag color={usedColorsTags[k]} label={tag} key={k}></Tag>
-              );
-            })}
+      )}
+      {item.fields["System.Tags"] && (
+        <Stack vertical>
+          <GreyTitle>Tags</GreyTitle>
+          <Stack gap={5} style={{ marginTop: "2px" }}>
+            {item.fields["System.Tags"]
+              ?.split("; ")
+              ?.map((tag: string, k: number) => {
+                return (
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  // I dont need the close icon
+                  <Tag color={usedColorsTags[k]} label={tag} key={k}></Tag>
+                );
+              })}
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Stack>
   );
 };

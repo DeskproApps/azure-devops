@@ -2,10 +2,6 @@ export const workItemFields = {
   Agile: {
     Bug: [
       {
-        name: "Reason",
-        field: "System.Reason",
-      },
-      {
         name: "Priority",
         field: "Microsoft.VSTS.Common.Priority",
       },

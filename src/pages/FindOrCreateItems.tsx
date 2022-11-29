@@ -6,7 +6,7 @@ import { CreateItem } from "../Components/Items/CreateItem";
 import { FindItem } from "../Components/Items/FindItem";
 
 export const FindOrCreateItems = () => {
-  const [page /*, setPage*/] = useState<0 | 1>(0);
+  const [page /*setPage*/] = useState<0 | 1>(0);
 
   return (
     <Stack vertical style={{ margin: "5px" }}>
@@ -24,8 +24,8 @@ export const FindOrCreateItems = () => {
           twoLabel="Create Item⠀⠀"
           oneOnClick={() => setPage(0)}
           twoOnClick={() => setPage(1)}
-        ></TwoButtonGroup>
-      </Stack> */}
+        ></TwoButtonGroup> 
+      </Stack>*/}
 
       {
         {

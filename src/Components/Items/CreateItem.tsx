@@ -16,26 +16,23 @@
 // import {
 //   getIterationList,
 //   getProcessList,
-//   getProjectById,
+//   getProjectByName,
 //   getProjectList,
 //   getUsersList,
 //   getWorkItemTypes,
 //   getWorkItemTypeStates,
 // } from "../../api/api";
-// import { IAzureProject } from "../../types/azure/project";
-// import {
-//   IAzureWorkItemPost,
-//   IAzureWorkItemType,
-// } from "../../types/azure/workItem";
-// import { IAzureResponse } from "../../types/azure/azure";
-// import { IAzureUser } from "../../types/azure/user";
-// import { IAzureIteration } from "../../types/azure/iteration";
+// import { IAzureWorkItemPost } from "../../types/azure/workItem";
+
 // import { workItemFields as workItemFieldsObj } from "../../utils/workItemFields";
 // import { useQueryWithClient } from "../../utils/query";
-// import { defaultInitialData } from "../../utils/utils";
+// import {
+//   defaultInitialDataArr,
+//   defaultInitialDataObj,
+// } from "../../utils/utils";
 
 export const CreateItem = () => {
-  return <div></div>;
+  return <h1></h1>;
   // const {
   //   handleSubmit,
   //   register,
@@ -64,16 +61,14 @@ export const CreateItem = () => {
   //   (client) => getProjectList(client, deskproData?.settings || {}),
   //   {
   //     enabled: !!deskproData,
-  //     ...defaultInitialData,
   //   }
   // );
 
   // const specificProject = useQueryWithClient(
   //   ["specificProject", deskproData, project],
-  //   (client) => getProjectById(client, deskproData?.settings || {}, project),
+  //   (client) => getProjectByName(client, deskproData?.settings || {}, project),
   //   {
   //     enabled: !!deskproData && !!project,
-  //     ...defaultInitialData,
   //   }
   // );
 
@@ -82,20 +77,19 @@ export const CreateItem = () => {
   //   (client) => getUsersList(client, deskproData?.settings || {}),
   //   {
   //     enabled: !!deskproData,
-  //     ...defaultInitialData,
   //   }
   // );
 
   // const processesList = useQueryWithClient(
   //   ["processesList", deskproData],
   //   (client) => getProcessList(client, deskproData?.settings || {}),
-  //   { enabled: !!deskproData, ...defaultInitialData }
+  //   { enabled: !!deskproData }
   // );
 
   // const process = processesList?.data?.value?.find(
   //   (process) =>
   //     process.name ===
-  //     specificProject.data.value.find(
+  //     specificProject?.data?.value?.find(
   //       (project: { name: string; value: string }) =>
   //         project.name === "System.Process Template"
   //     )?.value
@@ -111,7 +105,6 @@ export const CreateItem = () => {
   //     ),
   //   {
   //     enabled: !!deskproData && !!process?.id,
-  //     ...defaultInitialData,
   //   }
   // );
 
@@ -127,7 +120,7 @@ export const CreateItem = () => {
   //   (client) => getIterationList(client, deskproData?.settings || {}, project),
   //   {
   //     enabled: !!deskproData && !!project,
-  //     ...defaultInitialData,
+  //     ...defaultInitialDataArr,
   //   }
   // );
 
@@ -142,7 +135,7 @@ export const CreateItem = () => {
   //     ),
   //   {
   //     enabled: !!deskproData && !!workItem && !!process?.id,
-  //     ...defaultInitialData,
+  //     ...defaultInitialDataObj,
   //   }
   // );
 
@@ -157,13 +150,12 @@ export const CreateItem = () => {
   //     </Stack>
   //   );
   // }
-  // console.log(workItemTypeList);
   // return (
   //   <form style={{ width: "100%" }} onSubmit={handleSubmit(submit)}>
   //     <Stack vertical style={{ width: "100%" }} gap={12}>
   //       <Dropdown
   //         title="Project"
-  //         data={(projectList.data as IAzureResponse<IAzureProject>).value}
+  //         data={projectList.data?.value}
   //         value={project}
   //         required
   //         onChange={(e) => setValue("System.TeamProject", e)}
@@ -171,9 +163,9 @@ export const CreateItem = () => {
   //         keyName="id"
   //         valueName="name"
   //       />
-  //       {!workItemTypeList.isSuccess && !workItemTypeList.isLoading ? (
+  //       {workItemTypeList.isIdle ? (
   //         <div></div>
-  //       ) : !workItemTypeList.isSuccess && workItemTypeList.isLoading ? (
+  //       ) : workItemTypeList.isLoading ? (
   //         <Stack justify="center" style={{ width: "100%" }}>
   //           <LoadingSpinner />
   //         </Stack>
@@ -181,10 +173,7 @@ export const CreateItem = () => {
   //         <Stack vertical style={{ width: "100%" }} gap={12}>
   //           <Dropdown
   //             title="Work item" //epic, bug, issue etc..
-  //             data={
-  //               (workItemTypeList.data as IAzureResponse<IAzureWorkItemType>)
-  //                 .value
-  //             }
+  //             data={[]}
   //             value={workItem}
   //             required
   //             onChange={(e) => setValue("System.WorkItemType", e)}
@@ -200,7 +189,8 @@ export const CreateItem = () => {
   //           ></RequiredInput>
   //           <Dropdown
   //             title="Assignee"
-  //             data={(userList.data as IAzureResponse<IAzureUser>).value}
+  //             f
+  //             data={[]}
   //             value={user}
   //             onChange={(e) => setValue("System.AssignedTo", e)}
   //             error={false}
@@ -209,7 +199,7 @@ export const CreateItem = () => {
   //           />
   //           <Dropdown
   //             title="State"
-  //             data={workItemTypeStateList.data.value}
+  //             data={[]}
   //             value={workItemTypeState}
   //             onChange={(e) => setValue("System.State", e)}
   //             error={false}
@@ -232,90 +222,9 @@ export const CreateItem = () => {
   //           ></RequiredInput>
   //           <Dropdown
   //             title="Iteration"
-  //             data={
-  //               (iterationList.data as IAzureResponse<IAzureIteration>).value
-  //             }
+  //             data={[]}
   //             value={iteration}
   //             onChange={(e) => setValue("System.IterationPath", e)}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           <RequiredInput
-  //             error={Boolean(errors?.["Microsoft.VSTS.TCM.ReproSteps"])}
-  //             title="Repro Steps"
-  //             register={register("Microsoft.VSTS.TCM.ReproSteps")}
-  //           ></RequiredInput>
-  //           <RequiredInput
-  //             error={Boolean(errors?.["Microsoft.VSTS.TCM.SystemInfo"])}
-  //             title="System Info"
-  //             register={register("Microsoft.VSTS.TCM.SystemInfo")}
-  //           ></RequiredInput>
-  //           <RequiredInput
-  //             error={Boolean(errors?.["Microsoft.VSTS.Scheduling.StoryPoints"])}
-  //             title="Story Points"
-  //             register={register("Microsoft.VSTS.Scheduling.StoryPoints")}
-  //           ></RequiredInput>
-  //           <Dropdown
-  //             title="Priority"
-  //             data={[]}
-  //             value={""}
-  //             onChange={() => {}}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           <Dropdown
-  //             title="Severity"
-  //             data={[]}
-  //             value={""}
-  //             onChange={() => {}}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           <Dropdown
-  //             title="Activity"
-  //             data={[]}
-  //             value={""}
-  //             onChange={() => {}}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           {/* Need to be Datepickers */}
-  //           <Dropdown
-  //             title="Start Date"
-  //             data={[]}
-  //             value={""}
-  //             onChange={() => {}}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           <Dropdown
-  //             title="Target Date"
-  //             data={[]}
-  //             value={""}
-  //             onChange={() => {}}
-  //             error={false}
-  //             keyName="id"
-  //             valueName="name"
-  //           />
-  //           <Dropdown
-  //             title="Completed"
-  //             data={[
-  //               {
-  //                 id: 0,
-  //                 name: "No",
-  //               },
-  //               {
-  //                 id: 1,
-  //                 name: "Yes",
-  //               },
-  //             ]}
-  //             value={""}
-  //             onChange={() => {}}
   //             error={false}
   //             keyName="id"
   //             valueName="name"
