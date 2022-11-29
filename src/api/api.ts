@@ -90,7 +90,7 @@ const getProjectByName = async (
   client: IDeskproClient,
   settings: Settings,
   project: string
-): Promise<IAzureProject> => {
+): Promise<IAzureArrayResponse<{ name: string; value: string }[]>> => {
   return defaultRequest(
     client,
     `/${settings.organization}/_apis/projects/${project}/properties?api-version=7.0-preview.1`,

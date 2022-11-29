@@ -1,16 +1,16 @@
-import { Stack /*TwoButtonGroup*/ } from "@deskpro/app-sdk";
+import { Stack, TwoButtonGroup } from "@deskpro/app-sdk";
 import { useState } from "react";
-// import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { CreateItem } from "../Components/Items/CreateItem";
 import { FindItem } from "../Components/Items/FindItem";
 
 export const FindOrCreateItems = () => {
-  const [page /*setPage*/] = useState<0 | 1>(0);
+  const [page, setPage] = useState<0 | 1>(0);
 
   return (
     <Stack vertical style={{ margin: "5px" }}>
-      {/* <Stack style={{ alignSelf: "center" }}>
+      <Stack style={{ alignSelf: "center" }}>
         <TwoButtonGroup
           selected={
             {
@@ -24,8 +24,8 @@ export const FindOrCreateItems = () => {
           twoLabel="Create Item⠀⠀"
           oneOnClick={() => setPage(0)}
           twoOnClick={() => setPage(1)}
-        ></TwoButtonGroup> 
-      </Stack>*/}
+        ></TwoButtonGroup>
+      </Stack>
 
       {
         {

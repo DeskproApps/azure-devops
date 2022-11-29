@@ -17,7 +17,7 @@ import { useMemo } from "react";
 import { Status } from "../types/status";
 
 type Props<T> = {
-  data: T[];
+  data?: T[];
   onChange: (key: string) => void;
   title: string;
   value: string;
@@ -40,7 +40,7 @@ export const Dropdown = <T,>({
   // This works fine but the types are completely wrong
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dataOptions = useMemo<any>(() => {
-    return data.map((dataInList) => ({
+    return data?.map((dataInList) => ({
       key: dataInList[keyName],
       label: <Label label={dataInList[valueName]}></Label>,
       value: dataInList[valueName],
