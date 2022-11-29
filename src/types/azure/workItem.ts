@@ -37,7 +37,7 @@ export interface IAzureWorkItemFields {
   "System.WorkItemType": string;
   "System.State": string;
   "System.Reason": string;
-  "System.AssignedTo": System;
+  "System.AssignedTo"?: System;
   "System.CreatedDate": string;
   "System.CreatedBy": System;
   "System.ChangedDate": string;

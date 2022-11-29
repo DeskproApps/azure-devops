@@ -5,9 +5,11 @@ import { IAzureAvatar } from "../types/azure/avatar";
 import { IAzureArrayResponse } from "../types/azure/azure";
 import { IAzureComment } from "../types/azure/comment";
 import { IAzureIteration } from "../types/azure/iteration";
+import { IAzureProcess } from "../types/azure/process";
 import { IAzureProject } from "../types/azure/project";
 import { IAzureState } from "../types/azure/state";
 import { IAzureTeam } from "../types/azure/team";
+import { IAzureUser } from "../types/azure/user";
 import {
   IAzureWorkItem,
   IAzureWorkItemPost,
@@ -80,6 +82,18 @@ const getStateDefinitionList = async (
   return defaultRequest(
     client,
     `/${settings.organization}/${project}/_apis/wit/workitemtypes/${workitemtype}/states?api-version=7.0`,
+    "GET"
+  );
+};
+
+const getProjectByName = async (
+  client: IDeskproClient,
+  settings: Settings,
+  project: string
+): Promise<IAzureProject> => {
+  return defaultRequest(
+    client,
+    `/${settings.organization}/_apis/projects/${project}/properties?api-version=7.0-preview.1`,
     "GET"
   );
 };
@@ -159,6 +173,26 @@ const getTeamsList = (
     "GET"
   );
 
+const getProcessList = (
+  client: IDeskproClient,
+  settings: Settings
+): Promise<IAzureArrayResponse<IAzureProcess[]>> =>
+  defaultRequest(
+    client,
+    `/${settings.organization}/_apis/process/processes?api-version=7.0`,
+    "GET"
+  );
+
+const getUsersList = (
+  client: IDeskproClient,
+  settings: Settings
+): Promise<IAzureArrayResponse<IAzureUser[]>> =>
+  defaultRequest(
+    client,
+    `/${settings.organization}/_apis/graph/users?api-version=7.0-preview.1`,
+    "GET"
+  );
+
 const getIterationList = (
   client: IDeskproClient,
   settings: Settings,
@@ -207,50 +241,38 @@ const defaultRequest = async (
     `https://${initialDomainName}dev.azure.com${endpoint}`,
     options
   );
-  //change these response codes
-  if ([400, 401, 203, 500].includes(response.status)) {
-    options.headers = {
-      ...options.headers,
-      Authorization: `Bearer [[oauth/global/access_token]]`,
+
+  if ([400, 401, 203, 500, 403].includes(response.status)) {
+    const refreshRequestOptions: RequestInit = {
+      method: "POST",
+      body: `client_assertion_type=${encodeURIComponent(
+        "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+      )}&client_assertion=__client_secret__&grant_type=refresh_token&assertion=__global_access_token.json("[refresh_token]")__&redirect_uri=${encodeURIComponent(
+        new URL(await client.getStaticOAuth2CallbackUrlValue()).toString()
+      )}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     };
+
+    const refreshRes = await fetch(
+      "https://app.vssps.visualstudio.com/oauth2/token",
+      refreshRequestOptions
+    );
+    const refreshData = await refreshRes.json();
+
+    await client.setState<string>(
+      "global_access_token",
+      JSON.stringify(refreshData),
+      {
+        backend: true,
+      }
+    );
 
     response = await fetch(
       `https://${initialDomainName}dev.azure.com${endpoint}`,
       options
     );
-
-    if ([400, 401, 203, 500].includes(response.status)) {
-      const refreshRequestOptions: RequestInit = {
-        method: "POST",
-        body: `client_assertion_type=${encodeURIComponent(
-          "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-        )}&client_assertion=__client_secret__&grant_type=refresh_token&assertion=__global_access_token.json("[refresh_token]")__&redirect_uri=${encodeURIComponent(
-          new URL(await client.getStaticOAuth2CallbackUrlValue()).toString()
-        )}`,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      };
-
-      const refreshRes = await fetch(
-        "https://app.vssps.visualstudio.com/oauth2/token",
-        refreshRequestOptions
-      );
-      const refreshData = await refreshRes.json();
-
-      await client.setState<string>(
-        "oauth/global/access_token",
-        refreshData.access_token,
-        {
-          backend: true,
-        }
-      );
-
-      response = await fetch(
-        `https://${initialDomainName}dev.azure.com${endpoint}`,
-        options
-      );
-    }
   }
 
   if (isResponseError(response)) {
@@ -277,4 +299,7 @@ export {
   getProjectList,
   getWorkItemById,
   getWorkItemListByIds,
+  getUsersList,
+  getProjectByName,
+  getProcessList,
 };
