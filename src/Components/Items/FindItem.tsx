@@ -135,21 +135,25 @@ export const FindItem = () => {
     if (!deskproData || !client) return;
 
     await Promise.all(
-      Object.keys(checkedList).map((projectId) => {
-        return checkedList[projectId].map(async (id) => {
-          await client
-            .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-            .set(id.toString());
+      Object.keys(checkedList).map(async (projectId) => {
+        return await Promise.all(
+          checkedList[projectId].map(async (id) => {
+            await client
+              .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+              .set(id.toString());
 
-          await client.setState(
-            `azure/items/${projectId}/${id}`,
-            (((
-              await client.getState(`azure/items/${projectId}/${id}`)
-            )[0]?.data as number) ?? 0) + 1
-          );
-        });
+            await client.setState(
+              `azure/items/${projectId}/${id}`,
+              (((
+                await client.getState(`azure/items/${projectId}/${id}`)
+              )[0]?.data as number) ?? 0) + 1
+            );
+          })
+        );
       })
     );
+    console.log("b");
+
     navigate("/");
   };
 
@@ -190,7 +194,26 @@ export const FindItem = () => {
         data={projectList?.data?.value ?? []}
       ></Dropdown>
       {workItemList?.length !== 0 && (
-        <Stack vertical style={{ width: "100%" }} gap={6}>
+        <Stack vertical gap={6}>
+          <Stack vertical style={{ width: "100%" }} gap={5}>
+            <Stack
+              style={{ width: "100%", justifyContent: "space-between" }}
+              gap={5}
+            >
+              <Button
+                onClick={linkIssue}
+                disabled={Object.values(checkedList ?? []).flat().length === 0}
+                text="Link Issue"
+              ></Button>
+              <Button
+                disabled={Object.values(checkedList ?? []).flat().length === 0}
+                text="Cancel"
+                intent="secondary"
+                onClick={() => setCheckedList({})}
+              ></Button>
+            </Stack>
+            <HorizontalDivider />
+          </Stack>
           {workItemList?.map((item: IAzureWorkItem, i: number) => {
             return (
               <WorkItem
@@ -202,14 +225,6 @@ export const FindItem = () => {
               />
             );
           })}
-          <Stack vertical style={{ width: "100%" }}>
-            <HorizontalDivider />
-            <Button
-              onClick={linkIssue}
-              disabled={Object.values(checkedList ?? []).flat().length === 0}
-              text="Link Issue"
-            ></Button>
-          </Stack>
         </Stack>
       )}
     </Stack>
