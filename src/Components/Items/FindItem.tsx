@@ -152,8 +152,6 @@ export const FindItem = () => {
         );
       })
     );
-    console.log("b");
-
     navigate("/");
   };
 
