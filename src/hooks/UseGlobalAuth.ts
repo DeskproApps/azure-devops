@@ -78,7 +78,7 @@ export const useGlobalAuth = () => {
       `https://app.vssps.visualstudio.com/oauth2/authorize?client_id=${
         settings?.app_id
       }&response_type=Assertion&state=${key}&scope=${encodeURIComponent(
-        "vso.graph vso.project vso.work"
+        "vso.graph vso.project vso.work_write"
       )}&redirect_uri=${encodeURIComponent(callbackUrl)}`
     );
 

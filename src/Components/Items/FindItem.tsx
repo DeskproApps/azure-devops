@@ -93,7 +93,7 @@ export const FindItem = () => {
               values.forEach((value) => {
                 itemIds.workItems.splice(
                   itemIds.workItems.findIndex(
-                    (item: IAzureWorkItem) => item.id === Number(value)
+                    (item) => item.id === Number(value)
                   ),
                   1
                 );
