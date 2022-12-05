@@ -1,4 +1,4 @@
-import { Tag, RoundedLabelTag, LabelColors, Avatar } from "@deskpro/deskpro-ui";
+import { Tag, RoundedLabelTag, Avatar } from "@deskpro/deskpro-ui";
 import { Stack, P1 } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
@@ -9,29 +9,7 @@ import { useDeskpro } from "../../hooks/deskproContext";
 import { getAvatar, getStateDefinitionList } from "../../api/api";
 import { useQueryWithClient } from "../../utils/query";
 import { Settings } from "../../types";
-
-const colors: LabelColors[] = [
-  {
-    textColor: "#4C4F50",
-    backgroundColor: "#FDF8F7",
-    borderColor: "#EC6C4E",
-  },
-  {
-    backgroundColor: "#F3F9F9",
-    borderColor: "#5BB6B1",
-    textColor: "#4C4F50",
-  },
-  {
-    borderColor: "#912066",
-    backgroundColor: "#F4E9F0",
-    textColor: "#4C4F50",
-  },
-  {
-    borderColor: "#F2C94C",
-    backgroundColor: "#FEF9E7",
-    textColor: "#4C4F50",
-  },
-];
+import { colors } from "../../utils/utils";
 
 interface Props {
   item: IAzureWorkItem;
@@ -126,7 +104,7 @@ export const ItemPersistentData = ({ item }: Props) => {
       {item.fields["System.Tags"] && (
         <Stack vertical>
           <GreyTitle>Tags</GreyTitle>
-          <Stack gap={5} style={{ marginTop: "2px" }}>
+          <Stack gap={5} style={{ marginTop: "2px", flexWrap: "wrap" }}>
             {item.fields["System.Tags"]
               ?.split("; ")
               ?.map((tag: string, k: number) => {

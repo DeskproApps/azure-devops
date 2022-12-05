@@ -44,15 +44,6 @@ export const Main = () => {
       });
 
       (async () => {
-        // (
-        //   await client
-        //     .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-        //     .list()
-        // ).forEach(async (item) => {
-        //   await client
-        //     .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-        //     .delete(item);
-        // });
         const items = (
           await client
             .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)

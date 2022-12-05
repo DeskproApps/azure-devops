@@ -5,4 +5,5 @@ export interface IAzureProcess {
   type: string;
   url: string;
   name: string;
+  typeId: string;
 }
