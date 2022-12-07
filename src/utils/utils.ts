@@ -83,6 +83,18 @@ export const colors: LabelColors[] = [
   },
 ];
 
+export const splitArrEvery2 = (arr: string[]) => {
+  const newArr: string[][] = [];
+  for (let i = 0; i < arr.length; i += 2) {
+    if (arr[i + 1]) {
+      newArr.push([arr[i], arr[i + 1]]);
+    } else {
+      newArr.push([arr[i]]);
+    }
+  }
+  return newArr;
+};
+
 // for edit item page
 // const [states, reasons] = ["System.State", "System.Reason"].map((e) => {
 //   return workItemTypeFields.data?.value

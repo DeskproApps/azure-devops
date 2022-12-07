@@ -84,13 +84,35 @@ export const Main = () => {
           data.value.map(async (item) => {
             return (
               await (client as IDeskproClient).getState<number>(
-                `azure/items/${item.fields["System.TeamProject"]}/${item.id}`
+                `azure/items/${item.id}`
               )
             )[0].data as number;
           })
         );
 
         setLinkedCountArr(linkedCount);
+      },
+      async onError() {
+        await Promise.all(
+          itemIds.map(async (item) => {
+            await client
+              ?.getEntityAssociation(
+                "linkedAzureItems",
+                deskproData?.ticket.id as string
+              )
+              .delete(item.toString());
+
+            await client?.setState(
+              `azure/items/${item}`,
+              ((
+                (await client?.getState(`azure/items/${item}`)) as {
+                  data: number;
+                }[]
+              )[0]?.data ?? 0) - 1
+            );
+          })
+        );
+        navigate("/itemmenu");
       },
     }
   );

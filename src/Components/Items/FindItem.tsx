@@ -90,14 +90,9 @@ export const FindItem = () => {
                 .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
                 .list();
 
-              values.forEach((value) => {
-                itemIds.workItems.splice(
-                  itemIds.workItems.findIndex(
-                    (item) => item.id === Number(value)
-                  ),
-                  1
-                );
-              });
+              itemIds.workItems = itemIds.workItems.filter(
+                (item) => !values.map((e) => Number(e)).includes(item.id)
+              );
 
               if (itemIds.workItems.length === 0) return [];
 
@@ -143,9 +138,9 @@ export const FindItem = () => {
               .set(id.toString());
 
             await client.setState(
-              `azure/items/${projectId}/${id}`,
+              `azure/items/${id}`,
               (((
-                await client.getState(`azure/items/${projectId}/${id}`)
+                await client.getState(`azure/items/${id}`)
               )[0]?.data as number) ?? 0) + 1
             );
           })

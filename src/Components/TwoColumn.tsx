@@ -15,7 +15,7 @@ export type Props = {
 const Divider = styled.div`
   display: inline-block;
   width: 1px;
-  height: 2em;
+  height: 2.3em;
   background-color: ${({ theme }) => theme.colors.grey20};
   margin: 0 6px;
 `;
@@ -27,7 +27,7 @@ const TwoColumn: FC<Props> = ({
   rightText,
 }) => (
   <Stack>
-    <Stack vertical>
+    <Stack vertical gap={4}>
       <GreyTitle>{leftLabel}</GreyTitle>
       <H2>{leftText}</H2>
     </Stack>
@@ -40,7 +40,7 @@ const TwoColumn: FC<Props> = ({
       }}
     >
       <Divider />
-      <Stack vertical>
+      <Stack vertical gap={4}>
         <GreyTitle>{rightLabel}</GreyTitle>
         <H2>{rightText}</H2>
       </Stack>

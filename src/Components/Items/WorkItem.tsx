@@ -1,6 +1,5 @@
 import {
   Checkbox,
-  HorizontalDivider,
   Stack,
   H2,
   useInitialisedDeskproAppClient,
@@ -13,6 +12,7 @@ import { useState } from "react";
 import { useDeskpro } from "../../hooks/deskproContext";
 import { LogoAndLinkButton } from "../LogoAndLinkButton";
 import { CheckedList } from "../../types/checkedList";
+import { HorizontalDivider } from "../HorizontalDivider";
 interface Props {
   item: IAzureWorkItem;
   checkedList: CheckedList;
@@ -27,30 +27,17 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
   useInitialisedDeskproAppClient((client) => {
     (async () => {
       setTicketCount(
-        (
-          await client.getState<number>(
-            `azure/items/${item.fields["System.TeamProject"]}/${item.id}`
-          )
-        )[0]?.data ?? 0
+        (await client.getState<number>(`azure/items/${item.id}`))[0]?.data ?? 0
       );
     })();
   });
 
   return (
     <Stack vertical style={{ width: "100%" }}>
-      {i !== 0 && (
-        <HorizontalDivider
-          style={{
-            width: "110%",
-            color: "#EFF0F0",
-            marginBottom: "10px",
-            marginLeft: "-10px",
-          }}
-        />
-      )}
+      {i !== 0 && <HorizontalDivider />}
       <Stack gap={5} style={{ width: "100%" }}>
         <Checkbox
-          style={{ margin: "6px" }}
+          style={{ margin: "10px" }}
           checked={
             checkedList[item.fields["System.TeamProject"]]?.includes(item.id) ??
             false

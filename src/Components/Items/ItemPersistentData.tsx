@@ -68,9 +68,9 @@ export const ItemPersistentData = ({ item }: Props) => {
             backgroundColor={
               statusColor
                 ? "#" +
-                  statusColor.data?.value
+                  (statusColor.data?.value
                     .find((e) => e.name === item.fields["System.State"])
-                    ?.color.toUpperCase()
+                    ?.color.toUpperCase() ?? "808080")
                 : "#808080"
             }
             textColor="white"

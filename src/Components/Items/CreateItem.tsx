@@ -20,7 +20,7 @@ import { useDeskpro } from "../../hooks/deskproContext";
 import {
   getIterationList,
   getProcessById,
-  getProjectByName,
+  getProjectPropertiesById,
   getProjectList,
   getTeamFieldValues,
   getUsersList,
@@ -92,7 +92,8 @@ export const CreateItem = () => {
 
   const specificProject = useQueryWithClient(
     ["specificProject", deskproData, project],
-    (client) => getProjectByName(client, deskproData?.settings || {}, project),
+    (client) =>
+      getProjectPropertiesById(client, deskproData?.settings || {}, project),
     {
       enabled: !!deskproData && !!project,
     }
