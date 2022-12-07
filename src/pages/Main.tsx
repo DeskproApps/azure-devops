@@ -5,6 +5,7 @@ import {
   Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
+  useDeskproAppTheme,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useState } from "react";
@@ -23,6 +24,7 @@ import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
 export const Main = () => {
   const navigate = useNavigate();
   const { client } = useDeskproAppClient();
+  const { theme } = useDeskproAppTheme();
   const [itemIds, setItemIds] = useState<number[]>([]);
   const [linkedCountArr, setLinkedCountArr] = useState<number[]>([]);
   const deskproData = useDeskpro();
@@ -159,7 +161,7 @@ export const Main = () => {
             </Stack>
             <ItemPersistentData item={item} />
             <Stack vertical>
-              <GreyTitle>Deskpro Tickets</GreyTitle>
+              <GreyTitle theme={theme}>Deskpro Tickets</GreyTitle>
               <H2>{linkedCountArr[i]}</H2>
             </Stack>
             <HorizontalDivider />

@@ -206,7 +206,7 @@ export const ItemDetails = () => {
   const workItemFieldNames = workItemFields[processName]?.[workItemTypeName];
 
   const itemData = item.data;
-  console.log(itemData);
+
   return [
     item,
     project,
@@ -227,7 +227,7 @@ export const ItemDetails = () => {
       <H1>{itemData?.fields["System.Title"]}</H1>
       {itemData?.fields["System.Description"] && (
         <Stack vertical gap={2}>
-          <GreyTitle>Description</GreyTitle>
+          <GreyTitle theme={theme}>Description</GreyTitle>
           <H2>{parse(itemData?.fields["System.Description"] ?? "")}</H2>
         </Stack>
       )}

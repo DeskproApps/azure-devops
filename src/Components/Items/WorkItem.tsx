@@ -3,6 +3,7 @@ import {
   Stack,
   H2,
   useInitialisedDeskproAppClient,
+  useDeskproAppTheme,
 } from "@deskpro/app-sdk";
 
 import { GreyTitle } from "../../styles";
@@ -23,6 +24,7 @@ interface Props {
 export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
   const [ticketCount, setTicketCount] = useState<number | null>(null);
   const deskproData = useDeskpro();
+  const { theme } = useDeskproAppTheme();
 
   useInitialisedDeskproAppClient((client) => {
     (async () => {
@@ -93,7 +95,7 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
           </Stack>
           <ItemPersistentData item={item} />
           <Stack vertical>
-            <GreyTitle>Deskpro Tickets</GreyTitle>
+            <GreyTitle theme={theme}>Deskpro Tickets</GreyTitle>
             <H2>{ticketCount}</H2>
           </Stack>
         </Stack>

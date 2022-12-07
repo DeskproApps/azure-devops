@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Stack, H2 } from "@deskpro/app-sdk";
+import { Stack, H2, useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import type { Props as TextBlockWithLabelProps } from "./TextBlockWithLabel";
 import { GreyTitle } from "../styles";
@@ -25,27 +25,30 @@ const TwoColumn: FC<Props> = ({
   leftText,
   rightLabel,
   rightText,
-}) => (
-  <Stack>
-    <Stack vertical gap={4}>
-      <GreyTitle>{leftLabel}</GreyTitle>
-      <H2>{leftText}</H2>
-    </Stack>
-    <Stack
-      style={{
-        alignItems: "center",
-        alignSelf: "center",
-        position: "absolute",
-        marginLeft: "100px",
-      }}
-    >
-      <Divider />
+}) => {
+  const { theme } = useDeskproAppTheme();
+  return (
+    <Stack>
       <Stack vertical gap={4}>
-        <GreyTitle>{rightLabel}</GreyTitle>
-        <H2>{rightText}</H2>
+        <GreyTitle theme={theme}>{leftLabel}</GreyTitle>
+        <H2>{leftText}</H2>
+      </Stack>
+      <Stack
+        style={{
+          alignItems: "center",
+          alignSelf: "center",
+          position: "absolute",
+          marginLeft: "100px",
+        }}
+      >
+        <Divider />
+        <Stack vertical gap={4}>
+          <GreyTitle>{rightLabel}</GreyTitle>
+          <H2>{rightText}</H2>
+        </Stack>
       </Stack>
     </Stack>
-  </Stack>
-);
+  );
+};
 
 export { TwoColumn };
