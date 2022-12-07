@@ -5,6 +5,7 @@ import {
   Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
+  useDeskproAppTheme,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useState } from "react";
@@ -23,6 +24,7 @@ import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
 export const Main = () => {
   const navigate = useNavigate();
   const { client } = useDeskproAppClient();
+  const { theme } = useDeskproAppTheme();
   const [itemIds, setItemIds] = useState<number[]>([]);
   const [linkedCountArr, setLinkedCountArr] = useState<number[]>([]);
   const deskproData = useDeskpro();
@@ -84,13 +86,35 @@ export const Main = () => {
           data.value.map(async (item) => {
             return (
               await (client as IDeskproClient).getState<number>(
-                `azure/items/${item.fields["System.TeamProject"]}/${item.id}`
+                `azure/items/${item.id}`
               )
             )[0].data as number;
           })
         );
 
         setLinkedCountArr(linkedCount);
+      },
+      async onError() {
+        await Promise.all(
+          itemIds.map(async (item) => {
+            await client
+              ?.getEntityAssociation(
+                "linkedAzureItems",
+                deskproData?.ticket.id as string
+              )
+              .delete(item.toString());
+
+            await client?.setState(
+              `azure/items/${item}`,
+              ((
+                (await client?.getState(`azure/items/${item}`)) as {
+                  data: number;
+                }[]
+              )[0]?.data ?? 0) - 1
+            );
+          })
+        );
+        navigate("/itemmenu");
       },
     }
   );
@@ -137,7 +161,7 @@ export const Main = () => {
             </Stack>
             <ItemPersistentData item={item} />
             <Stack vertical>
-              <GreyTitle>Deskpro Tickets</GreyTitle>
+              <GreyTitle theme={theme}>Deskpro Tickets</GreyTitle>
               <H2>{linkedCountArr[i]}</H2>
             </Stack>
             <HorizontalDivider />

@@ -1,4 +1,13 @@
-export const workItemFields = {
+interface IWorkItemFields {
+  [key: string]: {
+    [key: string]: {
+      name: string;
+      field: string;
+    }[];
+  };
+}
+
+export const workItemFields: IWorkItemFields = {
   Agile: {
     Bug: [
       {
@@ -129,11 +138,15 @@ export const workItemFields = {
         name: "Completed",
         field: "Microsoft.VSTS.Scheduling.CompletedWork",
       },
+      {
+        name: "Integrated in Build",
+        field: "Microsoft.VSTS.Build.IntegrationBuild",
+      },
     ],
     "Test Case": [
       {
         name: "Steps",
-        field: "Microsoft.VSTS.TCM.ReproSteps",
+        field: "Microsoft.VSTS.TCM.Steps",
       },
     ],
     "User Story": [
@@ -196,6 +209,16 @@ export const workItemFields = {
     ],
   },
   Scrum: {
+    Impediment: [
+      {
+        name: "Resolution",
+        field: "Microsoft.VSTS.Common.Resolution",
+      },
+      {
+        name: "Priority",
+        field: "Microsoft.VSTS.Common.Priority",
+      },
+    ],
     Bug: [
       {
         name: "Priority",
@@ -252,8 +275,8 @@ export const workItemFields = {
         field: "Microsoft.VSTS.Scheduling.StartDate",
       },
       {
-        name: "Integrated in Build",
-        field: "Microsoft.VSTS.Build.IntegrationBuild",
+        name: "Target Date",
+        field: "Microsoft.VSTS.Scheduling.TargetDate",
       },
       {
         name: "Time Criticality",
@@ -284,6 +307,10 @@ export const workItemFields = {
       {
         name: "Start Date",
         field: "Microsoft.VSTS.Scheduling.StartDate",
+      },
+      {
+        name: "Target Date",
+        field: "Microsoft.VSTS.Scheduling.TargetDate",
       },
       {
         name: "Integrated in Build",
@@ -359,7 +386,7 @@ export const workItemFields = {
     "Test Case": [
       {
         name: "Steps",
-        field: "Microsoft.VSTS.TCM.ReproSteps",
+        field: "Microsoft.VSTS.TCM.Steps",
       },
     ],
   },
@@ -418,11 +445,19 @@ export const workItemFields = {
         field: "Microsoft.VSTS.TCM.SystemInfo",
       },
       {
-        name: "Update computer",
+        name: "Fix",
         field: "Microsoft.VSTS.CMMI.ProposedFix",
       },
     ],
     "Change Request": [
+      {
+        name: "Integrated in Build",
+        field: "Microsoft.VSTS.Build.IntegrationBuild",
+      },
+      {
+        name: "Original Estimate",
+        field: "Microsoft.VSTS.Scheduling.OriginalEstimate",
+      },
       {
         name: "Justification",
         field: "Microsoft.VSTS.CMMI.Justification",
@@ -560,7 +595,7 @@ export const workItemFields = {
     ],
     Requirement: [
       {
-        name: "Inpact Assessment",
+        name: "Impact Assessment",
         field: "Microsoft.VSTS.CMMI.ImpactAssessmentHtml",
       },
       {
@@ -647,27 +682,7 @@ export const workItemFields = {
     "Test Case": [
       {
         name: "Steps",
-        field: "Microsoft.VSTS.TCM.ReproSteps",
-      },
-      {
-        name: "Original Estimate",
-        field: "Microsoft.VSTS.Scheduling.OriginalEstimate",
-      },
-      {
-        name: "Remaining Work",
-        field: "Microsoft.VSTS.Scheduling.RemainingWork",
-      },
-      {
-        name: "Completed Work",
-        field: "Microsoft.VSTS.Scheduling.CompletedWork",
-      },
-      {
-        name: "Start Date",
-        field: "Microsoft.VSTS.Scheduling.StartDate",
-      },
-      {
-        name: "Finish Date",
-        field: "Microsoft.VSTS.Scheduling.FinishDate",
+        field: "Microsoft.VSTS.TCM.Steps",
       },
     ],
   },

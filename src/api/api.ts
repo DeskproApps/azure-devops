@@ -34,6 +34,19 @@ const getWorkItemFieldsData = async (
   );
 };
 
+const getProjectByName = async (
+  client: IDeskproClient,
+  settings: Settings,
+  projectName: string
+): Promise<IAzureProject> => {
+  //not being used
+  return defaultRequest(
+    client,
+    `/${settings.organization}/_apis/projects/${projectName}?api-version=7.0`,
+    "GET"
+  );
+};
+
 const getWorkItemFieldByName = async (
   client: IDeskproClient,
   settings: Settings,
@@ -161,7 +174,7 @@ const getStateDefinitionList = async (
   );
 };
 
-const getProjectByName = async (
+const getProjectPropertiesById = async (
   client: IDeskproClient,
   settings: Settings,
   project: string
@@ -375,11 +388,12 @@ export {
   getWorkItemById,
   getWorkItemListByIds,
   getUsersList,
-  getProjectByName,
+  getProjectPropertiesById,
   getProcessList,
   getTeamFieldValues,
   getWorkItemFieldsData,
   getProcessById,
   getWorkItemFieldByName,
   getWorkItemTypeFields,
+  getProjectByName,
 };

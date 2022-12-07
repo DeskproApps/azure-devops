@@ -1,5 +1,5 @@
 import { Tag, RoundedLabelTag, Avatar } from "@deskpro/deskpro-ui";
-import { Stack, P1 } from "@deskpro/app-sdk";
+import { Stack, P1, useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
 import { GreyTitle } from "../../styles";
@@ -17,6 +17,7 @@ interface Props {
 
 export const ItemPersistentData = ({ item }: Props) => {
   const deskproData = useDeskpro();
+  const { theme } = useDeskproAppTheme();
 
   const usedColorsTags = useMemo(() => {
     return new Array(item.fields["System.Tags"]?.split("; ")?.length)
@@ -68,9 +69,9 @@ export const ItemPersistentData = ({ item }: Props) => {
             backgroundColor={
               statusColor
                 ? "#" +
-                  statusColor.data?.value
+                  (statusColor.data?.value
                     .find((e) => e.name === item.fields["System.State"])
-                    ?.color.toUpperCase()
+                    ?.color.toUpperCase() ?? "808080")
                 : "#808080"
             }
             textColor="white"
@@ -87,7 +88,7 @@ export const ItemPersistentData = ({ item }: Props) => {
       ></TwoColumn>
       {assignedTo && (
         <Stack vertical>
-          <GreyTitle>Assignee</GreyTitle>
+          <GreyTitle theme={theme}>Assignee</GreyTitle>
           <Stack gap={5} align="center">
             {avatar.data ? (
               <img
