@@ -45,6 +45,8 @@ export const Main = () => {
         type: "plus_button",
       });
 
+      client.deregisterElement("azureEditButton");
+
       (async () => {
         const items = (
           await client

@@ -80,6 +80,10 @@ export const ItemDetails = () => {
         },
       ],
     });
+
+    client.registerElement("azureEditButton", {
+      type: "edit_button",
+    });
   });
 
   useDeskproAppEvents({
@@ -104,6 +108,10 @@ export const ItemDetails = () => {
           break;
         case "azureHomeButton":
           navigate("/redirect");
+          break;
+        case "azureEditButton":
+          navigate(`/edititem?itemId=${itemId}&projectId=${projectId}`);
+          break;
       }
     },
   });

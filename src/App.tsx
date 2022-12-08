@@ -14,12 +14,13 @@ import { FindOrCreateItems } from "./pages/FindOrCreateItems";
 import { ItemDetails } from "./pages/ItemDetails";
 import { Main } from "./pages/Main";
 import { Redirect } from "./pages/Redirect";
+import { EditItem } from "./pages/EditItem";
 
 function App() {
   return (
     <HashRouter>
       {/* 
-// @ts-ignore */}
+      // @ts-ignore */}
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
           <Route index path="/" element={<Main />} />
@@ -27,6 +28,7 @@ function App() {
           <Route path="/redirect" element={<Redirect />} />
           <Route path="/globalauth" element={<GlobalAuth />} />
           <Route path="itemmenu" element={<FindOrCreateItems />} />
+          <Route path="edititem" element={<EditItem />} />
         </Routes>
       </ErrorBoundary>
     </HashRouter>

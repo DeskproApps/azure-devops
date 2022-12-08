@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, ResolverOptions } from "react-hook-form/dist/types";
 import { Tag } from "@deskpro/deskpro-ui";
+import { useNavigate } from "react-router-dom";
 
 import { Dropdown } from "../Dropdown";
 import { RequiredInput } from "../RequiredInput";
@@ -35,7 +36,6 @@ import { workItemFields as workItemFieldsObj } from "../../utils/workItemFields"
 import { useQueryWithClient } from "../../utils/query";
 import { IAzureWorkItemFieldsSchema } from "../../schema/workItem";
 import { colors, toDotList } from "../../utils/utils";
-import { useNavigate } from "react-router-dom";
 import { DateField } from "../DateField";
 // useForm does not export the types, even zodresolver is doing any any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -486,7 +486,11 @@ export const CreateItem = () => {
                     type="submit"
                     text={isSubmitting ? "Creating..." : "Create"}
                   ></Button>
-                  <Button text="Cancel" intent="secondary"></Button>
+                  <Button
+                    text="Cancel"
+                    onClick={() => navigate("/itemmenu")}
+                    intent="secondary"
+                  ></Button>
                 </Stack>
               </Stack>
             )}
