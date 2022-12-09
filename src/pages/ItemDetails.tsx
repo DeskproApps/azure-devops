@@ -12,6 +12,8 @@ import parse from "html-react-parser";
 import { Avatar } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
 import x2js from "x2js";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
   getCommentsByItemId,
@@ -323,7 +325,7 @@ export const ItemDetails = () => {
       })}
       {<HorizontalDivider />}
       {commentsReq.data?.comments && (
-        <Stack vertical>
+        <Stack vertical gap={5} style={{ width: "100%" }}>
           <H1>Comments ({commentsReq.data.comments.length})</H1>
           <Stack vertical style={{ width: "100%" }}>
             {commentsReq.data.comments.map((comment, i) => {
@@ -360,6 +362,17 @@ export const ItemDetails = () => {
                 </Stack>
               );
             })}
+          </Stack>
+          <Stack align="center" justify="center" style={{ width: "100%" }}>
+            <FontAwesomeIcon
+              icon={faCirclePlus}
+              size="xl"
+              style={{
+                alignSelf: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => console.log("a")}
+            ></FontAwesomeIcon>
           </Stack>
         </Stack>
       )}

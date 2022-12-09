@@ -38,7 +38,7 @@ const TwoColumn: FC<Props> = ({
           alignItems: "center",
           alignSelf: "center",
           position: "absolute",
-          marginLeft: "100px",
+          marginLeft: "120px",
         }}
       >
         <Divider />
