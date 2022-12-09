@@ -599,14 +599,6 @@ export const workItemFields: IWorkItemFields = {
         field: "Microsoft.VSTS.CMMI.ImpactAssessmentHtml",
       },
       {
-        name: "Plan",
-        field: "Plan",
-      },
-      {
-        name: "Actual Resolution",
-        field: "Microsoft.VSTS.CMMI.CorrectiveActionActualResolution",
-      },
-      {
         name: "Size",
         field: "Microsoft.VSTS.Scheduling.Size",
       },
@@ -683,6 +675,14 @@ export const workItemFields: IWorkItemFields = {
       {
         name: "Steps",
         field: "Microsoft.VSTS.TCM.Steps",
+      },
+      {
+        name: "Priority",
+        field: "Microsoft.VSTS.Common.Priority",
+      },
+      {
+        name: "Automation Status",
+        field: "Microsoft.VSTS.TCM.AutomationStatus",
       },
     ],
   },

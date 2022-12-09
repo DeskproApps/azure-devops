@@ -50,6 +50,8 @@ export const FindItem = () => {
       },
     });
 
+    client.deregisterElement("azureEditButton");
+
     client.registerElement("azureRefreshButton", {
       type: "refresh_button",
     });

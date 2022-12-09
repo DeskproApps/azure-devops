@@ -10,7 +10,7 @@ After this, please head on to `https://app.vsaex.visualstudio.com/app/register?m
 
 [![](/docs/assets/setup/empty_callback.png)](/docs/assets/setup/empty_callback.png)
 
-On the Authorized scopes, please mark Work items (read), Project and teams (read) and Graph (read), in order to give permissions to the app.
+On the Authorized scopes, please mark Work items (read and write), Project and teams (read) and Graph (read), in order to give permissions to the app.
 
 [![](/docs/assets/setup/scopes.png)](/docs/assets/setup/scopes.png)
 
