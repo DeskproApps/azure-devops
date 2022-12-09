@@ -165,6 +165,7 @@ export const workItemFieldsItemDetails: IWorkItemFieldsItemDetails = {
     },
     "Test Case": {
       Top: ["Steps"],
+      Status: ["Priority", "Automation Status"],
     },
   },
 };

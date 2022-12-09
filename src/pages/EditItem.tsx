@@ -6,6 +6,8 @@ import {
   LoadingSpinner,
   useDeskproAppClient,
   Input,
+  useInitialisedDeskproAppClient,
+  useDeskproAppEvents,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -27,11 +29,11 @@ import {
   getWorkItemTypeFields,
   getWorkItemFieldsData,
   getWorkItemTypes,
-  postWorkItem,
   getWorkItemById,
   getProjectByName,
+  editWorkItem,
 } from "../api/api";
-import { IAzureWorkItemFields } from "../types/azure/workItem";
+import { IAzureWorkItemFields, System } from "../types/azure/workItem";
 import { workItemFields as workItemFieldsObj } from "../utils/workItemFields";
 import { useQueryWithClient } from "../utils/query";
 import { IAzureWorkItemFieldsSchema } from "../schema/workItem";
@@ -73,13 +75,12 @@ export const EditItem = () => {
     resolver: useCustomResolver,
   });
 
-  const [project, workItem, user, iteration, areaPath, reason, state] = watch([
+  const [project, workItem, user, iteration, areaPath, state] = watch([
     "System.TeamProject",
     "System.WorkItemType",
     "System.AssignedTo",
     "System.IterationPath",
     "System.AreaPath",
-    "System.Reason",
     "System.State",
   ]);
 
@@ -88,12 +89,27 @@ export const EditItem = () => {
     register("System.WorkItemType", { required: true });
   }, [register]);
 
+  useInitialisedDeskproAppClient((client) => {
+    client.deregisterElement("azureEditButton");
+    client.deregisterElement("azureMenuButton");
+  });
+
+  useDeskproAppEvents({
+    onElementEvent(id) {
+      switch (id) {
+        case "azureHomeButton":
+          navigate(`/redirect`);
+          break;
+      }
+    },
+  });
+
   const { client } = useDeskproAppClient();
   const { theme } = useDeskproAppTheme();
   const deskproData = useDeskpro();
 
   const fetchedProject = useQueryWithClient(
-    ["projectProperties", deskproData, projectId],
+    ["fetchedProject", deskproData, projectId],
     (client) =>
       getProjectByName(
         client,
@@ -118,7 +134,7 @@ export const EditItem = () => {
     }
   );
 
-  const item = useQueryWithClient(
+  useQueryWithClient(
     ["item", deskproData],
     (client) =>
       getWorkItemById(
@@ -130,22 +146,34 @@ export const EditItem = () => {
     {
       enabled: !!deskproData && !!itemId && !!projectId,
       onSuccess(data) {
+        const obj: Partial<IAzureWorkItemFields> = {};
+
+        const keys = Object.keys(
+          data?.fields
+        ) as (keyof IAzureWorkItemFields)[];
+
+        if (!data?.fields) return;
+
+        for (const key of keys) {
+          //eslint-disable-next-line
+          //@ts-ignore
+          obj[key] = !isNaN(data.fields[key] as number)
+            ? data.fields[key]?.toString()
+            : data.fields[key];
+        }
+
+        delete obj["System.CommentCount"];
+
         reset({
-          ...data?.fields,
+          ...obj,
+          "System.AssignedTo": (data?.fields["System.AssignedTo"]
+            ?.displayName || "") as unknown as System,
         });
+
+        setTags(data?.fields["System.Tags"]?.split(";") || []);
       },
     }
   );
-  console.log(itemId, projectId);
-  useEffect(() => {
-    if (!item.isSuccess) return;
-
-    reset({
-      ...item.data?.fields,
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item.isSuccess]);
 
   const specificProcess = useQueryWithClient(
     ["specificProcess", deskproData, projectProperties],
@@ -180,7 +208,7 @@ export const EditItem = () => {
       specificProcess.data?.name as "Agile" | "Scrum" | "Basic"
     ]?.[
       workItemTypeList?.data?.value?.find(
-        (workItemType) => workItemType.id === workItem
+        (workItemType) => workItemType.name === workItem
       )?.name as "Task"
     ];
 
@@ -197,6 +225,12 @@ export const EditItem = () => {
     (client) => getIterationList(client, deskproData?.settings || {}, project),
     {
       enabled: !!deskproData && !!project,
+      onSuccess(data) {
+        setValue(
+          "System.IterationPath",
+          data.value[0].name as unknown as never
+        );
+      },
     }
   );
 
@@ -246,15 +280,15 @@ export const EditItem = () => {
         from: null,
       }));
 
-    await postWorkItem(
+    await editWorkItem(
       client,
       deskproData.settings,
       project,
-      data["System.WorkItemType"],
+      itemId as string,
       mappedData
     );
 
-    navigate("/itemmenu");
+    navigate(-1);
   };
 
   const usedColorsTags = useMemo(() => {
@@ -276,7 +310,7 @@ export const EditItem = () => {
     workItemFieldsData,
   ].some((query) => query.isLoading);
 
-  const [states, reasons] = ["System.State", "System.Reason"].map((e) => {
+  const [states] = ["System.State"].map((e) => {
     return workItemTypeFields.data?.value
       ?.find((f) => f.referenceName === e)
       ?.allowedValues.map((f) => ({
@@ -285,7 +319,7 @@ export const EditItem = () => {
   });
 
   return (
-    <form style={{ width: "100%" }} onSubmit={handleSubmit(submit)}>
+    <form style={{ margin: "5px" }} onSubmit={handleSubmit(submit)}>
       <Stack vertical style={{ width: "100%" }} gap={12}>
         {areBaseFieldsLoading ? (
           <Stack justify="center" style={{ width: "100%" }}>
@@ -333,17 +367,6 @@ export const EditItem = () => {
               valueName="name"
             />
             <Dropdown
-              title="Reason"
-              data={reasons}
-              value={reason}
-              onChange={(e) =>
-                setValue("System.Reason" as keyof IAzureWorkItemFields, e)
-              }
-              error={false}
-              keyName="name"
-              valueName="name"
-            />
-            <Dropdown
               title="Iteration"
               data={iterationList.data?.value}
               value={iteration}
@@ -361,14 +384,13 @@ export const EditItem = () => {
               const fieldData = workItemTypeFields.data?.value?.find(
                 (e) => e.referenceName === field.field
               );
-              9;
+
               if (!fieldData) return <div></div>;
 
               if (fieldData?.allowedValues.length === 0) {
                 const fieldType = workItemFieldsData.data?.value.find(
                   (fieldData) => fieldData.referenceName === field.field
                 )?.type;
-
                 switch (fieldType) {
                   case "dateTime": {
                     return (
@@ -378,6 +400,7 @@ export const EditItem = () => {
                         error={Boolean(
                           errors?.[field.field as keyof IAzureWorkItemFields]
                         )}
+                        value={watch(field.field as keyof IAzureWorkItemFields)}
                         {...register(field.field as keyof IAzureWorkItemFields)}
                         onChange={(e: [Date]) =>
                           setValue(
@@ -388,6 +411,7 @@ export const EditItem = () => {
                       />
                     );
                   }
+                  case "html":
                   case "plainText":
                   case "integer":
                   case "double": {
@@ -487,7 +511,10 @@ export const EditItem = () => {
                 />
               </Stack>
             </Stack>
-            <Stack style={{ justifyContent: "space-between" }} gap={5}>
+            <Stack
+              style={{ justifyContent: "space-between", width: "100%" }}
+              gap={5}
+            >
               <Button
                 type="submit"
                 text={isSubmitting ? "Editing..." : "Edit"}

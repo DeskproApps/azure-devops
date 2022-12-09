@@ -114,6 +114,26 @@ const getWorkItemById = async (
   );
 };
 
+const editWorkItem = async (
+  client: IDeskproClient,
+  settings: Settings,
+  project: string,
+  workItemId: string,
+  data: {
+    op: string;
+    path: string;
+    value: string;
+    from: string | null;
+  }[]
+) => {
+  return defaultRequest(
+    client,
+    `/${settings.organization}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.0`,
+    "PATCH",
+    data
+  );
+};
+
 const postWorkItem = async (
   client: IDeskproClient,
   settings: Settings,
@@ -396,4 +416,5 @@ export {
   getWorkItemFieldByName,
   getWorkItemTypeFields,
   getProjectByName,
+  editWorkItem,
 };
