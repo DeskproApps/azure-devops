@@ -412,6 +412,7 @@ export const EditItem = () => {
                     );
                   }
                   case "html":
+                    return;
                   case "plainText":
                   case "integer":
                   case "double": {

@@ -9,7 +9,7 @@ interface IWorkItemFieldsItemDetails {
 export const workItemFieldsItemDetails: IWorkItemFieldsItemDetails = {
   Agile: {
     Bug: {
-      Top: ["Repro Steps"],
+      Top: ["Repro Steps", "System Info"],
       Planning: ["Priority", "Severity", "Activity"],
       Effort: ["Original Estimate", "Remaining", "Completed"],
     },
