@@ -6,9 +6,16 @@ interface Props {
   error: boolean;
   required?: boolean;
   register: UseFormRegisterReturn;
+  type?: string;
 }
 
-export const RequiredInput = ({ title, error, required, register }: Props) => {
+export const RequiredInput = ({
+  title,
+  error,
+  required,
+  register,
+  type,
+}: Props) => {
   const { theme } = useDeskproAppTheme();
   return (
     <Stack vertical style={{ width: "100%", marginTop: "5px" }}>
@@ -25,8 +32,8 @@ export const RequiredInput = ({ title, error, required, register }: Props) => {
       <Input
         error={error}
         variant="inline"
-        placeholder="Enter value"
-        type="title"
+        placeholder={`Enter ${type === "number" ? "number" : "value"}`}
+        type={type ?? "title"}
         {...register}
       />
     </Stack>

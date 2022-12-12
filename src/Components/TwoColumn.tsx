@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Stack, H2 } from "@deskpro/app-sdk";
+import { Stack, H2, useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import type { Props as TextBlockWithLabelProps } from "./TextBlockWithLabel";
 import { GreyTitle } from "../styles";
@@ -15,7 +15,7 @@ export type Props = {
 const Divider = styled.div`
   display: inline-block;
   width: 1px;
-  height: 2em;
+  height: 2.3em;
   background-color: ${({ theme }) => theme.colors.grey20};
   margin: 0 6px;
 `;
@@ -25,27 +25,30 @@ const TwoColumn: FC<Props> = ({
   leftText,
   rightLabel,
   rightText,
-}) => (
-  <Stack>
-    <Stack vertical>
-      <GreyTitle>{leftLabel}</GreyTitle>
-      <H2>{leftText}</H2>
-    </Stack>
-    <Stack
-      style={{
-        alignItems: "center",
-        alignSelf: "center",
-        position: "absolute",
-        marginLeft: "100px",
-      }}
-    >
-      <Divider />
-      <Stack vertical>
-        <GreyTitle>{rightLabel}</GreyTitle>
-        <H2>{rightText}</H2>
+}) => {
+  const { theme } = useDeskproAppTheme();
+  return (
+    <Stack>
+      <Stack vertical gap={4}>
+        <GreyTitle theme={theme}>{leftLabel}</GreyTitle>
+        <H2>{leftText}</H2>
+      </Stack>
+      <Stack
+        style={{
+          alignItems: "center",
+          alignSelf: "center",
+          position: "absolute",
+          marginLeft: "100px",
+        }}
+      >
+        <Divider />
+        <Stack vertical gap={4}>
+          <GreyTitle>{rightLabel}</GreyTitle>
+          <H2>{rightText}</H2>
+        </Stack>
       </Stack>
     </Stack>
-  </Stack>
-);
+  );
+};
 
 export { TwoColumn };

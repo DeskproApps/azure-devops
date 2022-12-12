@@ -1,5 +1,5 @@
-import { Tag, RoundedLabelTag, LabelColors, Avatar } from "@deskpro/deskpro-ui";
-import { Stack, P1 } from "@deskpro/app-sdk";
+import { Tag, RoundedLabelTag, Avatar } from "@deskpro/deskpro-ui";
+import { Stack, P1, useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
 import { GreyTitle } from "../../styles";
@@ -9,29 +9,7 @@ import { useDeskpro } from "../../hooks/deskproContext";
 import { getAvatar, getStateDefinitionList } from "../../api/api";
 import { useQueryWithClient } from "../../utils/query";
 import { Settings } from "../../types";
-
-const colors: LabelColors[] = [
-  {
-    textColor: "#4C4F50",
-    backgroundColor: "#FDF8F7",
-    borderColor: "#EC6C4E",
-  },
-  {
-    backgroundColor: "#F3F9F9",
-    borderColor: "#5BB6B1",
-    textColor: "#4C4F50",
-  },
-  {
-    borderColor: "#912066",
-    backgroundColor: "#F4E9F0",
-    textColor: "#4C4F50",
-  },
-  {
-    borderColor: "#F2C94C",
-    backgroundColor: "#FEF9E7",
-    textColor: "#4C4F50",
-  },
-];
+import { colors } from "../../utils/utils";
 
 interface Props {
   item: IAzureWorkItem;
@@ -39,6 +17,7 @@ interface Props {
 
 export const ItemPersistentData = ({ item }: Props) => {
   const deskproData = useDeskpro();
+  const { theme } = useDeskproAppTheme();
 
   const usedColorsTags = useMemo(() => {
     return new Array(item.fields["System.Tags"]?.split("; ")?.length)
@@ -90,9 +69,9 @@ export const ItemPersistentData = ({ item }: Props) => {
             backgroundColor={
               statusColor
                 ? "#" +
-                  statusColor.data?.value
+                  (statusColor.data?.value
                     .find((e) => e.name === item.fields["System.State"])
-                    ?.color.toUpperCase()
+                    ?.color.toUpperCase() ?? "808080")
                 : "#808080"
             }
             textColor="white"
@@ -109,7 +88,7 @@ export const ItemPersistentData = ({ item }: Props) => {
       ></TwoColumn>
       {assignedTo && (
         <Stack vertical>
-          <GreyTitle>Assignee</GreyTitle>
+          <GreyTitle theme={theme}>Assignee</GreyTitle>
           <Stack gap={5} align="center">
             {avatar.data ? (
               <img
@@ -126,7 +105,7 @@ export const ItemPersistentData = ({ item }: Props) => {
       {item.fields["System.Tags"] && (
         <Stack vertical>
           <GreyTitle>Tags</GreyTitle>
-          <Stack gap={5} style={{ marginTop: "2px" }}>
+          <Stack gap={5} style={{ marginTop: "2px", flexWrap: "wrap" }}>
             {item.fields["System.Tags"]
               ?.split("; ")
               ?.map((tag: string, k: number) => {
