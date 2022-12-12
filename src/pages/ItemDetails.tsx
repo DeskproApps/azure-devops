@@ -34,6 +34,7 @@ import { HorizontalDivider } from "../Components/HorizontalDivider";
 import { MultipleFields } from "../Components/MultipleFields";
 import { workItemFields } from "../utils/workItemFields";
 import { BiggerH1 } from "../styles";
+import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
 
 const POSSIBLE_BOTTOM_FIELDS = [
   "Planning",
@@ -232,7 +233,19 @@ export const ItemDetails = () => {
       style={{ margin: "10px 5px 5px 5px", width: "100%" }}
       gap={8}
     >
-      <H1>{itemData?.fields["System.Title"]}</H1>
+      <Stack
+        justify={"space-between"}
+        style={{ width: "100%", alignItems: "center" }}
+      >
+        <H1>{itemData?.fields["System.Title"]}</H1>
+        <div style={{ marginRight: "8px" }}>
+          <LogoAndLinkButton
+            organizationId={deskproData?.settings.organization as string}
+            itemId={Number(itemId as string)}
+            projectId={projectId as string}
+          />
+        </div>
+      </Stack>
       {itemData?.fields["System.Description"] && (
         <Stack vertical gap={2}>
           <GreyTitle theme={theme}>Description</GreyTitle>

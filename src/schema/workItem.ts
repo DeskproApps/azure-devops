@@ -67,7 +67,6 @@ export const IAzureWorkItemFieldsSchema = z
   })
   .transform((obj) => ({
     ...obj,
-    "System.TeamProject": "",
     "System.WorkItemType": obj["System.WorkItemType"].split(".").at(-1),
     "System.IterationPath": obj["System.IterationPath"]
       ? `${obj["System.AreaPath"]}\\${obj["System.IterationPath"]}`

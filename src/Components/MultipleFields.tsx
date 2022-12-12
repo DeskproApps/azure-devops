@@ -37,13 +37,13 @@ export const MultipleFields = ({
           isNaN(Number(leftText)) &&
           new Date(leftText).toString() !== "Invalid Date"
         ) {
-          leftText = new Date(leftText).toLocaleDateString();
+          leftText = new Date(leftText).toLocaleDateString("en-GB");
         }
         if (
           isNaN(Number(rightText)) &&
           new Date(rightText).toString() !== "Invalid Date"
         ) {
-          rightText = new Date(rightText).toLocaleDateString();
+          rightText = new Date(rightText).toLocaleDateString("en-GB");
         }
         return (
           <TwoColumn
