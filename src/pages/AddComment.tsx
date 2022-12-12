@@ -28,6 +28,8 @@ export const AddComment = () => {
   const text = watch("comment");
 
   useInitialisedDeskproAppClient((client) => {
+    client.setTitle("Add Comment");
+
     client.deregisterElement("azureEditButton");
     client.deregisterElement("azureMenuButton");
   });
