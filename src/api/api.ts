@@ -160,7 +160,7 @@ const postWorkItem = async (
     value: string;
     from: string | null;
   }[]
-) => {
+): Promise<IAzureWorkItem> => {
   return defaultRequest(
     client,
     `/${settings.organization}/${project}/_apis/wit/workitems/$${workItemType

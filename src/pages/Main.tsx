@@ -37,6 +37,8 @@ export const Main = () => {
 
       client.deregisterElement("azureHomeButton");
 
+      client.deregisterElement("azureMenuButton");
+
       client.registerElement("azureRefreshButton", {
         type: "refresh_button",
       });

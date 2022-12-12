@@ -6,6 +6,7 @@ import {
   LoadingSpinner,
   useDeskproAppClient,
   Input,
+  useDeskproAppEvents,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -37,6 +38,13 @@ import { useQueryWithClient } from "../../utils/query";
 import { IAzureWorkItemFieldsSchema } from "../../schema/workItem";
 import { colors, toDotList } from "../../utils/utils";
 import { DateField } from "../DateField";
+
+interface IMappedData {
+  op: string;
+  path: string;
+  value: string;
+  from: null;
+}
 // useForm does not export the types, even zodresolver is doing any any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useCustomResolver: Resolver<any, any> = (
@@ -81,6 +89,15 @@ export const CreateItem = () => {
   const { client } = useDeskproAppClient();
   const { theme } = useDeskproAppTheme();
   const deskproData = useDeskpro();
+
+  useDeskproAppEvents({
+    onElementEvent(id) {
+      switch (id) {
+        case "azureHomeButton":
+          navigate("/redirect");
+      }
+    },
+  });
 
   const projectList = useQueryWithClient(
     ["projectList", deskproData],
@@ -198,7 +215,14 @@ export const CreateItem = () => {
         from: null,
       }));
 
-    await postWorkItem(
+    (
+      mappedData.find(
+        (e) => e.path === "/fields/System.TeamProject"
+      ) as IMappedData
+    ).value = projectList.data?.value.find((e) => e.id === project)
+      ?.name as string;
+
+    const newItem = await postWorkItem(
       client,
       deskproData.settings,
       project,
@@ -206,7 +230,26 @@ export const CreateItem = () => {
       mappedData
     );
 
-    navigate("/itemmenu");
+    await client
+      .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+      .set(newItem.id.toString());
+
+    await client.setState(
+      `azure/items/${newItem.id}`,
+      (((
+        await client.getState(`azure/items/${newItem.id}`)
+      )[0]?.data as number) ?? 0) + 1
+    );
+
+    navigate(
+      `/itemdetails?itemId=${newItem.id}&projectId=${
+        (
+          mappedData.find(
+            (e) => e.path === "/fields/System.TeamProject"
+          ) as IMappedData
+        ).value
+      }`
+    );
   };
 
   const usedColorsTags = useMemo(() => {
@@ -481,14 +524,17 @@ export const CreateItem = () => {
                     />
                   </Stack>
                 </Stack>
-                <Stack style={{ justifyContent: "space-between" }} gap={5}>
+                <Stack
+                  style={{ justifyContent: "space-between", width: "100%" }}
+                  gap={5}
+                >
                   <Button
                     type="submit"
                     text={isSubmitting ? "Creating..." : "Create"}
                   ></Button>
                   <Button
                     text="Cancel"
-                    onClick={() => navigate("/itemmenu")}
+                    onClick={() => navigate("/redirect")}
                     intent="secondary"
                   ></Button>
                 </Stack>

@@ -163,6 +163,7 @@ export const EditItem = () => {
         }
 
         delete obj["System.CommentCount"];
+        delete obj["System.Reason"];
 
         reset({
           ...obj,
@@ -518,7 +519,7 @@ export const EditItem = () => {
             >
               <Button
                 type="submit"
-                text={isSubmitting ? "Editing..." : "Edit"}
+                text={isSubmitting ? "Saving..." : "Save"}
               ></Button>
               <Button
                 text="Cancel"

@@ -32,7 +32,7 @@ export const RequiredInput = ({
       <Input
         error={error}
         variant="inline"
-        placeholder="Enter value"
+        placeholder={`Enter ${type === "number" ? "number" : "value"}`}
         type={type ?? "title"}
         {...register}
       />
