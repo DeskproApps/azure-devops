@@ -319,7 +319,7 @@ export const EditItem = () => {
   });
 
   return (
-    <form style={{ margin: "5px" }} onSubmit={handleSubmit(submit)}>
+    <form onSubmit={handleSubmit(submit)}>
       <Stack vertical style={{ width: "100%" }} gap={12}>
         {areBaseFieldsLoading ? (
           <Stack justify="center" style={{ width: "100%" }}>

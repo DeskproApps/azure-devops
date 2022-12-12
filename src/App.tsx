@@ -15,6 +15,7 @@ import { ItemDetails } from "./pages/ItemDetails";
 import { Main } from "./pages/Main";
 import { Redirect } from "./pages/Redirect";
 import { EditItem } from "./pages/EditItem";
+import { AddComment } from "./pages/AddComment";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/globalauth" element={<GlobalAuth />} />
           <Route path="itemmenu" element={<FindOrCreateItems />} />
           <Route path="edititem" element={<EditItem />} />
+          <Route path="/addcomment" element={<AddComment />} />
         </Routes>
       </ErrorBoundary>
     </HashRouter>

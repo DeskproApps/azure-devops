@@ -130,7 +130,7 @@ export const Main = () => {
   }
 
   return (
-    <Stack vertical style={{ margin: "5px 8px" }}>
+    <Stack vertical>
       <Stack gap={5} style={{ width: "100%", marginTop: "5px" }} vertical>
         {tickets.data?.value.map((item, i) => (
           <Stack vertical style={{ width: "100%" }} gap={12} key={i}>

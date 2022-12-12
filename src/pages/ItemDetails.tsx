@@ -12,7 +12,7 @@ import parse from "html-react-parser";
 import { Avatar } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
 import x2js from "x2js";
-import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -36,6 +36,7 @@ import { HorizontalDivider } from "../Components/HorizontalDivider";
 import { MultipleFields } from "../Components/MultipleFields";
 import { workItemFields } from "../utils/workItemFields";
 import { BiggerH1 } from "../styles";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 const POSSIBLE_BOTTOM_FIELDS = [
   "Planning",
@@ -229,11 +230,7 @@ export const ItemDetails = () => {
       <LoadingSpinner />
     </Stack>
   ) : (
-    <Stack
-      vertical
-      style={{ margin: "10px 5px 5px 5px", width: "100%" }}
-      gap={8}
-    >
+    <Stack vertical style={{ width: "100%" }} gap={8}>
       <H1>{itemData?.fields["System.Title"]}</H1>
       {itemData?.fields["System.Description"] && (
         <Stack vertical gap={2}>
@@ -326,7 +323,28 @@ export const ItemDetails = () => {
       {<HorizontalDivider />}
       {commentsReq.data?.comments && (
         <Stack vertical gap={5} style={{ width: "100%" }}>
-          <H1>Comments ({commentsReq.data.comments.length})</H1>
+          <Stack
+            gap={5}
+            style={{
+              verticalAlign: "baseline",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <H1>Comments ({commentsReq.data.comments.length})</H1>
+            <FontAwesomeIcon
+              icon={faPlus as IconProp}
+              size="sm"
+              style={{
+                alignSelf: "center",
+                cursor: "pointer",
+                marginBottom: "2px",
+              }}
+              onClick={() =>
+                navigate(`/addcomment?itemId=${itemId}&projectId=${projectId}`)
+              }
+            ></FontAwesomeIcon>
+          </Stack>
           <Stack vertical style={{ width: "100%" }}>
             {commentsReq.data.comments.map((comment, i) => {
               return (
@@ -362,17 +380,6 @@ export const ItemDetails = () => {
                 </Stack>
               );
             })}
-          </Stack>
-          <Stack align="center" justify="center" style={{ width: "100%" }}>
-            <FontAwesomeIcon
-              icon={faCirclePlus}
-              size="xl"
-              style={{
-                alignSelf: "center",
-                cursor: "pointer",
-              }}
-              onClick={() => console.log("a")}
-            ></FontAwesomeIcon>
           </Stack>
         </Stack>
       )}

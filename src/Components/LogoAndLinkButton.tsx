@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 import { AzureIcon } from "./AzureIcon";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 export const LogoAndLinkButton = ({
   itemId,
@@ -30,7 +31,7 @@ export const LogoAndLinkButton = ({
     >
       <AzureIcon />
       <FontAwesomeIcon
-        icon={faArrowUpRightFromSquare}
+        icon={faArrowUpRightFromSquare as IconProp}
         style={{
           marginLeft: "10px",
           alignSelf: "center",
