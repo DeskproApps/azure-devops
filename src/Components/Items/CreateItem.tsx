@@ -6,6 +6,7 @@ import {
   LoadingSpinner,
   useDeskproAppClient,
   Input,
+  useDeskproAppEvents,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -88,6 +89,15 @@ export const CreateItem = () => {
   const { client } = useDeskproAppClient();
   const { theme } = useDeskproAppTheme();
   const deskproData = useDeskpro();
+
+  useDeskproAppEvents({
+    onElementEvent(id) {
+      switch (id) {
+        case "azureHomeButton":
+          navigate("/redirect");
+      }
+    },
+  });
 
   const projectList = useQueryWithClient(
     ["projectList", deskproData],
@@ -524,7 +534,7 @@ export const CreateItem = () => {
                   ></Button>
                   <Button
                     text="Cancel"
-                    onClick={() => navigate("/itemmenu")}
+                    onClick={() => navigate("/redirect")}
                     intent="secondary"
                   ></Button>
                 </Stack>
