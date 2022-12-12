@@ -62,7 +62,7 @@ export const AddComment = () => {
 
     navigate(-1);
   };
-  console.log(errors);
+
   return (
     <Stack vertical gap={12} style={{ width: "100%" }}>
       <RequiredInput
