@@ -12,6 +12,8 @@ import parse from "html-react-parser";
 import { Avatar } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
 import x2js from "x2js";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
   getCommentsByItemId,
@@ -34,6 +36,9 @@ import { HorizontalDivider } from "../Components/HorizontalDivider";
 import { MultipleFields } from "../Components/MultipleFields";
 import { workItemFields } from "../utils/workItemFields";
 import { BiggerH1 } from "../styles";
+
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+
 import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
 
 const POSSIBLE_BOTTOM_FIELDS = [
@@ -228,11 +233,7 @@ export const ItemDetails = () => {
       <LoadingSpinner />
     </Stack>
   ) : (
-    <Stack
-      vertical
-      style={{ margin: "10px 5px 5px 5px", width: "100%" }}
-      gap={8}
-    >
+    <Stack vertical style={{ width: "100%" }} gap={8}>
       <Stack
         justify={"space-between"}
         style={{ width: "100%", alignItems: "center" }}
@@ -246,6 +247,7 @@ export const ItemDetails = () => {
           />
         </div>
       </Stack>
+
       {itemData?.fields["System.Description"] && (
         <Stack vertical gap={2}>
           <GreyTitle theme={theme}>Description</GreyTitle>
@@ -336,8 +338,29 @@ export const ItemDetails = () => {
       })}
       {<HorizontalDivider />}
       {commentsReq.data?.comments && (
-        <Stack vertical>
-          <H1>Comments ({commentsReq.data.comments.length})</H1>
+        <Stack vertical gap={5} style={{ width: "100%" }}>
+          <Stack
+            gap={5}
+            style={{
+              verticalAlign: "baseline",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <H1>Comments ({commentsReq.data.comments.length})</H1>
+            <FontAwesomeIcon
+              icon={faPlus as IconProp}
+              size="sm"
+              style={{
+                alignSelf: "center",
+                cursor: "pointer",
+                marginBottom: "2px",
+              }}
+              onClick={() =>
+                navigate(`/addcomment?itemId=${itemId}&projectId=${projectId}`)
+              }
+            ></FontAwesomeIcon>
+          </Stack>
           <Stack vertical style={{ width: "100%" }}>
             {commentsReq.data.comments.map((comment, i) => {
               return (

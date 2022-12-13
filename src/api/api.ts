@@ -134,6 +134,21 @@ const editWorkItem = async (
   );
 };
 
+const postComment = async (
+  client: IDeskproClient,
+  settings: Settings,
+  projectId: string,
+  workItemId: string,
+  content: string
+) => {
+  return defaultRequest(
+    client,
+    `/${settings.organization}/${projectId}/_apis/wit/workItems/${workItemId}/comments?api-version=7.0-preview.3`,
+    "POST",
+    { text: content }
+  );
+};
+
 const postWorkItem = async (
   client: IDeskproClient,
   settings: Settings,
@@ -417,4 +432,5 @@ export {
   getWorkItemTypeFields,
   getProjectByName,
   editWorkItem,
+  postComment,
 };

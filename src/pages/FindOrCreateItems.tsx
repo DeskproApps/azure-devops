@@ -9,7 +9,7 @@ export const FindOrCreateItems = () => {
   const [page, setPage] = useState<0 | 1>(0);
 
   return (
-    <Stack vertical style={{ margin: "5px" }}>
+    <Stack vertical>
       <Stack style={{ alignSelf: "center" }}>
         <TwoButtonGroup
           selected={
