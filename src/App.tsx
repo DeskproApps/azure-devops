@@ -16,23 +16,30 @@ import { Main } from "./pages/Main";
 import { Redirect } from "./pages/Redirect";
 import { EditItem } from "./pages/EditItem";
 import { AddComment } from "./pages/AddComment";
+import { QueryErrorResetBoundary } from "react-query";
+import { Stack } from "@deskpro/app-sdk";
 
 function App() {
   return (
     <HashRouter>
-      {/* 
-      // @ts-ignore */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Routes>
-          <Route index path="/" element={<Main />} />
-          <Route path="/itemdetails" element={<ItemDetails />} />
-          <Route path="/redirect" element={<Redirect />} />
-          <Route path="/globalauth" element={<GlobalAuth />} />
-          <Route path="itemmenu" element={<FindOrCreateItems />} />
-          <Route path="edititem" element={<EditItem />} />
-          <Route path="/addcomment" element={<AddComment />} />
-        </Routes>
-      </ErrorBoundary>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <Stack>
+            {/* @ts-ignore */}
+            <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
+              <Routes>
+                <Route index path="/" element={<Main />} />
+                <Route path="/itemdetails" element={<ItemDetails />} />
+                <Route path="/redirect" element={<Redirect />} />
+                <Route path="/globalauth" element={<GlobalAuth />} />
+                <Route path="itemmenu" element={<FindOrCreateItems />} />
+                <Route path="edititem" element={<EditItem />} />
+                <Route path="/addcomment" element={<AddComment />} />
+              </Routes>
+            </ErrorBoundary>
+          </Stack>
+        )}
+      </QueryErrorResetBoundary>
     </HashRouter>
   );
 }
