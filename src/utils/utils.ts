@@ -95,11 +95,15 @@ export const splitArrEvery2 = (arr: string[]) => {
   return newArr;
 };
 
-// for edit item page
-// const [states, reasons] = ["System.State", "System.Reason"].map((e) => {
-//   return workItemTypeFields.data?.value
-//     ?.find((f) => f.referenceName === e)
-//     ?.allowedValues.map((f) => ({
-//       name: f,
-//     }));
-// });
+export const parseJsonErrorMessage = (error: string) => {
+  try {
+    const parsedError = JSON.parse(error);
+
+    if (parsedError.status === 401)
+      return "The user is not authorized to access this resource.";
+
+    return parsedError.message;
+  } catch (e) {
+    return error;
+  }
+};

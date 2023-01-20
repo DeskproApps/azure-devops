@@ -400,7 +400,10 @@ const defaultRequest = async (
 
   if (isResponseError(response)) {
     throw new Error(
-      `Request failed: [${response.status}] ${await response.text()}`
+      JSON.stringify({
+        status: response.status,
+        message: await response.text(),
+      })
     );
   }
 
