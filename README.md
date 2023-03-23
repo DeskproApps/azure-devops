@@ -1,35 +1,9 @@
-My App
-===
+<img align="right" alt="Deskpro" src="https://raw.githubusercontent.com/DeskproApps/azure-devops/master/docs/assets/deskpro-logo.svg" />
 
-TODO: Include a summary of app functionality and a screenshot
+# Azure Devops App
 
-Basic Usage
----
+View information from your DevOps work items by linking them to your Deskpro tickets
 
-We recommend using [Yarn](https://yarnpkg.com/) to manage this project. First, start by installing the project 
-dependencies from inside the project directory `app-template-vite`.
+![Azure Devops App - Deskpro](https://raw.githubusercontent.com/DeskproApps/azure-devops/master/docs/assets/azure-devops_screenshot_01.png)
 
-```bash
-yarn install
-```
-
-Then, run the development server.
-
-```bash
-yarn start
-```
-
-You should now be able to view the bare-bones app in your browser.
-
-For more information or to start developing an app, please take a look at our [developer guides](https://support.deskpro.com/en/guides/developers/apps/apps-1/anatomy-of-an-app).
-
-Testing
----
-
-We've included `jest` to run your tests. It will look anywhere in `/src` for test suite files ending in `.test.tsx`.
-
-You can run all tests using:
-
-```bash
-yarn test
-```
+[Find out more about our Azure Devops App](https://www.deskpro.com/apps/azure-devops)
