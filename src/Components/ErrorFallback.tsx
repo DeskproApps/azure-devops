@@ -1,4 +1,4 @@
-import { Stack, H1, H2, Button } from "@deskpro/app-sdk";
+import { Stack, H1, H2, Button, AnyIcon } from "@deskpro/app-sdk";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 import { parseJsonErrorMessage } from "../utils/utils";
@@ -17,7 +17,7 @@ export const ErrorFallback = ({
       <Button
         text="Reload"
         onClick={resetErrorBoundary}
-        icon={faRefresh}
+        icon={faRefresh as AnyIcon}
         intent="secondary"
       />
     </Stack>

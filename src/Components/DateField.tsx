@@ -10,6 +10,7 @@ import {
   Stack,
   H1,
   DateTimePicker,
+  AnyIcon
 } from "@deskpro/app-sdk";
 import "./DateField.css";
 
@@ -77,7 +78,7 @@ export const DateField: FC<MappedFieldProps> = ({
             placeholder="DD/MM/YYYY"
             style={{ backgroundColor: "transparent" }}
             rightIcon={{
-              icon: faCalendarDays,
+              icon: faCalendarDays as AnyIcon,
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               style: {

@@ -6,10 +6,11 @@ import {
   LoadingSpinner,
   useDeskproAppClient,
   useDeskproAppEvents,
+  AnyIcon,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-
+import chunk from "lodash.chunk";
 import useDebounce from "../../utils/debounce";
 import { Dropdown } from "../Dropdown";
 import { WorkItem } from "./WorkItem";
@@ -98,16 +99,26 @@ export const FindItem = () => {
 
               if (itemIds.workItems.length === 0) return [];
 
-              const items = await defaultRequest(
-                client,
-                `/${deskproData?.settings.organization}/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
-                "POST",
-                {
-                  ids: itemIds.workItems.map((wi: { id: number }) => wi.id),
-                }
+              const chunks = chunk(
+                itemIds.workItems.map((wi) => wi.id),
+                200
               );
 
-              return items.value;
+              const allItems = await Promise.all(
+                chunks.map(async (wiArr) => {
+                  const items = await defaultRequest(
+                    client,
+                    `/${deskproData?.settings.organization}/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
+                    "POST",
+                    {
+                      ids: wiArr,
+                    }
+                  );
+
+                  return items.value;
+                })
+              );
+              return allItems.flat();
             })
           );
           setRan(true);
@@ -178,7 +189,7 @@ export const FindItem = () => {
         value={inputText}
         placeholder="Enter item details"
         type="text"
-        leftIcon={faMagnifyingGlass}
+        leftIcon={faMagnifyingGlass as AnyIcon}
       />
       <Dropdown
         title="Project"
