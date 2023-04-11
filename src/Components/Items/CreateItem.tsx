@@ -7,6 +7,7 @@ import {
   useDeskproAppClient,
   Input,
   useDeskproAppEvents,
+  AnyIcon
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -482,7 +483,7 @@ export const CreateItem = () => {
                     <Stack gap={5} style={{ flexWrap: "wrap" }}>
                       {tags.map((tag, i) => (
                         <Tag
-                          closeIcon={faTimes}
+                          closeIcon={faTimes as AnyIcon}
                           color={usedColorsTags[i]}
                           onCloseClick={() =>
                             setTags((prev) => prev.filter((e) => e !== tag))
@@ -500,7 +501,7 @@ export const CreateItem = () => {
                   >
                     <Button
                       text="Add"
-                      icon={faPlus}
+                      icon={faPlus as AnyIcon}
                       minimal
                       onClick={() => {
                         if (!tagText) return;
