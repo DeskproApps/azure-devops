@@ -3,16 +3,11 @@
   "title": "Azure Devops",
   "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/azure-devops",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "scope": "agent",
   "hasDevMode": true,
   "isSingleInstall": false,
-  "targets": [
-    {
-      "target": "ticket_sidebar",
-      "entrypoint": "index.html"
-    }
-  ],
+  "targets": [{ "target": "ticket_sidebar", "entrypoint": "index.html" }],
   "entityAssociations": {
     "linkedAzureItems": {
       "entity": "ticket",
@@ -42,9 +37,7 @@
     "global_access_token": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/globalauth"
-      },
+      "options": { "entrypoint": "#/globalauth" },
       "isRequired": true,
       "isBackendOnly": true
     }
@@ -53,30 +46,17 @@
     "whitelist": [
       {
         "url": "https://dev.azure.com/.*",
-        "methods": [
-          "GET",
-          "POST",
-          "PUT",
-          "PATCH"
-        ],
+        "methods": ["GET", "POST", "PUT", "PATCH"],
         "timeout": 10
       },
       {
         "url": "https://vssps.dev.azure.com/.*",
-        "methods": [
-          "GET",
-          "POST",
-          "PUT"
-        ],
+        "methods": ["GET", "POST", "PUT"],
         "timeout": 10
       },
       {
         "url": "https://app.vssps.visualstudio.com/.*",
-        "methods": [
-          "GET",
-          "POST",
-          "PUT"
-        ],
+        "methods": ["GET", "POST", "PUT"],
         "timeout": 10
       }
     ]
