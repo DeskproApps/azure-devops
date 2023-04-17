@@ -2,7 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@deskpro/app-sdk': ^1.2.14
-  '@deskpro/deskpro-ui': ^6.6.0
+  '@deskpro/deskpro-ui': ^6.1.0
   '@fortawesome/fontawesome-svg-core': 1.2.36
   '@fortawesome/free-regular-svg-icons': ^6.2.1
   '@fortawesome/free-solid-svg-icons': ^6.4.0
