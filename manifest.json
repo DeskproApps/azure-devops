@@ -3,10 +3,11 @@
   "title": "Azure Devops",
   "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/azure-devops",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "scope": "agent",
   "hasDevMode": true,
   "isSingleInstall": false,
+  "serveUrl": "https://apps-cdn.deskpro-service.com/__name__/__version__",
   "targets": [{ "target": "ticket_sidebar", "entrypoint": "index.html" }],
   "entityAssociations": {
     "linkedAzureItems": {
