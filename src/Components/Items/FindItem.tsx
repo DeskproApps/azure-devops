@@ -110,6 +110,7 @@ export const FindItem = () => {
                     client,
                     `/${deskproData?.settings.organization}/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
                     "POST",
+                    deskproData?.settings,
                     {
                       ids: wiArr,
                     }

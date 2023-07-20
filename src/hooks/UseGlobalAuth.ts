@@ -1,34 +1,26 @@
-import { v4 as uuidv4 } from "uuid";
-import { useMemo, useState } from "react";
 import {
   adminGenericProxyFetch,
-  useDeskproAppClient,
-  useDeskproAppEvents,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
+import { preInstallGetCurrentUserCloud } from "../api/preInstallApi";
 import { Settings } from "../types/settings";
-import { preInstallGetCurrentUser } from "../api/preInstallApi";
 
-export const useGlobalAuth = () => {
-  const { client } = useDeskproAppClient();
+export const useGlobalAuth = (
+  setData: Dispatch<SetStateAction<Settings>>,
+  data: Settings
+) => {
   const key = useMemo(() => uuidv4(), []);
 
   const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
   const [poll, setPoll] = useState<(() => Promise<{ token: string }>) | null>(
     null
   );
-  const [settings, setSettings] = useState<Settings | null>(null);
   const [accessCode, setAccessCode] = useState<string | null>(null);
   const [user, setUser] = useState<{ name: string; email: string } | null>(
     null
-  );
-
-  useDeskproAppEvents(
-    {
-      onAdminSettingsChange: setSettings,
-    },
-    []
   );
 
   useInitialisedDeskproAppClient(
@@ -50,25 +42,18 @@ export const useGlobalAuth = () => {
     [key]
   );
 
-  const signOut = () => {
-    client?.setAdminSetting("");
-    setUser(null);
-    setAccessCode(null);
-  };
-
   useInitialisedDeskproAppClient(
     (client) => {
       (async () => {
-        if (
-          settings?.global_access_token &&
-          settings?.app_id &&
-          settings?.client_secret
-        ) {
-          setUser(await preInstallGetCurrentUser(client, settings as Settings));
+        console.log(data);
+        if (data?.global_access_token && data?.app_id && data?.client_secret) {
+          setUser(
+            await preInstallGetCurrentUserCloud(client, data as Settings)
+          );
         }
       })();
     },
-    [settings?.global_access_token, settings?.app_id, settings?.client_secret]
+    [data?.global_access_token, data?.app_id, data?.client_secret]
   );
 
   const signIn = async () => {
@@ -76,7 +61,7 @@ export const useGlobalAuth = () => {
 
     window.open(
       `https://app.vssps.visualstudio.com/oauth2/authorize?client_id=${
-        settings?.app_id
+        data?.app_id
       }&response_type=Assertion&state=${key}&scope=${encodeURIComponent(
         "vso.graph vso.project vso.work_write"
       )}&redirect_uri=${encodeURIComponent(callbackUrl)}`
@@ -94,12 +79,9 @@ export const useGlobalAuth = () => {
   useInitialisedDeskproAppClient(
     (client) => {
       if (
-        ![
-          accessCode,
-          callbackUrl,
-          settings?.app_id,
-          settings?.client_secret,
-        ].every((e) => e)
+        ![accessCode, callbackUrl, data?.app_id, data?.client_secret].every(
+          (e) => e
+        )
       )
         return;
       (async () => {
@@ -108,7 +90,7 @@ export const useGlobalAuth = () => {
         const params = new URLSearchParams({
           client_assertion_type:
             "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-          client_assertion: settings?.client_secret as string,
+          client_assertion: data?.client_secret as string,
           grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
           assertion: accessCode as string,
           redirect_uri: new URL(callbackUrl as string).toString(),
@@ -131,10 +113,13 @@ export const useGlobalAuth = () => {
           redirect_uri: new URL(callbackUrl as string).toString(),
         };
 
-        client.setAdminSetting(JSON.stringify(tokens));
+        setData((prev) => ({
+          ...prev,
+          global_access_token: tokens,
+        }));
       })();
     },
-    [accessCode, callbackUrl, settings?.app_id, settings?.client_secret]
+    [accessCode, callbackUrl, data?.app_id, data?.client_secret]
   );
 
   return {
@@ -144,6 +129,5 @@ export const useGlobalAuth = () => {
     key,
     setAccessCode,
     signIn,
-    signOut,
   };
 };

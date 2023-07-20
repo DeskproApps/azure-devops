@@ -15,6 +15,7 @@ import { EditItem } from "./pages/EditItem";
 import { AddComment } from "./pages/AddComment";
 import { QueryErrorResetBoundary } from "react-query";
 import { Stack } from "@deskpro/app-sdk";
+import { PageType } from "./pages/PageType";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
               <Routes>
                 <Route index path="/" element={<Main />} />
                 <Route path="/itemdetails" element={<ItemDetails />} />
+                <Route path="/pagetype" element={<PageType />} />
+
                 <Route path="/redirect" element={<Redirect />} />
                 <Route path="/globalauth" element={<GlobalAuth />} />
                 <Route path="itemmenu" element={<FindOrCreateItems />} />

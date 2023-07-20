@@ -5,18 +5,37 @@ import { Settings, RequestMethods, AuthTokens } from "../types/";
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
 
-export const preInstallGetCurrentUser = (
+export const preInstallGetCurrentUserPremise = (
   client: IDeskproClient,
   settings: Settings
 ) =>
-  preInstallDefaultRequest(
+  preInstallDefaultRequestPremise(
     client,
     settings,
     "_apis/graph/users?api-version=7.0-preview.1",
     "GET"
   );
 
-const preInstallDefaultRequest = async (
+export const preInstallGetCurrentUserCloud = (
+  client: IDeskproClient,
+  settings: Settings
+) =>
+  preInstallDefaultRequestCloud(
+    client,
+    settings,
+    "_apis/graph/users?api-version=7.0-preview.1",
+    "GET"
+  );
+
+const preInstallDefaultRequestPremise = async (
+  client: IDeskproClient,
+  settings: Settings,
+  endpoint: string,
+  method: RequestMethods,
+  data?: unknown
+) => {};
+
+const preInstallDefaultRequestCloud = async (
   client: IDeskproClient,
   settings: Settings,
   endpoint: string,
@@ -29,7 +48,7 @@ const preInstallDefaultRequest = async (
     );
   }
 
-  const tokens: AuthTokens = JSON.parse(settings.global_access_token as string);
+  const tokens = settings.global_access_token;
 
   const fetch = await adminGenericProxyFetch(client);
 
@@ -38,7 +57,7 @@ const preInstallDefaultRequest = async (
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Bearer __global_access_token.json("[access_token]")__`,
+      Authorization: `Bearer __global_settings.json("[global_access_token][access_token]")__`,
     },
   };
 
@@ -50,7 +69,7 @@ const preInstallDefaultRequest = async (
     `https://vssps.dev.azure.com/${settings.organization}/${endpoint}`,
     options
   );
-
+  console.log(response);
   // If our access token has expired, attempt to get a new one using the refresh token
   if ([400, 401].includes(response.status)) {
     const params = new URLSearchParams({
@@ -58,7 +77,7 @@ const preInstallDefaultRequest = async (
         "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
       client_assertion: settings.client_secret as string,
       grant_type: "refresh_token",
-      assertion: tokens.refresh_token as string,
+      assertion: tokens?.refresh_token as string,
       redirect_uri: new URL(
         await client.getStaticOAuth2CallbackUrlValue()
       ).toString(),

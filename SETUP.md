@@ -1,5 +1,7 @@
 # Azure Devops App Setup
 
+# Azure Devops on Cloud (To Install the app for Azure Devops on Premise, please scroll down)
+
 To install the Azure Devops app, you must first enable "Third-party application access via OAuth" in the link below.
 
 `https://dev.azure.com/mycompany/_settings/organizationPolicy`, where mycompany is your company name found in the Azure Devops URL e.g. this will be `mycompany` in this url.
@@ -31,3 +33,17 @@ On the Deskpro Settings page, enter the following details:
 On this page, just click Accept in order to accept the permissions for the app, and once you see "Authorization has been completed" the app has been successfully installed.
 
 [![](/docs/assets/setup/complete.png)](/docs/assets/setup/complete.png)
+
+# Azure Devops on Premise
+
+Inside the Azure Devops page, click on your profile on the top right corner and select Security.
+
+[![](/docs/assets/setup/security.png)](/docs/assets/setup/security.png)
+
+On the Security page, click on New Token and give it the following permissions.
+
+[![](/docs/assets/setup/new_token.png)](/docs/assets/setup/new_token.png)
+
+Once your new token is created, please copy it and paste it, and your account name on the Azure Devops app settings page on Deskpro, making sure to select the On Premise tickbox.
+
+[![](/docs/assets/setup/token.png)](/docs/assets/setup/token.png)
