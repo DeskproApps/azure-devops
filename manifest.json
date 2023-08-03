@@ -7,12 +7,8 @@
   "scope": "agent",
   "hasDevMode": true,
   "isSingleInstall": false,
-  "targets": [
-    {
-      "target": "ticket_sidebar",
-      "entrypoint": "index.html"
-    }
-  ],
+  "serveUrl": "https://apps-cdn.deskpro-service.com/__name__/__version__",
+  "targets": [{ "target": "ticket_sidebar", "entrypoint": "index.html" }],
   "entityAssociations": {
     "linkedAzureItems": {
       "entity": "ticket",
