@@ -4,12 +4,11 @@ import {
 } from "@deskpro/app-sdk";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-
 import { preInstallGetCurrentUserCloud } from "../api/preInstallApi";
-import { Settings } from "../types/settings";
+import { AuthTokens, Settings } from "../types/settings";
 
 export const useGlobalAuth = (
-  setData: Dispatch<SetStateAction<Settings>>,
+  setData: Dispatch<SetStateAction<AuthTokens>>,
   data: Settings
 ) => {
   const key = useMemo(() => uuidv4(), []);
@@ -45,15 +44,14 @@ export const useGlobalAuth = (
   useInitialisedDeskproAppClient(
     (client) => {
       (async () => {
-        console.log(data);
-        if (data?.global_access_token && data?.app_id && data?.client_secret) {
+        if (data?.app_id && data?.client_secret) {
           setUser(
             await preInstallGetCurrentUserCloud(client, data as Settings)
           );
         }
       })();
     },
-    [data?.global_access_token, data?.app_id, data?.client_secret]
+    [data?.app_id, data?.client_secret]
   );
 
   const signIn = async () => {
@@ -113,10 +111,7 @@ export const useGlobalAuth = (
           redirect_uri: new URL(callbackUrl as string).toString(),
         };
 
-        setData((prev) => ({
-          ...prev,
-          global_access_token: tokens,
-        }));
+        setData(tokens);
       })();
     },
     [accessCode, callbackUrl, data?.app_id, data?.client_secret]

@@ -14,6 +14,7 @@ import { useDeskpro } from "../../hooks/deskproContext";
 import { LogoAndLinkButton } from "../LogoAndLinkButton";
 import { CheckedList } from "../../types/checkedList";
 import { HorizontalDivider } from "../HorizontalDivider";
+import { Settings } from "../../types";
 interface Props {
   item: IAzureWorkItem;
   checkedList: CheckedList;
@@ -81,14 +82,16 @@ export const WorkItem = ({ item, setCheckedList, checkedList, i }: Props) => {
               }}
               onClick={() =>
                 window.open(
-                  `https://dev.azure.com/${deskproData?.settings.organization}/${item.fields["System.TeamProject"]}/_workitems/edit/${item.id}/`
+                  deskproData?.settings.type === "cloud"
+                    ? `https://dev.azure.com/${deskproData?.settings.organization_collection}/${item.fields["System.TeamProject"]}/_workitems/edit/${item.id}/`
+                    : `${deskproData?.settings.instance_url}/${deskproData?.settings.organization_collection}/${item.fields["System.TeamProject"]}/_workitems/edit/${item.id}/`
                 )
               }
             >
               <b>{item.fields["System.Title"]}</b>
             </h1>
             <LogoAndLinkButton
-              organizationId={deskproData?.settings.organization as string}
+              settings={deskproData?.settings as Settings}
               itemId={item.id}
               projectId={item.fields["System.TeamProject"]}
             />

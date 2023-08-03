@@ -8,7 +8,7 @@ export const PageType = () => {
   useInitialisedDeskproAppClient(
     (client) => {
       if (!pageType) return;
-      console.log(pageType);
+
       client.setAdminSetting(pageType);
     },
     [pageType]

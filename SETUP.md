@@ -40,10 +40,16 @@ Inside the Azure Devops page, click on your profile on the top right corner and 
 
 [![](/docs/assets/setup/security.png)](/docs/assets/setup/security.png)
 
-On the Security page, click on New Token and give it the following permissions.
+On the Security page, click on New Token and give it the following permissions (click on Show all scopes).
 
-[![](/docs/assets/setup/new_token.png)](/docs/assets/setup/new_token.png)
+[![](/docs/assets/setup/permission_1.png)](/docs/assets/setup/permission_1.png)
 
-Once your new token is created, please copy it and paste it, and your account name on the Azure Devops app settings page on Deskpro, making sure to select the On Premise tickbox.
+[![](/docs/assets/setup/permission_2.png)](/docs/assets/setup/permission_2.png)
 
-[![](/docs/assets/setup/token.png)](/docs/assets/setup/token.png)
+[![](/docs/assets/setup/permission_3.png)](/docs/assets/setup/permission_3.png)
+
+Once your new token is created, please copy it and paste it, your account name, collection name and URL on the Azure Devops app settings page on Deskpro, making sure to select the On Premise tickbox.
+
+[![](/docs/assets/setup/settings_premise.png)](/docs/assets/setup/settings_premise.png)
+
+Once the data is inserted, click on the Test button, and if it shows "Success!" It means you are now free to install the app.

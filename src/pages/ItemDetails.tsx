@@ -40,6 +40,7 @@ import { BiggerH1 } from "../styles";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
+import { Settings } from "../types";
 
 const POSSIBLE_BOTTOM_FIELDS = [
   "Planning",
@@ -241,7 +242,7 @@ export const ItemDetails = () => {
         <H1>{itemData?.fields["System.Title"]}</H1>
         <div style={{ marginRight: "8px" }}>
           <LogoAndLinkButton
-            organizationId={deskproData?.settings.organization as string}
+            settings={deskproData?.settings as Settings}
             itemId={Number(itemId as string)}
             projectId={projectId as string}
           />

@@ -8,7 +8,7 @@ import {
   Input,
   useInitialisedDeskproAppClient,
   useDeskproAppEvents,
-  AnyIcon
+  AnyIcon,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -218,7 +218,7 @@ export const EditItem = () => {
     ["userList", deskproData],
     (client) => getUsersList(client, deskproData?.settings || {}),
     {
-      enabled: !!deskproData,
+      enabled: !!deskproData && deskproData.settings.type === "cloud",
     }
   );
 
@@ -321,7 +321,7 @@ export const EditItem = () => {
   });
 
   return (
-    <form onSubmit={handleSubmit(submit)}>
+    <form onSubmit={handleSubmit(submit)} style={{ width: "100%" }}>
       <Stack vertical style={{ width: "100%" }} gap={12}>
         {areBaseFieldsLoading ? (
           <Stack justify="center" style={{ width: "100%" }}>
@@ -335,17 +335,19 @@ export const EditItem = () => {
               error={Boolean(errors?.["System.Title"])}
               register={register("System.Title", { required: true })}
             ></RequiredInput>
-            <Dropdown
-              title="Assignee"
-              data={userList.data?.value}
-              value={user}
-              onChange={(e) =>
-                setValue("System.AssignedTo" as keyof IAzureWorkItemFields, e)
-              }
-              error={false}
-              keyName="displayName"
-              valueName="displayName"
-            />
+            {deskproData?.settings.type === "cloud" && (
+              <Dropdown
+                title="Assignee"
+                data={userList.data?.value}
+                value={user}
+                onChange={(e) =>
+                  setValue("System.AssignedTo" as keyof IAzureWorkItemFields, e)
+                }
+                error={false}
+                keyName="displayName"
+                valueName="displayName"
+              />
+            )}
             <Dropdown
               title="Area"
               data={teamFieldValues.data?.values}

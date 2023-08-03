@@ -4,15 +4,16 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 import { AzureIcon } from "./AzureIcon";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { Settings } from "../types";
 
 export const LogoAndLinkButton = ({
-  itemId,
-  organizationId,
+  settings,
   projectId,
+  itemId,
 }: {
-  itemId: number;
-  organizationId: string;
+  settings: Settings;
   projectId: string;
+  itemId: string | number;
 }) => {
   return (
     <Stack
@@ -25,7 +26,9 @@ export const LogoAndLinkButton = ({
       }}
       onClick={() =>
         window.open(
-          `https://dev.azure.com/${organizationId}/${projectId}/_workitems/edit/${itemId}/`
+          settings.type === "cloud"
+            ? `https://dev.azure.com/${settings.organization_collection}/${projectId}/_workitems/edit/${itemId}/`
+            : `${settings.instance_url}/${settings.organization_collection}/${projectId}/_workitems/edit/${itemId}/`
         )
       }
     >

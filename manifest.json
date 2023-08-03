@@ -3,7 +3,7 @@
   "title": "Azure Devops",
   "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/azure-devops",
-  "version": "1.0.17",
+  "version": "1.0.28",
   "scope": "agent",
   "hasDevMode": true,
   "isSingleInstall": false,
@@ -25,19 +25,71 @@
       "title": "",
       "type": "app_embedded",
       "options": {
-        "entrypoint": "http://localhost:3000/#/pagetype"
+        "entrypoint": "#/admin/pagetype"
       },
       "isRequired": true,
-      "isBackendOnly": false
+      "isBackendOnly": false,
+      "order": 10
+    },
+    "organization_collection": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/organization"
+      },
+      "isRequired": true,
+      "isBackendOnly": false,
+      "order": 20
+    },
+    "app_id": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/appid"
+      },
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 30
+    },
+    "client_secret": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/clientsecret"
+      },
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 40
     },
     "global_settings": {
       "title": "",
       "type": "app_embedded",
       "options": {
-        "entrypoint": "http://localhost:3000/#/globalauth"
+        "entrypoint": "#/admin/globalauth"
       },
-      "isRequired": true,
-      "isBackendOnly": true
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 50
+    },
+    "instance_url": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/instanceUrl"
+      },
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 60
+    },
+    "account_name_pat_token": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/accountNamePatToken"
+      },
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 70
     }
   },
   "proxy": {

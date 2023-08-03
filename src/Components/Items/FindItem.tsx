@@ -108,7 +108,7 @@ export const FindItem = () => {
                 chunks.map(async (wiArr) => {
                   const items = await defaultRequest(
                     client,
-                    `/${deskproData?.settings.organization}/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
+                    `/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
                     "POST",
                     deskproData?.settings,
                     {
@@ -201,7 +201,7 @@ export const FindItem = () => {
         data={projectList?.data?.value ?? []}
       ></Dropdown>
       {workItemList?.length !== 0 && (
-        <Stack vertical gap={6}>
+        <Stack vertical gap={6} style={{ width: "100%" }}>
           <Stack vertical style={{ width: "100%" }} gap={5}>
             <Stack
               style={{ width: "100%", justifyContent: "space-between" }}
