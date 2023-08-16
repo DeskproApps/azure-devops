@@ -3,7 +3,7 @@
   "title": "Azure Devops",
   "description": "View information from your DevOps work items by linking them to your Deskpro tickets",
   "appStoreUrl": "https://www.deskpro.com/product-embed/apps/azure-devops",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "scope": "agent",
   "hasDevMode": true,
   "isSingleInstall": false,
@@ -20,9 +20,7 @@
     "type": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/pagetype"
-      },
+      "options": { "entrypoint": "#/admin/pagetype" },
       "isRequired": true,
       "isBackendOnly": false,
       "order": 10
@@ -30,9 +28,7 @@
     "organization_collection": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/organization"
-      },
+      "options": { "entrypoint": "#/admin/organization" },
       "isRequired": true,
       "isBackendOnly": false,
       "order": 20
@@ -40,9 +36,7 @@
     "app_id": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/appid"
-      },
+      "options": { "entrypoint": "#/admin/appid" },
       "isRequired": false,
       "isBackendOnly": false,
       "order": 30
@@ -50,9 +44,7 @@
     "client_secret": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/clientsecret"
-      },
+      "options": { "entrypoint": "#/admin/clientsecret" },
       "isRequired": false,
       "isBackendOnly": true,
       "order": 40
@@ -60,9 +52,7 @@
     "global_settings": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/globalauth"
-      },
+      "options": { "entrypoint": "#/admin/globalauth" },
       "isRequired": false,
       "isBackendOnly": true,
       "order": 50
@@ -70,9 +60,7 @@
     "instance_url": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/instanceUrl"
-      },
+      "options": { "entrypoint": "#/admin/instanceUrl" },
       "isRequired": false,
       "isBackendOnly": false,
       "order": 60
@@ -80,9 +68,7 @@
     "account_name_pat_token": {
       "title": "",
       "type": "app_embedded",
-      "options": {
-        "entrypoint": "#/admin/accountNamePatToken"
-      },
+      "options": { "entrypoint": "#/admin/accountNamePatToken" },
       "isRequired": false,
       "isBackendOnly": true,
       "order": 70
@@ -92,12 +78,7 @@
     "whitelist": [
       {
         "url": "https://.*",
-        "methods": [
-          "GET",
-          "POST",
-          "PUT",
-          "PATCH"
-        ],
+        "methods": ["GET", "POST", "PUT", "PATCH"],
         "timeout": 10
       }
     ]
