@@ -20,6 +20,7 @@ import { GreyTitle } from "../styles";
 import { useQueryWithClient } from "../utils/query";
 import { IAzureArrayResponse } from "../types/azure/azure";
 import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
+import { Settings } from "../types";
 
 export const Main = () => {
   const navigate = useNavigate();
@@ -130,9 +131,8 @@ export const Main = () => {
       </Stack>
     );
   }
-
   return (
-    <Stack vertical>
+    <Stack vertical style={{ width: "100%" }}>
       <Stack gap={5} style={{ width: "100%", marginTop: "5px" }} vertical>
         {tickets.data?.value.map((item, i) => (
           <Stack vertical style={{ width: "100%" }} gap={12} key={i}>
@@ -158,7 +158,7 @@ export const Main = () => {
                 <b>{item.fields["System.Title"]}</b>
               </h1>
               <LogoAndLinkButton
-                organizationId={deskproData?.settings.organization as string}
+                settings={deskproData?.settings as Settings}
                 itemId={item.id}
                 projectId={item.fields["System.TeamProject"]}
               />

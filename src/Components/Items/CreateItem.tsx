@@ -7,7 +7,7 @@ import {
   useDeskproAppClient,
   Input,
   useDeskproAppEvents,
-  AnyIcon
+  AnyIcon,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -158,7 +158,7 @@ export const CreateItem = () => {
     ["userList", deskproData],
     (client) => getUsersList(client, deskproData?.settings || {}),
     {
-      enabled: !!deskproData,
+      enabled: !!deskproData && deskproData.settings.type === "cloud",
     }
   );
 
@@ -276,7 +276,6 @@ export const CreateItem = () => {
 
   const areBaseFieldsLoading = [
     teamFieldValues,
-    userList,
     iterationList,
     specificProcess,
     workItemTypeFields,
@@ -284,7 +283,6 @@ export const CreateItem = () => {
   ].some((query) => query.isLoading);
 
   const areBaseFieldsIdle = [
-    userList,
     iterationList,
     specificProcess,
     teamFieldValues,
@@ -341,20 +339,22 @@ export const CreateItem = () => {
                   error={Boolean(errors?.["System.Title"])}
                   register={register("System.Title", { required: true })}
                 ></RequiredInput>
-                <Dropdown
-                  title="Assignee"
-                  data={userList.data?.value}
-                  value={user}
-                  onChange={(e) =>
-                    setValue(
-                      "System.AssignedTo" as keyof IAzureWorkItemFields,
-                      e
-                    )
-                  }
-                  error={false}
-                  keyName="displayName"
-                  valueName="displayName"
-                />
+                {deskproData?.settings.type === "cloud" && (
+                  <Dropdown
+                    title="Assignee"
+                    data={userList.data?.value}
+                    value={user}
+                    onChange={(e) =>
+                      setValue(
+                        "System.AssignedTo" as keyof IAzureWorkItemFields,
+                        e
+                      )
+                    }
+                    error={false}
+                    keyName="displayName"
+                    valueName="displayName"
+                  />
+                )}
                 <Dropdown
                   title="Area"
                   data={teamFieldValues.data?.values}

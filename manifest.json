@@ -17,47 +17,87 @@
     }
   },
   "settings": {
-    "app_id": {
-      "title": "Azure App Id",
-      "type": "string",
-      "isRequired": true,
-      "isBackendOnly": false
-    },
-    "client_secret": {
-      "title": "Azure Client Secret",
-      "type": "string",
-      "isRequired": true,
-      "isBackendOnly": true
-    },
-    "organization": {
-      "title": "Azure Organization Name",
-      "type": "string",
-      "isRequired": true,
-      "isBackendOnly": false
-    },
-    "global_access_token": {
+    "type": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/globalauth" },
+      "options": {
+        "entrypoint": "#/admin/pagetype"
+      },
       "isRequired": true,
-      "isBackendOnly": true
+      "isBackendOnly": false,
+      "order": 10
+    },
+    "organization_collection": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/organization"
+      },
+      "isRequired": true,
+      "isBackendOnly": false,
+      "order": 20
+    },
+    "app_id": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/appid"
+      },
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 30
+    },
+    "client_secret": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/clientsecret"
+      },
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 40
+    },
+    "global_settings": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/globalauth"
+      },
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 50
+    },
+    "instance_url": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/instanceUrl"
+      },
+      "isRequired": false,
+      "isBackendOnly": false,
+      "order": 60
+    },
+    "account_name_pat_token": {
+      "title": "",
+      "type": "app_embedded",
+      "options": {
+        "entrypoint": "#/admin/accountNamePatToken"
+      },
+      "isRequired": false,
+      "isBackendOnly": true,
+      "order": 70
     }
   },
   "proxy": {
     "whitelist": [
       {
-        "url": "https://dev.azure.com/.*",
-        "methods": ["GET", "POST", "PUT", "PATCH"],
-        "timeout": 10
-      },
-      {
-        "url": "https://vssps.dev.azure.com/.*",
-        "methods": ["GET", "POST", "PUT"],
-        "timeout": 10
-      },
-      {
-        "url": "https://app.vssps.visualstudio.com/.*",
-        "methods": ["GET", "POST", "PUT"],
+        "url": "https://.*",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH"
+        ],
         "timeout": 10
       }
     ]

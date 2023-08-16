@@ -1,11 +1,16 @@
 import { adminGenericProxyFetch, IDeskproClient } from "@deskpro/app-sdk";
 
-import { Settings, RequestMethods, AuthTokens } from "../types/";
+import { RequestMethods, Settings } from "../types/";
 
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
 
-export const preInstallGetCurrentUser = (
+export const preInstallGetCurrentUserPremise = (
+  client: IDeskproClient,
+  settings: Settings
+) => preInstallDefaultRequest(client, settings, `/_apis/ConnectionData`, "GET");
+
+export const preInstallGetCurrentUserCloud = (
   client: IDeskproClient,
   settings: Settings
 ) =>
@@ -23,13 +28,7 @@ const preInstallDefaultRequest = async (
   method: RequestMethods,
   data?: unknown
 ) => {
-  if (![settings.app_id, settings.client_secret].every((e) => e)) {
-    throw new Error(
-      "Client key, secret, instance URL and global access tokens are not defined"
-    );
-  }
-
-  const tokens: AuthTokens = JSON.parse(settings.global_access_token as string);
+  const globalSettings = JSON.parse(settings.global_settings || "{}");
 
   const fetch = await adminGenericProxyFetch(client);
 
@@ -38,27 +37,33 @@ const preInstallDefaultRequest = async (
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Bearer __global_access_token.json("[access_token]")__`,
+      "X-Proxy-SSL-No-Verify": "1",
+      Authorization:
+        settings.type === "cloud"
+          ? `Bearer __global_settings.json("[access_token]")__`
+          : `Basic ${settings.account_name_pat_token}`,
     },
   };
+
+  const url =
+    settings.type === "cloud"
+      ? `https://vssps.dev.azure.com/__organization_collection__/${endpoint}`
+      : `${settings.instance_url}/${settings.organization_collection}/${endpoint}`;
 
   if (data) {
     options.body = JSON.stringify(data);
   }
 
-  let response = await fetch(
-    `https://vssps.dev.azure.com/${settings.organization}/${endpoint}`,
-    options
-  );
+  let response = await fetch(url, options);
 
   // If our access token has expired, attempt to get a new one using the refresh token
-  if ([400, 401].includes(response.status)) {
+  if ([400, 401].includes(response.status) && settings.type === "cloud") {
     const params = new URLSearchParams({
       client_assertion_type:
         "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-      client_assertion: settings.client_secret as string,
+      client_assertion: globalSettings.client_secret as string,
       grant_type: "refresh_token",
-      assertion: tokens.refresh_token as string,
+      assertion: globalSettings?.refresh_token as string,
       redirect_uri: new URL(
         await client.getStaticOAuth2CallbackUrlValue()
       ).toString(),
@@ -79,7 +84,7 @@ const preInstallDefaultRequest = async (
     const refreshData = await refreshRes.json();
 
     const refreshedTokens = {
-      ...tokens,
+      ...globalSettings,
       accessToken: refreshData.access_token,
     };
 
@@ -93,7 +98,7 @@ const preInstallDefaultRequest = async (
     };
 
     response = await fetch(
-      `https://vssps.dev.azure.com/${settings.organization}/${endpoint}`,
+      `https://vssps.dev.azure.com/__organization_collection__/${endpoint}`,
       options
     );
   }

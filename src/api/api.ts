@@ -29,8 +29,9 @@ const getWorkItemFieldsData = async (
 ): Promise<IAzureArrayResponse<IAzureWorkItemFieldsData[]>> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/fields?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/wit/fields?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -42,8 +43,9 @@ const getProjectByName = async (
   //not being used
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/projects/${projectName}?api-version=7.0`,
-    "GET"
+    `/_apis/projects/${projectName}?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -55,8 +57,9 @@ const getWorkItemFieldByName = async (
   //not being used
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/wit/fields/${fieldName}?api-version=7.0`,
-    "GET"
+    `/_apis/wit/fields/${fieldName}?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -67,8 +70,9 @@ const getAvatar = async (
 ): Promise<IAzureAvatar> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/graph/Subjects/${userId}/avatars?size=small&api-version=7.0`,
-    "GET"
+    `/_apis/graph/Subjects/${userId}/avatars?size=small&api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -79,8 +83,9 @@ const getWorkItemListByIds = async (
 ) => {
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/wit/workitemsbatch?api-version=7.0`,
+    `/_apis/wit/workitemsbatch?api-version=7.0`,
     "POST",
+    settings,
     {
       ids: data,
     }
@@ -96,8 +101,9 @@ const getWorkItemTypeStates = async (
 ) => {
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/work/processes/${processId}/workItemTypes/${witRefName}/states?api-version=7.0`,
-    "GET"
+    `/_apis/work/processes/${processId}/workItemTypes/${witRefName}/states?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -109,8 +115,9 @@ const getWorkItemById = async (
 ): Promise<IAzureWorkItem> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitems/${id}?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/wit/workitems/${id}?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -128,8 +135,9 @@ const editWorkItem = async (
 ) => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitems/${workItemId}?api-version=7.0`,
+    `/${project}/_apis/wit/workitems/${workItemId}?api-version=7.0`,
     "PATCH",
+    settings,
     data
   );
 };
@@ -143,8 +151,9 @@ const postComment = async (
 ) => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${projectId}/_apis/wit/workItems/${workItemId}/comments?api-version=7.0-preview.3`,
+    `/${projectId}/_apis/wit/workItems/${workItemId}/comments?api-version=7.0-preview.3`,
     "POST",
+    settings,
     { text: content }
   );
 };
@@ -163,10 +172,11 @@ const postWorkItem = async (
 ): Promise<IAzureWorkItem> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitems/$${workItemType
+    `/${project}/_apis/wit/workitems/$${workItemType
       .split(".")
       .at(-1)}?api-version=7.0`,
     "POST",
+    settings,
     data
   );
 };
@@ -178,8 +188,9 @@ const getTeamFieldValues = async (
 ): Promise<IAzureFieldValues> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/work/teamsettings/teamfieldvalues?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/work/teamsettings/teamfieldvalues?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -191,8 +202,9 @@ const getWorkItemTypeFields = async (
 ): Promise<IAzureArrayResponse<IAzureWorkItemTypeFields[]>> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitemtypes/${workitemtype}/fields?$expand=all&api-version=5.1`,
-    "GET"
+    `/${project}/_apis/wit/workitemtypes/${workitemtype}/fields?$expand=all&api-version=5.1`,
+    "GET",
+    settings
   );
 };
 
@@ -204,8 +216,9 @@ const getStateDefinitionList = async (
 ): Promise<IAzureArrayResponse<IAzureState[]>> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitemtypes/${workitemtype}/states?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/wit/workitemtypes/${workitemtype}/states?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -216,8 +229,9 @@ const getProjectPropertiesById = async (
 ): Promise<IAzureArrayResponse<{ name: string; value: string }[]>> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/projects/${project}/properties?api-version=7.0-preview.1`,
-    "GET"
+    `/_apis/projects/${project}/properties?api-version=7.0-preview.1`,
+    "GET",
+    settings
   );
 };
 
@@ -229,8 +243,9 @@ const getCommentsByItemId = async (
 ): Promise<IAzureComment> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workItems/${workItemId}/comments?api-version=7.0-preview.3`,
-    "GET"
+    `/${project}/_apis/wit/workItems/${workItemId}/comments?api-version=7.0-preview.3`,
+    "GET",
+    settings
   );
 };
 
@@ -241,8 +256,9 @@ const getWorkItemTypes = async (
 ): Promise<IAzureArrayResponse<IAzureWorkItemType[]>> => {
   return defaultRequest(
     client,
-    `/${settings.organization}/_apis/work/processdefinitions/${processId}/workitemtypes?api-version=4.1-preview.1`,
-    "GET"
+    `/_apis/work/processdefinitions/${processId}/workitemtypes?api-version=4.1-preview.1`,
+    "GET",
+    settings
   );
 };
 // check type for this
@@ -253,8 +269,9 @@ const getWorkItemTypeCategories = async (
 ) => {
   return defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/wit/workitemtypecategories?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/wit/workitemtypecategories?api-version=7.0`,
+    "GET",
+    settings
   );
 };
 
@@ -265,8 +282,9 @@ const getWorkItemListByWiql = async (
 ): Promise<IAzureWorkItemWiql> => {
   return await defaultRequest(
     client,
-    `/${settings.organization}/_apis/wit/wiql?api-version=7.0`,
+    `/_apis/wit/wiql?api-version=7.0`,
     "POST",
+    settings,
     {
       query,
     }
@@ -279,8 +297,9 @@ const getTeamsList = (
 ): Promise<IAzureArrayResponse<IAzureTeam[]>> =>
   defaultRequest(
     client,
-    `/${settings.organization}/_apis/teams?api-version=7.0-preview.3`,
-    "GET"
+    `/_apis/teams?api-version=7.0-preview.3`,
+    "GET",
+    settings
   );
 
 const getProcessList = (
@@ -289,8 +308,9 @@ const getProcessList = (
 ): Promise<IAzureArrayResponse<IAzureProcess[]>> =>
   defaultRequest(
     client,
-    `/${settings.organization}/_apis/process/processes?api-version=7.0`,
-    "GET"
+    `/_apis/process/processes?api-version=7.0`,
+    "GET",
+    settings
   );
 
 const getProcessById = (
@@ -300,8 +320,9 @@ const getProcessById = (
 ): Promise<IAzureProcess> =>
   defaultRequest(
     client,
-    `/${settings.organization}/_apis/work/processes/${id}?api-version=7.0`,
-    "GET"
+    `/_apis/work/processes/${id}?api-version=7.0`,
+    "GET",
+    settings
   );
 
 const getUsersList = (
@@ -310,8 +331,9 @@ const getUsersList = (
 ): Promise<IAzureArrayResponse<IAzureUser[]>> =>
   defaultRequest(
     client,
-    `/${settings.organization}/_apis/graph/users?api-version=7.0-preview.1`,
-    "GET"
+    `/_apis/graph/users?api-version=7.0-preview.1`,
+    "GET",
+    settings
   );
 
 const getIterationList = (
@@ -321,24 +343,22 @@ const getIterationList = (
 ): Promise<IAzureArrayResponse<IAzureIteration[]>> =>
   defaultRequest(
     client,
-    `/${settings.organization}/${project}/_apis/work/teamsettings/iterations?api-version=7.0`,
-    "GET"
+    `/${project}/_apis/work/teamsettings/iterations?api-version=7.0`,
+    "GET",
+    settings
   );
 
 const getProjectList = (
   client: IDeskproClient,
   settings: Settings
 ): Promise<IAzureArrayResponse<IAzureProject[]>> =>
-  defaultRequest(
-    client,
-    `/${settings.organization}/_apis/projects?api-version=7.0`,
-    "GET"
-  );
+  defaultRequest(client, `/_apis/projects?api-version=7.0`, "GET", settings);
 
 const defaultRequest = async (
   client: IDeskproClient,
   endpoint: string,
   method: RequestMethods,
+  settings: Settings,
   data?: unknown
 ) => {
   const fetch = await proxyFetch(client);
@@ -352,7 +372,15 @@ const defaultRequest = async (
       "Content-Type": endpoint.includes("/_apis/wit/workitems/")
         ? "application/json-patch+json"
         : "application/json",
-      Authorization: `Bearer [[oauth/global/access_token]]`,
+      Authorization:
+        settings.type === "cloud"
+          ? `Bearer [[oauth/global/access_token]]`
+          : `Basic __account_name_pat_token__`,
+      ...(settings.type === "cloud"
+        ? {}
+        : {
+            "X-Proxy-SSL-No-Verify": "1",
+          }),
     },
   };
 
@@ -360,17 +388,22 @@ const defaultRequest = async (
     options.body = JSON.stringify(data);
   }
 
-  let response = await fetch(
-    `https://${initialDomainName}dev.azure.com${endpoint}`,
-    options
-  );
+  const url =
+    settings.type === "cloud"
+      ? `https://${initialDomainName}dev.azure.com/${settings.organization_collection}${endpoint}`
+      : `${settings.instance_url}/${settings.organization_collection}${endpoint}`;
 
-  if ([400, 401, 203, 500, 403].includes(response.status)) {
+  let response = await fetch(url, options);
+
+  if (
+    [400, 401, 203, 500, 403].includes(response.status) &&
+    settings.type === "cloud"
+  ) {
     const refreshRequestOptions: RequestInit = {
       method: "POST",
       body: `client_assertion_type=${encodeURIComponent(
         "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-      )}&client_assertion=__client_secret__&grant_type=refresh_token&assertion=__global_access_token.json("[refresh_token]")__&redirect_uri=${encodeURIComponent(
+      )}&client_assertion=__client_secret__&grant_type=refresh_token&assertion=__global_settings.json("[refresh_token]")__&redirect_uri=${encodeURIComponent(
         new URL(await client.getStaticOAuth2CallbackUrlValue()).toString()
       )}`,
       headers: {

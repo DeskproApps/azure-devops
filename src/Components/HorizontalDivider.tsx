@@ -4,9 +4,9 @@ export const HorizontalDivider = () => {
   return (
     <HorizontalDividerSDK
       style={{
-        width: "110%",
         color: "#EFF0F0",
         marginBottom: "10px",
+        width: "100hw",
         marginLeft: "-10px",
       }}
     />

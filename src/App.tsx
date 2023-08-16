@@ -6,7 +6,6 @@ import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./Components/ErrorFallback";
-import { GlobalAuth } from "./pages/GlobalAuth";
 import { FindOrCreateItems } from "./pages/FindOrCreateItems";
 import { ItemDetails } from "./pages/ItemDetails";
 import { Main } from "./pages/Main";
@@ -15,6 +14,13 @@ import { EditItem } from "./pages/EditItem";
 import { AddComment } from "./pages/AddComment";
 import { QueryErrorResetBoundary } from "react-query";
 import { Stack } from "@deskpro/app-sdk";
+import { PageType } from "./pages/Admin/PageType";
+import { GlobalAuth } from "./pages/Admin/GlobalAuth";
+import { Organization } from "./pages/Admin/Organization";
+import { AccountNamePatToken } from "./pages/Admin/AccountNamePatToken";
+import { InstanceURL } from "./pages/Admin/InstanceURL";
+import { AppId } from "./pages/Admin/AppId";
+import { ClientSecret } from "./pages/Admin/ClientSecret";
 
 function App() {
   return (
@@ -28,7 +34,18 @@ function App() {
                 <Route index path="/" element={<Main />} />
                 <Route path="/itemdetails" element={<ItemDetails />} />
                 <Route path="/redirect" element={<Redirect />} />
-                <Route path="/globalauth" element={<GlobalAuth />} />
+                <Route path="/admin">
+                  <Route
+                    path="accountnamepattoken"
+                    element={<AccountNamePatToken />}
+                  />
+                  <Route path="appid" element={<AppId />} />
+                  <Route path="clientSecret" element={<ClientSecret />} />
+                  <Route path="instanceurl" element={<InstanceURL />} />
+                  <Route path="globalauth" element={<GlobalAuth />} />
+                  <Route path="pagetype" element={<PageType />} />
+                  <Route path="organization" element={<Organization />} />
+                </Route>
                 <Route path="itemmenu" element={<FindOrCreateItems />} />
                 <Route path="edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />

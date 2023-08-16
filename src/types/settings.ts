@@ -1,10 +1,16 @@
 export interface Settings {
+  organization_collection?: string;
+  account_name_pat_token?: string;
+  type?: string;
+  global_settings?: string;
+  instance_url?: string;
   app_id?: string;
   client_secret?: string;
-  global_access_token?: string;
-  organization?: string;
 }
+
 export type AuthTokens = {
-  access_token: string;
-  refresh_token: string;
+  access_token?: string;
+  refresh_token?: string;
+  redirect_uri?: string;
+  account_name?: string;
 };
