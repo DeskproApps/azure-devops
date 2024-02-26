@@ -2,6 +2,7 @@
 //Added this because the DeskproContextProvider was erroring, had to update react version because generics crashed
 import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
 import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
+import "flatpickr/dist/themes/light.css";
 
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
