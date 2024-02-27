@@ -7,9 +7,10 @@ import {
   useDeskproAppClient,
   useDeskproAppEvents,
   AnyIcon,
+  IconButton,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faTimes } from "@fortawesome/free-solid-svg-icons";
 import chunk from "lodash.chunk";
 import useDebounce from "../../utils/debounce";
 import { Dropdown } from "../Dropdown";
@@ -31,6 +32,7 @@ export const FindItem = () => {
   const deskproData = useDeskpro();
   const { client } = useDeskproAppClient();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [hasLinkedItems, setHasLinkedItems] = useState<boolean | undefined>();
   const [originalWorkItemList, setOriginalWorkItemList] = useState<
     IAzureWorkItem[]
   >([]);
@@ -40,6 +42,7 @@ export const FindItem = () => {
   const { debouncedValue } = useDebounce(inputText, 300);
   const [ran, setRan] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Find Items");
 
@@ -73,6 +76,23 @@ export const FindItem = () => {
     ["projectList", deskproData],
     (client) => getProjectList(client, deskproData?.settings || {}),
     { enabled: !!deskproData }
+  );
+
+  useInitialisedDeskproAppClient(
+    async (client) => {
+      if (!deskproData) return;
+
+      const items = await client
+        .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+        .list();
+
+      if (items.length) {
+        setHasLinkedItems(true);
+        return;
+      }
+      setHasLinkedItems(false);
+    },
+    [deskproData]
   );
 
   useInitialisedDeskproAppClient(
@@ -175,7 +195,7 @@ export const FindItem = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProject]);
 
-  if (loading) {
+  if (loading || typeof hasLinkedItems === "undefined") {
     return (
       <Stack justify="center" style={{ width: "100%" }}>
         <LoadingSpinner />
@@ -190,6 +210,13 @@ export const FindItem = () => {
         value={inputText}
         placeholder="Enter item details"
         type="text"
+        rightIcon={
+          <IconButton
+            icon={faTimes as AnyIcon}
+            onClick={() => setInputText("")}
+            minimal
+          />
+        }
         leftIcon={faMagnifyingGlass as AnyIcon}
       />
       <Dropdown
@@ -210,13 +237,23 @@ export const FindItem = () => {
               <Button
                 onClick={linkIssue}
                 disabled={Object.values(checkedList ?? []).flat().length === 0}
-                text="Link Issue"
+                text="Link Item"
               ></Button>
               <Button
-                disabled={Object.values(checkedList ?? []).flat().length === 0}
-                text="Cancel"
+                disabled={
+                  Object.values(checkedList ?? []).flat().length === 0 &&
+                  !hasLinkedItems
+                }
+                text={hasLinkedItems ? "Cancel" : "Clear"}
                 intent="secondary"
-                onClick={() => setCheckedList({})}
+                onClick={() => {
+                  if (hasLinkedItems) {
+                    navigate("/");
+                    return;
+                  }
+                  setCheckedList({});
+                  setInputText("");
+                }}
               ></Button>
             </Stack>
             <HorizontalDivider />
