@@ -7,9 +7,10 @@ import {
   useDeskproAppClient,
   useDeskproAppEvents,
   AnyIcon,
+  IconButton,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faTimes } from "@fortawesome/free-solid-svg-icons";
 import chunk from "lodash.chunk";
 import useDebounce from "../../utils/debounce";
 import { Dropdown } from "../Dropdown";
@@ -209,6 +210,13 @@ export const FindItem = () => {
         value={inputText}
         placeholder="Enter item details"
         type="text"
+        rightIcon={
+          <IconButton
+            icon={faTimes as AnyIcon}
+            onClick={() => setInputText("")}
+            minimal
+          />
+        }
         leftIcon={faMagnifyingGlass as AnyIcon}
       />
       <Dropdown
