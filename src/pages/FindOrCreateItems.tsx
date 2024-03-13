@@ -1,4 +1,5 @@
-import { Stack, TwoButtonGroup } from "@deskpro/app-sdk";
+import { Stack } from "@deskpro/deskpro-ui";
+import { TwoButtonGroup } from "@deskpro/app-sdk";
 import { useState } from "react";
 import { faMagnifyingGlass, faPlus } from "@fortawesome/free-solid-svg-icons";
 

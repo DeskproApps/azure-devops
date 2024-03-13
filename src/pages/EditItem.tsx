@@ -1,21 +1,17 @@
 import {
-  H1,
-  Stack,
   useDeskproAppTheme,
-  Button,
   LoadingSpinner,
   useDeskproAppClient,
-  Input,
   useInitialisedDeskproAppClient,
   useDeskproAppEvents,
-  AnyIcon,
+  DateInput,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, ResolverOptions } from "react-hook-form/dist/types";
-import { Tag } from "@deskpro/deskpro-ui";
+import { Tag, AnyIcon, Input, Button, H1, Stack } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { Dropdown } from "../Components/Dropdown";
@@ -39,9 +35,8 @@ import { workItemFields as workItemFieldsObj } from "../utils/workItemFields";
 import { useQueryWithClient } from "../utils/query";
 import { IAzureWorkItemFieldsSchema } from "../schema/workItem";
 import { colors, toDotList } from "../utils/utils";
-import { DateField } from "../Components/DateField";
 import { IAzureProject } from "../types/azure/project";
-// useForm does not export the types, even zodresolver is doing any any
+// useForm does not export the types, even zodresolver is doing any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const useCustomResolver: Resolver<any, any> = (
   values: object,
@@ -398,7 +393,7 @@ export const EditItem = () => {
                 switch (fieldType) {
                   case "dateTime": {
                     return (
-                      <DateField
+                      <DateInput
                         key={i}
                         label={field.name}
                         error={Boolean(

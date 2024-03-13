@@ -1,5 +1,5 @@
-import { Stack, useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
-import { Radio } from "@deskpro/deskpro-ui";
+import { useInitialisedDeskproAppClient } from "@deskpro/app-sdk";
+import { Stack, Radio } from "@deskpro/deskpro-ui";
 import { useState } from "react";
 
 export const PageType = () => {

@@ -1,20 +1,16 @@
 import {
-  H1,
-  Stack,
   useDeskproAppTheme,
-  Button,
   LoadingSpinner,
   useDeskproAppClient,
-  Input,
   useDeskproAppEvents,
-  AnyIcon,
+  DateInput,
 } from "@deskpro/app-sdk";
 import { useForm, Resolver } from "react-hook-form";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, ResolverOptions } from "react-hook-form/dist/types";
-import { Tag } from "@deskpro/deskpro-ui";
+import { Tag, H1, Stack, Button, Input, AnyIcon } from "@deskpro/deskpro-ui";
 import { useNavigate } from "react-router-dom";
 
 import { Dropdown } from "../Dropdown";
@@ -38,7 +34,6 @@ import { workItemFields as workItemFieldsObj } from "../../utils/workItemFields"
 import { useQueryWithClient } from "../../utils/query";
 import { IAzureWorkItemFieldsSchema } from "../../schema/workItem";
 import { colors, toDotList } from "../../utils/utils";
-import { DateField } from "../DateField";
 
 interface IMappedData {
   op: string;
@@ -395,7 +390,7 @@ export const CreateItem = () => {
                     switch (fieldType) {
                       case "dateTime": {
                         return (
-                          <DateField
+                          <DateInput
                             key={i}
                             label={field.name}
                             error={Boolean(

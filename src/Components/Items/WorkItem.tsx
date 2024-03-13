@@ -1,7 +1,5 @@
+import { Checkbox, Stack, H2 } from "@deskpro/deskpro-ui";
 import {
-  Checkbox,
-  Stack,
-  H2,
   useInitialisedDeskproAppClient,
   useDeskproAppTheme,
 } from "@deskpro/app-sdk";

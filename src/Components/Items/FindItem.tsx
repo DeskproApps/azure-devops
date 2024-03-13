@@ -1,12 +1,9 @@
+import { Input, Stack, Button, AnyIcon } from "@deskpro/deskpro-ui";
 import {
-  Input,
-  Stack,
   useInitialisedDeskproAppClient,
-  Button,
   LoadingSpinner,
   useDeskproAppClient,
   useDeskproAppEvents,
-  AnyIcon,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";

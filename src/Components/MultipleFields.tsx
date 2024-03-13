@@ -1,4 +1,4 @@
-import { Stack, H1 } from "@deskpro/app-sdk";
+import { Stack, H1 } from "@deskpro/deskpro-ui";
 import { IAzureWorkItem, IAzureWorkItemFields } from "../types/azure/workItem";
 import { splitArrEvery2 } from "../utils/utils";
 import { workItemFields } from "../utils/workItemFields";

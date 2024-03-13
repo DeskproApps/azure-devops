@@ -1,4 +1,4 @@
-import { H2, Stack, Input as InputSDK } from "@deskpro/app-sdk";
+import { H2, Stack, Input as InputSDK } from "@deskpro/deskpro-ui";
 
 export const Input = ({
   name,

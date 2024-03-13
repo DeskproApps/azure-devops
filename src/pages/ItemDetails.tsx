@@ -1,15 +1,12 @@
 import {
-  H1,
-  H2,
   LoadingSpinner,
-  Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
   useDeskproAppTheme,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import parse from "html-react-parser";
-import { Avatar } from "@deskpro/deskpro-ui";
+import { H1, H2, Stack, Avatar } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
 import x2js from "x2js";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
