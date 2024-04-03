@@ -155,11 +155,11 @@ devDependencies:
     specifier: ^4.4.4
     version: 4.9.5
   vite:
-    specifier: ^2.9.17
-    version: 2.9.17
+    specifier: ^2.9.18
+    version: 2.9.18
   vite-plugin-windicss:
     specifier: ^1.9.3
-    version: 1.9.3(vite@2.9.17)
+    version: 1.9.3(vite@2.9.18)
 
 packages:
 
@@ -5381,7 +5381,7 @@ packages:
       source-map: 0.7.4
     dev: true
 
-  /vite-plugin-windicss@1.9.3(vite@2.9.17):
+  /vite-plugin-windicss@1.9.3(vite@2.9.18):
     resolution: {integrity: sha512-PqNiIsrEftCrgn0xIpj8ZMSdpz8NZn+OJ3gKXnOF+hFzbHFrKGJA49ViOUKCHDOquxoGBZMmTjepWr8GrftKcQ==}
     peerDependencies:
       vite: ^2.0.1 || ^3.0.0 || ^4.0.0 || ^5.0.0
@@ -5389,14 +5389,14 @@ packages:
       '@windicss/plugin-utils': 1.9.3
       debug: 4.3.4(supports-color@5.5.0)
       kolorist: 1.8.0
-      vite: 2.9.17
+      vite: 2.9.18
       windicss: 3.5.6
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite@2.9.17:
-    resolution: {integrity: sha512-XxcRzra6d7xrKXH66jZUgb+srThoPu+TLJc06GifUyKq9JmjHkc1Numc8ra0h56rju2jfVWw3B3fs5l3OFMvUw==}
+  /vite@2.9.18:
+    resolution: {integrity: sha512-sAOqI5wNM9QvSEE70W3UGMdT8cyEn0+PmJMTFvTB8wB0YbYUWw3gUbY62AOyrXosGieF2htmeLATvNxpv/zNyQ==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:
