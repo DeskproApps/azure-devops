@@ -1,7 +1,5 @@
+import { H4, P5, Stack } from "@deskpro/deskpro-ui";
 import {
-  H4,
-  P5,
-  Stack,
   useDeskproAppEvents,
   useDeskproAppTheme,
   useInitialisedDeskproAppClient,

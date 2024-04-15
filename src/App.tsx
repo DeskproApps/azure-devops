@@ -13,7 +13,7 @@ import { Redirect } from "./pages/Redirect";
 import { EditItem } from "./pages/EditItem";
 import { AddComment } from "./pages/AddComment";
 import { QueryErrorResetBoundary } from "react-query";
-import { Stack } from "@deskpro/app-sdk";
+import { Stack } from "@deskpro/deskpro-ui";
 import { PageType } from "./pages/Admin/PageType";
 import { GlobalAuth } from "./pages/Admin/GlobalAuth";
 import { Organization } from "./pages/Admin/Organization";

@@ -1,5 +1,5 @@
-import { Tag, RoundedLabelTag, Avatar } from "@deskpro/deskpro-ui";
-import { Stack, P1, useDeskproAppTheme } from "@deskpro/app-sdk";
+import { Tag, RoundedLabelTag, Avatar, Stack, P1 } from "@deskpro/deskpro-ui";
+import { useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import { TwoColumn } from "../TwoColumn";
 import { GreyTitle } from "../../styles";

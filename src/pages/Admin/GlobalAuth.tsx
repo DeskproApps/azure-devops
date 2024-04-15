@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Button,
   CopyToClipboardInput,
-  H1,
-  H2,
-  P1,
-  Stack,
   useDeskproAppEvents,
   useDeskproAppTheme,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
+import { H1, H2, P1, Stack, Button } from "@deskpro/deskpro-ui";
 import { useState } from "react";
 import { useGlobalAuth } from "../../hooks/UseGlobalAuth";
 import { AuthTokens, Settings } from "../../types";

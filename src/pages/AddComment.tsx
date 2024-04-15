@@ -1,7 +1,6 @@
 import { useState } from "react";
+import { Button, Stack } from "@deskpro/deskpro-ui";
 import {
-  Button,
-  Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
   useInitialisedDeskproAppClient,

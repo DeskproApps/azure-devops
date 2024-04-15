@@ -1,6 +1,7 @@
 import { FC } from "react";
 import styled from "styled-components";
-import { Stack, H2, useDeskproAppTheme } from "@deskpro/app-sdk";
+import { Stack, H2 } from "@deskpro/deskpro-ui";
+import { useDeskproAppTheme } from "@deskpro/app-sdk";
 
 import type { Props as TextBlockWithLabelProps } from "./TextBlockWithLabel";
 import { GreyTitle } from "../styles";
