@@ -1,11 +1,6 @@
-import { Input, Stack, Button, AnyIcon } from "@deskpro/deskpro-ui";
+import { Input, Stack, Button, AnyIcon, H1 } from "@deskpro/deskpro-ui";
 import {
-  AnyIcon,
-  Button,
-  H1,
-  Input,
   LoadingSpinner,
-  Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
   useDeskproLatestAppContext,
