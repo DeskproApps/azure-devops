@@ -291,6 +291,22 @@ const getWorkItemListByWiql = async (
   );
 };
 
+const getWorkItemListByTitle = async (
+  client: IDeskproClient,
+  settings: Settings,
+  query: string
+): Promise<IAzureWorkItemWiql> => {
+  return await defaultRequest(
+    client,
+    `/_apis/wit/wiql?api-version=7.0`,
+    "POST",
+    settings,
+    {
+      query: `SELECT * FROM workitems WHERE [System.Title] CONTAINS '${query}'`,
+    }
+  );
+};
+
 const getTeamsList = (
   client: IDeskproClient,
   settings: Settings
@@ -354,6 +370,39 @@ const getProjectList = (
 ): Promise<IAzureArrayResponse<IAzureProject[]>> =>
   defaultRequest(client, `/_apis/projects?api-version=7.0`, "GET", settings);
 
+const getWorkItemsByProject = async (
+  client: IDeskproClient,
+  settings: Settings,
+  project: string,
+  continuationToken?: number
+): Promise<IAzureArrayResponse<IAzureWorkItem[]>> => {
+  return defaultRequest(
+    client,
+    `/${project}/_apis/wit/workitemsbatch?api-version=5.1&top=10${
+      continuationToken ? `&continuationToken=${continuationToken}` : ""
+    }`,
+    "GET",
+    settings
+  );
+};
+
+const getWorkItemsByIds = async (
+  client: IDeskproClient,
+  settings: Settings,
+  project: string,
+  ids: number[]
+): Promise<IAzureArrayResponse<IAzureWorkItem[]>> => {
+  return defaultRequest(
+    client,
+    `/${project}/_apis/wit/workitemsbatch?api-version=7.0`,
+    "POST",
+    settings,
+    {
+      ids,
+    }
+  );
+};
+
 const defaultRequest = async (
   client: IDeskproClient,
   endpoint: string,
@@ -395,10 +444,7 @@ const defaultRequest = async (
 
   let response = await fetch(url, options);
 
-  if (
-    [400, 401, 203, 500, 403].includes(response.status) &&
-    settings.type === "cloud"
-  ) {
+  if ([401, 403].includes(response.status) && settings.type === "cloud") {
     const refreshRequestOptions: RequestInit = {
       method: "POST",
       body: `client_assertion_type=${encodeURIComponent(
@@ -426,7 +472,7 @@ const defaultRequest = async (
     );
 
     response = await fetch(
-      `https://${initialDomainName}dev.azure.com${endpoint}`,
+      `https://${initialDomainName}dev.azure.com/${settings.organization_collection}${endpoint}`,
       options
     );
   }
@@ -440,7 +486,12 @@ const defaultRequest = async (
     );
   }
 
-  return response.json();
+  const responseJson = await response.json();
+
+  return {
+    ...responseJson,
+    continuationToken: response.headers.get("x-ms-continuationtoken"),
+  };
 };
 
 export {
@@ -469,4 +520,7 @@ export {
   getProjectByName,
   editWorkItem,
   postComment,
+  getWorkItemsByProject,
+  getWorkItemListByTitle,
+  getWorkItemsByIds,
 };

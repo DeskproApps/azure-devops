@@ -1,45 +1,42 @@
 import {
-  Input,
-  Stack,
-  useInitialisedDeskproAppClient,
+  AnyIcon,
   Button,
+  H1,
+  Input,
   LoadingSpinner,
+  Stack,
   useDeskproAppClient,
   useDeskproAppEvents,
-  AnyIcon,
+  useDeskproLatestAppContext,
+  useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { useEffect, useState } from "react";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import chunk from "lodash.chunk";
-import useDebounce from "../../utils/debounce";
-import { Dropdown } from "../Dropdown";
-import { WorkItem } from "./WorkItem";
-import { useDeskpro } from "../../hooks/deskproContext";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  defaultRequest,
   getProjectList,
-  getWorkItemListByWiql,
+  getWorkItemListByTitle,
+  getWorkItemsByIds,
 } from "../../api/api";
 import { IAzureWorkItem } from "../../types/azure/workItem";
-import { useNavigate } from "react-router-dom";
-import { useQueryWithClient } from "../../utils/query";
-import { HorizontalDivider } from "../HorizontalDivider";
 import { CheckedList } from "../../types/checkedList";
+import useDebounce from "../../utils/debounce";
+import { useQueryWithClient } from "../../utils/query";
+import { Dropdown } from "../Dropdown";
+import { HorizontalDivider } from "../HorizontalDivider";
+import { WorkItem } from "./WorkItem";
 
 export const FindItem = () => {
   const navigate = useNavigate();
-  const deskproData = useDeskpro();
+  const { context } = useDeskproLatestAppContext();
   const { client } = useDeskproAppClient();
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [originalWorkItemList, setOriginalWorkItemList] = useState<
-    IAzureWorkItem[]
-  >([]);
-  const [workItemList, setWorkItemList] = useState<IAzureWorkItem[]>([]);
+  const [selectedProject, setSelectedProject] = useState<string | undefined>();
+  const [hasLinkedItems, setHasLinkedItems] = useState<boolean | undefined>();
+  const [workItemList, setWorkItemList] = useState<number[]>([]);
   const [checkedList, setCheckedList] = useState<CheckedList>({});
   const [inputText, setInputText] = useState<string>("");
   const { debouncedValue } = useDebounce(inputText, 300);
-  const [ran, setRan] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Find Items");
 
@@ -70,85 +67,73 @@ export const FindItem = () => {
   });
 
   const projectList = useQueryWithClient(
-    ["projectList", deskproData],
-    (client) => getProjectList(client, deskproData?.settings || {}),
-    { enabled: !!deskproData }
+    ["projectList", context],
+    (client) => getProjectList(client, context?.settings || {}),
+    { enabled: !!context }
   );
 
+  useQueryWithClient(
+    ["itemsList", context],
+    (client) =>
+      getWorkItemListByTitle(client, context?.settings || {}, debouncedValue),
+    {
+      enabled: !!context && debouncedValue.length > 0 && !!selectedProject,
+      onSuccess: async (data) => {
+        const values = await client
+          ?.getEntityAssociation("linkedAzureItems", context?.data.ticket.id)
+          .list();
+
+        data.workItems = data.workItems.filter(
+          (item) => !values?.map((e) => Number(e)).includes(item.id)
+        );
+
+        setWorkItemList(data.workItems.map((item) => item.id));
+      },
+    }
+  );
+
+  const workItemsQuery = useQueryWithClient(
+    ["workItems", context, selectedProject, workItemList],
+    (client) =>
+      getWorkItemsByIds(
+        client,
+        context?.settings || {},
+        selectedProject as string,
+        workItemList
+      ),
+    {
+      enabled: !!context && workItemList.length > 0 && !!selectedProject,
+    }
+  );
+
+  console.log(workItemsQuery.data);
+
   useInitialisedDeskproAppClient(
-    (client) => {
-      if (!deskproData) return;
+    async (client) => {
+      if (!context) return;
 
-      if (!ran && projectList.isSuccess) {
-        (async () => {
-          const workItems = await Promise.all(
-            projectList.data.value.map(async (project) => {
-              const itemIds = await getWorkItemListByWiql(
-                client,
-                deskproData?.settings || {},
-                `SELECT * FROM workItems WHERE [System.TeamProject] = "${project.name}"`
-              );
+      const items = await client
+        .getEntityAssociation("linkedAzureItems", context.data.ticket.id)
+        .list();
 
-              const values = await client
-                .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-                .list();
-
-              itemIds.workItems = itemIds.workItems.filter(
-                (item) => !values.map((e) => Number(e)).includes(item.id)
-              );
-
-              if (itemIds.workItems.length === 0) return [];
-
-              const chunks = chunk(
-                itemIds.workItems.map((wi) => wi.id),
-                200
-              );
-
-              const allItems = await Promise.all(
-                chunks.map(async (wiArr) => {
-                  const items = await defaultRequest(
-                    client,
-                    `/${project.name}/_apis/wit/workitemsbatch?api-version=7.0`,
-                    "POST",
-                    deskproData?.settings,
-                    {
-                      ids: wiArr,
-                    }
-                  );
-
-                  return items.value;
-                })
-              );
-              return allItems.flat();
-            })
-          );
-          setRan(true);
-          setLoading(false);
-          setOriginalWorkItemList(workItems.flat());
-          setWorkItemList(workItems.flat());
-        })();
+      if (items.length) {
+        setHasLinkedItems(true);
+        return;
       }
-
-      setWorkItemList(
-        originalWorkItemList?.filter((item) =>
-          item.fields["System.Title"]
-            .toLowerCase()
-            .includes(debouncedValue.toLowerCase())
-        ) ?? []
-      );
+      setHasLinkedItems(false);
     },
-    [debouncedValue, ran, projectList.isSuccess]
+    [context]
   );
 
   const linkIssue = async () => {
-    if (!deskproData || !client) return;
+    if (!context || !client) return;
 
     await Promise.all(
       Object.keys(checkedList).map(async (projectId) => {
         return await Promise.all(
           checkedList[projectId].map(async (id) => {
             await client
-              .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
+              .getEntityAssociation("linkedAzureItems", context.data.ticket.id)
               .set(id.toString());
 
             await client.setState(
@@ -164,24 +149,15 @@ export const FindItem = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    if (!selectedProject) return;
-
-    setWorkItemList(
-      originalWorkItemList.filter(
-        (item) => item.fields["System.TeamProject"] === selectedProject
-      )
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProject]);
-
-  if (loading) {
+  if (typeof hasLinkedItems === "undefined" || workItemsQuery.isLoading) {
     return (
       <Stack justify="center" style={{ width: "100%" }}>
         <LoadingSpinner />
       </Stack>
     );
   }
+
+  const workItems = workItemsQuery.data?.value ?? [];
 
   return (
     <Stack gap={10} style={{ width: "100%" }} vertical>
@@ -200,40 +176,55 @@ export const FindItem = () => {
         valueName="name"
         data={projectList?.data?.value ?? []}
       ></Dropdown>
-      {workItemList?.length !== 0 && (
-        <Stack vertical gap={6} style={{ width: "100%" }}>
-          <Stack vertical style={{ width: "100%" }} gap={5}>
-            <Stack
-              style={{ width: "100%", justifyContent: "space-between" }}
-              gap={5}
-            >
-              <Button
-                onClick={linkIssue}
-                disabled={Object.values(checkedList ?? []).flat().length === 0}
-                text="Link Issue"
-              ></Button>
-              <Button
-                disabled={Object.values(checkedList ?? []).flat().length === 0}
-                text="Cancel"
-                intent="secondary"
-                onClick={() => setCheckedList({})}
-              ></Button>
+      {workItemsQuery.isSuccess &&
+        (workItems?.length !== 0 ? (
+          <Stack vertical gap={6} style={{ width: "100%" }}>
+            <Stack vertical style={{ width: "100%" }} gap={5}>
+              <Stack
+                style={{ width: "100%", justifyContent: "space-between" }}
+                gap={5}
+              >
+                <Button
+                  onClick={linkIssue}
+                  disabled={
+                    Object.values(checkedList ?? []).flat().length === 0
+                  }
+                  text="Link Item"
+                ></Button>
+                <Button
+                  disabled={
+                    Object.values(checkedList ?? []).flat().length === 0 &&
+                    !hasLinkedItems
+                  }
+                  text={hasLinkedItems ? "Cancel" : "Clear"}
+                  intent="secondary"
+                  onClick={() => {
+                    if (hasLinkedItems) {
+                      navigate("/");
+                      return;
+                    }
+                    setCheckedList({});
+                    setInputText("");
+                  }}
+                ></Button>
+              </Stack>
+              <HorizontalDivider />
             </Stack>
-            <HorizontalDivider />
+            {workItems?.map((item: IAzureWorkItem, i: number) => {
+              return (
+                <WorkItem
+                  item={item}
+                  checkedList={checkedList}
+                  setCheckedList={setCheckedList}
+                  key={i}
+                  i={i}
+                />
+              );
+            })}
           </Stack>
-          {workItemList?.map((item: IAzureWorkItem, i: number) => {
-            return (
-              <WorkItem
-                item={item}
-                checkedList={checkedList}
-                setCheckedList={setCheckedList}
-                key={i}
-                i={i}
-              />
-            );
-          })}
-        </Stack>
-      )}
+        ) : (
+          <H1>No Work Items Found</H1>
+        ))}
     </Stack>
   );
 };
