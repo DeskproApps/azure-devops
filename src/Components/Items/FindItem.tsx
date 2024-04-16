@@ -1,4 +1,3 @@
-import { Input, Stack, Button, AnyIcon, H1 } from "@deskpro/deskpro-ui";
 import {
   LoadingSpinner,
   useDeskproAppClient,
@@ -6,6 +5,7 @@ import {
   useDeskproLatestAppContext,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
+import { AnyIcon, Button, H1, H2, Input, Stack } from "@deskpro/deskpro-ui";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -165,7 +165,14 @@ export const FindItem = () => {
         leftIcon={faMagnifyingGlass as AnyIcon}
       />
       <Dropdown
-        title="Project"
+        title={
+          (
+            <Stack gap={2}>
+              <H2>Project</H2>
+              <H1 style={{ color: "#F55F67" }}>*</H1>
+            </Stack>
+          ) as unknown as string
+        }
         value={selectedProject ?? ""}
         onChange={(e: string) => setSelectedProject(e)}
         keyName="name"
