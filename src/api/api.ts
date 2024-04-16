@@ -444,7 +444,7 @@ const defaultRequest = async (
 
   let response = await fetch(url, options);
 
-  if ([401, 403].includes(response.status) && settings.type === "cloud") {
+  if ([401, 403, 203].includes(response.status) && settings.type === "cloud") {
     const refreshRequestOptions: RequestInit = {
       method: "POST",
       body: `client_assertion_type=${encodeURIComponent(
