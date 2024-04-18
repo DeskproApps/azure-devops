@@ -156,7 +156,7 @@ export const FindItem = () => {
   const workItems = workItemsQuery.data?.value ?? [];
 
   return (
-    <Stack gap={10} style={{ width: "100%" }} vertical>
+    <Stack gap={10} style={{ width: "100%", minHeight: "600px" }} vertical>
       <Input
         onChange={(e) => setInputText(e.target.value)}
         value={inputText}

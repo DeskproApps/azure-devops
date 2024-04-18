@@ -123,6 +123,13 @@ export const Main = () => {
     }
   );
 
+  useInitialisedDeskproAppClient(
+    (client) => {
+      client.setBadgeCount(tickets.data?.value.length ?? 0);
+    },
+    [tickets.data?.value]
+  );
+
   if (itemIds.length === 0) {
     return (
       <Stack justify="center" style={{ width: "100%" }}>
