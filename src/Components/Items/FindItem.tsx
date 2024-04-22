@@ -69,7 +69,7 @@ export const FindItem = () => {
   );
 
   useQueryWithClient(
-    ["itemsList", context],
+    ["itemsList", context, debouncedValue, selectedProject],
     (client) =>
       getWorkItemListByTitle(client, context?.settings || {}, debouncedValue),
     {
@@ -179,55 +179,52 @@ export const FindItem = () => {
         valueName="name"
         data={projectList?.data?.value ?? []}
       ></Dropdown>
-      {workItemsQuery.isSuccess &&
-        (workItems?.length !== 0 ? (
-          <Stack vertical gap={6} style={{ width: "100%" }}>
-            <Stack vertical style={{ width: "100%" }} gap={5}>
-              <Stack
-                style={{ width: "100%", justifyContent: "space-between" }}
-                gap={5}
-              >
-                <Button
-                  onClick={linkIssue}
-                  disabled={
-                    Object.values(checkedList ?? []).flat().length === 0
+      {workItems?.length !== 0 ? (
+        <Stack vertical gap={6} style={{ width: "100%" }}>
+          <Stack vertical style={{ width: "100%" }} gap={5}>
+            <Stack
+              style={{ width: "100%", justifyContent: "space-between" }}
+              gap={5}
+            >
+              <Button
+                onClick={linkIssue}
+                disabled={Object.values(checkedList ?? []).flat().length === 0}
+                text="Link Item"
+              ></Button>
+              <Button
+                disabled={
+                  Object.values(checkedList ?? []).flat().length === 0 &&
+                  !hasLinkedItems
+                }
+                text={hasLinkedItems ? "Cancel" : "Clear"}
+                intent="secondary"
+                onClick={() => {
+                  if (hasLinkedItems) {
+                    navigate("/");
+                    return;
                   }
-                  text="Link Item"
-                ></Button>
-                <Button
-                  disabled={
-                    Object.values(checkedList ?? []).flat().length === 0 &&
-                    !hasLinkedItems
-                  }
-                  text={hasLinkedItems ? "Cancel" : "Clear"}
-                  intent="secondary"
-                  onClick={() => {
-                    if (hasLinkedItems) {
-                      navigate("/");
-                      return;
-                    }
-                    setCheckedList({});
-                    setInputText("");
-                  }}
-                ></Button>
-              </Stack>
-              <HorizontalDivider />
+                  setCheckedList({});
+                  setInputText("");
+                }}
+              ></Button>
             </Stack>
-            {workItems?.map((item: IAzureWorkItem, i: number) => {
-              return (
-                <WorkItem
-                  item={item}
-                  checkedList={checkedList}
-                  setCheckedList={setCheckedList}
-                  key={i}
-                  i={i}
-                />
-              );
-            })}
+            <HorizontalDivider />
           </Stack>
-        ) : (
-          <H1>No Work Items Found</H1>
-        ))}
+          {workItems?.map((item: IAzureWorkItem, i: number) => {
+            return (
+              <WorkItem
+                item={item}
+                checkedList={checkedList}
+                setCheckedList={setCheckedList}
+                key={i}
+                i={i}
+              />
+            );
+          })}
+        </Stack>
+      ) : (
+        <H1>No Work Items Found</H1>
+      )}
     </Stack>
   );
 };

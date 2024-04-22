@@ -486,12 +486,7 @@ const defaultRequest = async (
     );
   }
 
-  const responseJson = await response.json();
-
-  return {
-    ...responseJson,
-    continuationToken: response.headers.get("x-ms-continuationtoken"),
-  };
+  return await response.json();
 };
 
 export {
