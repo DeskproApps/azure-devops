@@ -294,7 +294,8 @@ const getWorkItemListByWiql = async (
 const getWorkItemListByTitle = async (
   client: IDeskproClient,
   settings: Settings,
-  query: string
+  query: string,
+  projectName: string
 ): Promise<IAzureWorkItemWiql> => {
   return await defaultRequest(
     client,
@@ -302,7 +303,7 @@ const getWorkItemListByTitle = async (
     "POST",
     settings,
     {
-      query: `SELECT * FROM workitems WHERE [System.Title] CONTAINS '${query}'`,
+      query: `SELECT [System.Title] FROM workitems WHERE [System.Title] CONTAINS '${query}' AND [System.TeamProject] = '${projectName}'`,
     }
   );
 };

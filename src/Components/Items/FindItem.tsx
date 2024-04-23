@@ -71,10 +71,16 @@ export const FindItem = () => {
   useQueryWithClient(
     ["itemsList", context, debouncedValue, selectedProject],
     (client) =>
-      getWorkItemListByTitle(client, context?.settings || {}, debouncedValue),
+      getWorkItemListByTitle(
+        client,
+        context?.settings || {},
+        debouncedValue,
+        selectedProject as string
+      ),
     {
       enabled: !!context && debouncedValue.length > 0 && !!selectedProject,
       onSuccess: async (data) => {
+        console.log(data);
         const values = await client
           ?.getEntityAssociation("linkedAzureItems", context?.data.ticket.id)
           .list();
@@ -87,7 +93,7 @@ export const FindItem = () => {
       },
     }
   );
-
+  console.log(!!context && debouncedValue.length > 0 && !!selectedProject);
   const workItemsQuery = useQueryWithClient(
     ["workItems", context, selectedProject, workItemList],
     (client) =>
