@@ -28,7 +28,9 @@ export const FindItem = () => {
   const { client } = useDeskproAppClient();
   const [selectedProject, setSelectedProject] = useState<string | undefined>();
   const [hasLinkedItems, setHasLinkedItems] = useState<boolean | undefined>();
-  const [workItemList, setWorkItemList] = useState<number[]>([]);
+  const [workItemList, setWorkItemList] = useState<number[] | undefined>(
+    undefined
+  );
   const [checkedList, setCheckedList] = useState<CheckedList>({});
   const [inputText, setInputText] = useState<string>("");
   const { debouncedValue } = useDebounce(inputText, 300);
@@ -68,7 +70,7 @@ export const FindItem = () => {
     { enabled: !!context }
   );
 
-  useQueryWithClient(
+  const workItemsByTitleQuery = useQueryWithClient(
     ["itemsList", context, debouncedValue, selectedProject],
     (client) =>
       getWorkItemListByTitle(
@@ -80,7 +82,6 @@ export const FindItem = () => {
     {
       enabled: !!context && debouncedValue.length > 0 && !!selectedProject,
       onSuccess: async (data) => {
-        console.log(data);
         const values = await client
           ?.getEntityAssociation("linkedAzureItems", context?.data.ticket.id)
           .list();
@@ -93,7 +94,7 @@ export const FindItem = () => {
       },
     }
   );
-  console.log(!!context && debouncedValue.length > 0 && !!selectedProject);
+
   const workItemsQuery = useQueryWithClient(
     ["workItems", context, selectedProject, workItemList],
     (client) =>
@@ -101,14 +102,12 @@ export const FindItem = () => {
         client,
         context?.settings || {},
         selectedProject as string,
-        workItemList
+        workItemList as number[]
       ),
     {
-      enabled: !!context && workItemList.length > 0 && !!selectedProject,
+      enabled: !!context && workItemList !== undefined && !!selectedProject,
     }
   );
-
-  console.log(workItemsQuery.data);
 
   useInitialisedDeskproAppClient(
     async (client) => {
@@ -150,8 +149,13 @@ export const FindItem = () => {
     );
     navigate("/");
   };
-
-  if (typeof hasLinkedItems === "undefined" || workItemsQuery.isLoading) {
+  console.log(workItemsByTitleQuery.data, workItemsQuery.data);
+  if (
+    typeof hasLinkedItems === "undefined" ||
+    workItemsQuery.isLoading ||
+    workItemsByTitleQuery.isLoading ||
+    (!workItemsQuery.isSuccess && workItemsByTitleQuery.isSuccess)
+  ) {
     return (
       <Stack justify="center" style={{ width: "100%" }}>
         <LoadingSpinner />

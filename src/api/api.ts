@@ -393,14 +393,17 @@ const getWorkItemsByIds = async (
   project: string,
   ids: number[]
 ): Promise<IAzureArrayResponse<IAzureWorkItem[]>> => {
-  return defaultRequest(
-    client,
-    `/${project}/_apis/wit/workitemsbatch?api-version=7.0`,
-    "POST",
-    settings,
-    {
-      ids,
-    }
+  if (ids.length === 0) return { count: 0, value: [] };
+  return (
+    defaultRequest(
+      client,
+      `/${project}/_apis/wit/workitemsbatch?api-version=7.0`,
+      "POST",
+      settings,
+      {
+        ids,
+      }
+    ) ?? []
   );
 };
 
