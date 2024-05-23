@@ -38,6 +38,7 @@ export const ItemPersistentData = ({ item }: Props) => {
       ),
     {
       enabled: !!deskproData && !!assignedTo,
+      useErrorBoundary: false,
     }
   );
 

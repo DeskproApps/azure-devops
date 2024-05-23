@@ -170,15 +170,11 @@ const postWorkItem = async (
     from: string | null;
   }[]
 ): Promise<IAzureWorkItem> => {
-  return defaultRequest(
-    client,
-    `/${project}/_apis/wit/workitems/$${workItemType
-      .split(".")
-      .at(-1)}?api-version=7.0`,
-    "POST",
-    settings,
-    data
-  );
+  const url = `/${project}/_apis/wit/workitems/$${
+    workItemType.split(".").at(-1)
+  }?api-version=7.0`;
+
+  return defaultRequest(client, url, "POST", settings, data);
 };
 
 const getTeamFieldValues = async (
@@ -425,15 +421,12 @@ const defaultRequest = async (
       "Content-Type": endpoint.includes("/_apis/wit/workitems/")
         ? "application/json-patch+json"
         : "application/json",
-      Authorization:
-        settings.type === "cloud"
-          ? `Bearer [[oauth/global/access_token]]`
-          : `Basic __account_name_pat_token__`,
+      Authorization: settings.type === "cloud"
+        ? `Bearer [[oauth/global/access_token]]`
+        : `Basic __account_name_pat_token__`,
       ...(settings.type === "cloud"
         ? {}
-        : {
-            "X-Proxy-SSL-No-Verify": "1",
-          }),
+        : { "X-Proxy-SSL-No-Verify": "1" }),
     },
   };
 

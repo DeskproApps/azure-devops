@@ -29,42 +29,30 @@ export const Main = () => {
   const [linkedCountArr, setLinkedCountArr] = useState<number[]>([]);
   const deskproData = useDeskpro();
 
-  useInitialisedDeskproAppClient(
-    (client) => {
-      if (!deskproData) return;
+  useInitialisedDeskproAppClient((client) => {
+    if (!deskproData) return;
 
-      client.setTitle("Work Items");
+    client.setTitle("Work Items");
 
-      client.deregisterElement("azureHomeButton");
+    client.deregisterElement("azureHomeButton");
+    client.deregisterElement("azureMenuButton");
 
-      client.deregisterElement("azureMenuButton");
+    client.registerElement("azureRefreshButton", { type: "refresh_button" });
+    client.registerElement("azurePlusButton", { type: "plus_button" });
+    client.deregisterElement("azureEditButton");
 
-      client.registerElement("azureRefreshButton", {
-        type: "refresh_button",
-      });
+    (async () => {
+      const items = (
+        await client.getEntityAssociation("linkedAzureItems", deskproData.ticket.id).list()
+      )?.map((e) => Number(e));
 
-      client.registerElement("azurePlusButton", {
-        type: "plus_button",
-      });
+      if (!items || items.length === 0) {
+        navigate("/itemmenu");
+      }
 
-      client.deregisterElement("azureEditButton");
-
-      (async () => {
-        const items = (
-          await client
-            .getEntityAssociation("linkedAzureItems", deskproData.ticket.id)
-            .list()
-        )?.map((e) => Number(e));
-
-        if (!items || items.length === 0) {
-          navigate("/itemmenu");
-        }
-
-        setItemIds(items);
-      })();
-    },
-    [deskproData]
-  );
+      setItemIds(items);
+    })();
+  }, [deskproData]);
 
   useDeskproAppEvents({
     onElementEvent(id) {
@@ -80,40 +68,31 @@ export const Main = () => {
 
   const tickets = useQueryWithClient<IAzureArrayResponse<IAzureWorkItem[]>>(
     ["tickets", deskproData, itemIds],
-    (client) =>
-      getWorkItemListByIds(client, deskproData?.settings || {}, itemIds),
+    (client) => getWorkItemListByIds(client, deskproData?.settings || {}, itemIds),
     {
       enabled: !!deskproData && itemIds.length > 0 && !!client,
-      async onSuccess(data) {
+      onSuccess: async (data) => {
         if (!deskproData) return;
         const linkedCount = await Promise.all(
           data.value.map(async (item) => {
             return (
-              await (client as IDeskproClient).getState<number>(
-                `azure/items/${item.id}`
-              )
+              await (client as IDeskproClient).getState<number>(`azure/items/${item.id}`)
             )[0].data as number;
           })
         );
 
         setLinkedCountArr(linkedCount);
       },
-      async onError() {
+      onError: async () => {
         await Promise.all(
           itemIds.map(async (item) => {
-            await client
-              ?.getEntityAssociation(
-                "linkedAzureItems",
-                deskproData?.ticket.id as string
-              )
+            await client?.getEntityAssociation("linkedAzureItems", deskproData?.ticket.id as string)
               .delete(item.toString());
 
             await client?.setState(
               `azure/items/${item}`,
               ((
-                (await client?.getState(`azure/items/${item}`)) as {
-                  data: number;
-                }[]
+                (await client?.getState(`azure/items/${item}`)) as { data: number }[]
               )[0]?.data ?? 0) - 1
             );
           })
@@ -156,9 +135,7 @@ export const Main = () => {
                   cursor: "pointer",
                 }}
                 onClick={() =>
-                  navigate(
-                    `/itemdetails?itemId=${item.id}&projectId=${item.fields["System.TeamProject"]}`
-                  )
+                  navigate(`/itemdetails?itemId=${item.id}&projectId=${item.fields["System.TeamProject"]}`)
                 }
               >
                 <b>{item.fields["System.Title"]}</b>

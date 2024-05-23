@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Dropdown } from "../Dropdown";
 import { RequiredInput } from "../RequiredInput";
+import { TextArea } from "../TextArea";
 import { useDeskpro } from "../../hooks/deskproContext";
 import {
   getIterationList,
@@ -55,10 +56,8 @@ const useCustomResolver: Resolver<any, any> = (
 
 export const CreateItem = () => {
   const navigate = useNavigate();
-
   const [tags, setTags] = useState<string[]>([]);
   const [tagText, setTagText] = useState<string>("");
-
   const {
     handleSubmit,
     register,
@@ -75,6 +74,7 @@ export const CreateItem = () => {
     "System.AssignedTo",
     "System.IterationPath",
     "System.AreaPath",
+    "System.Description",
   ]);
 
   useEffect(() => {
@@ -98,9 +98,7 @@ export const CreateItem = () => {
   const projectList = useQueryWithClient(
     ["projectList", deskproData],
     (client) => getProjectList(client, deskproData?.settings || {}),
-    {
-      enabled: !!deskproData,
-    }
+    { enabled: !!deskproData }
   );
 
   const specificProject = useQueryWithClient(
@@ -114,30 +112,18 @@ export const CreateItem = () => {
 
   const specificProcess = useQueryWithClient(
     ["specificProcess", deskproData, specificProject],
-    (client) =>
-      getProcessById(
-        client,
-        deskproData?.settings || {},
-        specificProject?.data?.value.find(
-          (e) => e.name === "System.ProcessTemplateType"
-        )?.value as string
-      ),
-    {
-      enabled: !!deskproData && !!specificProject.isSuccess,
-    }
+    (client) => getProcessById(
+      client,
+      deskproData?.settings || {},
+      specificProject?.data?.value.find((e) => e.name === "System.ProcessTemplateType")?.value as string
+    ),
+    { enabled: !!deskproData && !!specificProject.isSuccess }
   );
 
   const workItemTypeList = useQueryWithClient(
     ["workItemTypeList", deskproData, specificProcess],
-    (client) =>
-      getWorkItemTypes(
-        client,
-        deskproData?.settings || {},
-        specificProcess.data?.typeId as string
-      ),
-    {
-      enabled: !!deskproData && !!specificProcess.isSuccess,
-    }
+    (client) => getWorkItemTypes(client, deskproData?.settings || {}, specificProcess.data?.typeId as string),
+    { enabled: !!deskproData && !!specificProcess.isSuccess }
   );
 
   const workItemFields =
@@ -152,57 +138,37 @@ export const CreateItem = () => {
   const userList = useQueryWithClient(
     ["userList", deskproData],
     (client) => getUsersList(client, deskproData?.settings || {}),
-    {
-      enabled: !!deskproData && deskproData.settings.type === "cloud",
-    }
+    { enabled: !!deskproData && deskproData.settings.type === "cloud" }
   );
 
   const iterationList = useQueryWithClient(
     ["iterationList", deskproData, project],
     (client) => getIterationList(client, deskproData?.settings || {}, project),
-    {
-      enabled: !!deskproData && !!project,
-    }
+    { enabled: !!deskproData && !!project }
   );
 
   const workItemFieldsData = useQueryWithClient(
     ["workItemFieldsData", deskproData, project],
-    (client) =>
-      getWorkItemFieldsData(client, deskproData?.settings || {}, project),
-    {
-      enabled: !!deskproData && !!project,
-    }
+    (client) => getWorkItemFieldsData(client, deskproData?.settings || {}, project),
+    { enabled: !!deskproData && !!project }
   );
 
   const teamFieldValues = useQueryWithClient(
     ["teamFieldValues", deskproData, project],
-    (client) =>
-      getTeamFieldValues(client, deskproData?.settings || {}, project),
-    {
-      enabled: !!deskproData && !!project,
-    }
+    (client) => getTeamFieldValues(client, deskproData?.settings || {}, project),
+    { enabled: !!deskproData && !!project }
   );
 
   const workItemTypeFields = useQueryWithClient(
     ["workItemTypeFields", deskproData, project, workItem],
-    (client) =>
-      getWorkItemTypeFields(
-        client,
-        deskproData?.settings || {},
-        project,
-        workItem
-      ),
-    {
-      enabled: !!deskproData && !!project && !!workItem,
-    }
+    (client) => getWorkItemTypeFields(client, deskproData?.settings || {}, project, workItem),
+    { enabled: !!deskproData && !!project && !!workItem }
   );
 
   const submit = async (data: IAzureWorkItemFields) => {
     if (!client || !deskproData) return;
 
-    const mappedData = Object.entries(
-      toDotList({ ...data, "System.Tags": tags.join("; ") })
-    )
+    const mappedData = Object.entries(toDotList({ ...data, "System.Tags": tags.join("; ") }))
       .filter((e) => e[1])
       .map((e) => ({
         op: "add",
@@ -333,7 +299,12 @@ export const CreateItem = () => {
                   required
                   error={Boolean(errors?.["System.Title"])}
                   register={register("System.Title", { required: true })}
-                ></RequiredInput>
+                />
+                <TextArea
+                  title="Description"
+                  register={register("System.Description")}
+                />
+
                 {deskproData?.settings.type === "cloud" && (
                   <Dropdown
                     title="Assignee"

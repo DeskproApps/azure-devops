@@ -35,10 +35,7 @@ function App() {
                 <Route path="/itemdetails" element={<ItemDetails />} />
                 <Route path="/redirect" element={<Redirect />} />
                 <Route path="/admin">
-                  <Route
-                    path="accountnamepattoken"
-                    element={<AccountNamePatToken />}
-                  />
+                  <Route path="accountnamepattoken" element={<AccountNamePatToken />}/>
                   <Route path="appid" element={<AppId />} />
                   <Route path="clientSecret" element={<ClientSecret />} />
                   <Route path="instanceurl" element={<InstanceURL />} />
