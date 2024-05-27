@@ -1,13 +1,14 @@
+import { useMemo, useState } from "react";
 import {
+  Search,
   LoadingSpinner,
+  HorizontalDivider,
   useDeskproAppClient,
   useDeskproAppEvents,
   useDeskproLatestAppContext,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import { AnyIcon, Button, H1, H2, Input, Stack } from "@deskpro/deskpro-ui";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { Button, H1, Stack } from "@deskpro/deskpro-ui";
 import { useNavigate } from "react-router-dom";
 import {
   getProjectList,
@@ -19,8 +20,8 @@ import { CheckedList } from "../../types/checkedList";
 import useDebounce from "../../utils/debounce";
 import { useQueryWithClient } from "../../utils/query";
 import { Dropdown } from "../Dropdown";
-import { HorizontalDivider } from "../HorizontalDivider";
 import { WorkItem } from "./WorkItem";
+import { Container, Label } from "../common";
 
 export const FindItem = () => {
   const navigate = useNavigate();
@@ -38,21 +39,13 @@ export const FindItem = () => {
   useInitialisedDeskproAppClient((client) => {
     client.setTitle("Find Items");
 
+    client.deregisterElement("azureEditButton");
+    client.deregisterElement("azurePlusButton");
+    client.registerElement("azureRefreshButton", {type: "refresh_button" });
     client.registerElement("azureHomeButton", {
       type: "home_button",
-      payload: {
-        type: "changePage",
-        page: "/",
-      },
+      payload: { type: "changePage", page: "/" },
     });
-
-    client.deregisterElement("azureEditButton");
-
-    client.registerElement("azureRefreshButton", {
-      type: "refresh_button",
-    });
-
-    client.deregisterElement("azurePlusButton");
   });
 
   useDeskproAppEvents({
@@ -72,13 +65,12 @@ export const FindItem = () => {
 
   const workItemsByTitleQuery = useQueryWithClient(
     ["itemsList", context, debouncedValue, selectedProject],
-    (client) =>
-      getWorkItemListByTitle(
-        client,
-        context?.settings || {},
-        debouncedValue,
-        selectedProject as string
-      ),
+    (client) => getWorkItemListByTitle(
+      client,
+      context?.settings || {},
+      debouncedValue,
+      selectedProject as string
+    ),
     {
       enabled: !!context && debouncedValue.length > 0 && !!selectedProject,
       onSuccess: async (data) => {
@@ -149,79 +141,68 @@ export const FindItem = () => {
     );
     navigate("/");
   };
-  console.log(workItemsByTitleQuery.data, workItemsQuery.data);
-  if (
-    typeof hasLinkedItems === "undefined" ||
-    workItemsQuery.isLoading ||
-    workItemsByTitleQuery.isLoading ||
-    (!workItemsQuery.isSuccess && workItemsByTitleQuery.isSuccess)
-  ) {
-    return (
-      <Stack justify="center" style={{ width: "100%" }}>
-        <LoadingSpinner />
-      </Stack>
-    );
-  }
+
+  const isLoading = useMemo(() => {
+    return typeof hasLinkedItems === "undefined" ||
+      workItemsQuery.isLoading ||
+      workItemsByTitleQuery.isLoading ||
+      (!workItemsQuery.isSuccess && workItemsByTitleQuery.isSuccess);
+  }, [
+    hasLinkedItems,
+    workItemsQuery.isLoading,
+    workItemsByTitleQuery.isLoading,
+    workItemsQuery.isSuccess,
+    workItemsByTitleQuery.isSuccess,
+  ]);
 
   const workItems = workItemsQuery.data?.value ?? [];
 
   return (
-    <Stack gap={10} style={{ width: "100%", minHeight: "600px" }} vertical>
-      <Input
-        onChange={(e) => setInputText(e.target.value)}
-        value={inputText}
-        placeholder="Enter item details"
-        type="text"
-        leftIcon={faMagnifyingGlass as AnyIcon}
-      />
-      <Dropdown
-        title={
-          (
-            <Stack gap={2}>
-              <H2>Project</H2>
-              <H1 style={{ color: "#F55F67" }}>*</H1>
-            </Stack>
-          ) as unknown as string
-        }
-        value={selectedProject ?? ""}
-        onChange={(e: string) => setSelectedProject(e)}
-        keyName="name"
-        valueName="name"
-        data={projectList?.data?.value ?? []}
-      ></Dropdown>
-      {workItems?.length !== 0 ? (
-        <Stack vertical gap={6} style={{ width: "100%" }}>
-          <Stack vertical style={{ width: "100%" }} gap={5}>
-            <Stack
-              style={{ width: "100%", justifyContent: "space-between" }}
-              gap={5}
-            >
-              <Button
-                onClick={linkIssue}
-                disabled={Object.values(checkedList ?? []).flat().length === 0}
-                text="Link Item"
-              ></Button>
-              <Button
-                disabled={
-                  Object.values(checkedList ?? []).flat().length === 0 &&
-                  !hasLinkedItems
-                }
-                text={hasLinkedItems ? "Cancel" : "Clear"}
-                intent="secondary"
-                onClick={() => {
-                  if (hasLinkedItems) {
-                    navigate("/");
-                    return;
-                  }
-                  setCheckedList({});
-                  setInputText("");
-                }}
-              ></Button>
-            </Stack>
-            <HorizontalDivider />
-          </Stack>
-          {workItems?.map((item: IAzureWorkItem, i: number) => {
-            return (
+    <>
+      <Container>
+        <Search
+          onChange={setInputText}
+          marginBottom={0}
+          inputProps={{ placeholder: "Enter item details" }}
+        />
+        <Label label="Project" required>
+          <Dropdown
+            value={selectedProject ?? ""}
+            onChange={setSelectedProject}
+            keyName="name"
+            valueName="name"
+            data={projectList?.data?.value ?? []}
+          />
+        </Label>
+        <Stack justify="space-between" style={{ marginBottom: 10 }}>
+          <Button
+            onClick={linkIssue}
+            disabled={Object.values(checkedList ?? []).flat().length === 0}
+            text="Link Item"
+          />
+          <Button
+            disabled={Object.values(checkedList ?? []).flat().length === 0 && !hasLinkedItems}
+            text={hasLinkedItems ? "Cancel" : "Clear"}
+            intent="secondary"
+            onClick={() => {
+              if (hasLinkedItems) {
+                navigate("/");
+                return;
+              }
+              setCheckedList({});
+              setInputText("");
+            }}
+          />
+        </Stack>
+      </Container>
+
+      <HorizontalDivider />
+
+      <Container>
+        {isLoading ? (
+          <LoadingSpinner/>
+        ) : workItems?.length !== 0 ? (
+            workItems?.map((item: IAzureWorkItem, i: number) => (
               <WorkItem
                 item={item}
                 checkedList={checkedList}
@@ -229,12 +210,11 @@ export const FindItem = () => {
                 key={i}
                 i={i}
               />
-            );
-          })}
-        </Stack>
-      ) : (
-        <H1>No Work Items Found</H1>
-      )}
-    </Stack>
+            ))
+        ) : (
+          <H1>No Work Items Found</H1>
+        )}
+      </Container>
+    </>
   );
 };

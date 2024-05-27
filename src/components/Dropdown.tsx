@@ -19,7 +19,7 @@ import { Status } from "../types/status";
 type Props<T> = {
   data?: T[];
   onChange: (key: string) => void;
-  title: string;
+  title?: string;
   value: string;
   error?: boolean;
   keyName: keyof T;
@@ -42,6 +42,8 @@ export const Dropdown = <T,>({
   const dataOptions = useMemo<any>(() => {
     return data?.map((dataInList) => ({
       key: dataInList[keyName],
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       label: <Label label={dataInList[valueName]}></Label>,
       value: dataInList[valueName],
       type: "value" as const,
@@ -52,14 +54,16 @@ export const Dropdown = <T,>({
       vertical
       style={{ marginTop: "5px", color: theme.colors.grey80, width: "100%" }}
     >
-      <Stack>
-        <H1>{title}</H1>
-        {required && (
-          <Stack style={{ color: "red" }}>
-            <H1>⠀*</H1>
-          </Stack>
-        )}
-      </Stack>
+      {title && (
+        <Stack>
+          <H1>{title}</H1>
+          {required && (
+            <Stack style={{ color: "red" }}>
+              <H1>⠀*</H1>
+            </Stack>
+          )}
+        </Stack>
+      )}
       <DropdownComponent<Status, HTMLDivElement>
         placement="bottom-start"
         options={dataOptions}

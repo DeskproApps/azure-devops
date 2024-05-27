@@ -1,8 +1,9 @@
-import { Tag, RoundedLabelTag, Avatar, Stack, P1 } from "@deskpro/deskpro-ui";
-import { useDeskproAppTheme } from "@deskpro/app-sdk";
-
-import { TwoColumn } from "../TwoColumn";
-import { GreyTitle } from "../../styles";
+import { Tag, RoundedLabelTag, Stack } from "@deskpro/deskpro-ui";
+import {
+  Member,
+  Property,
+  TwoProperties,
+} from "@deskpro/app-sdk";
 import { useMemo } from "react";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { useDeskpro } from "../../hooks/deskproContext";
@@ -17,15 +18,11 @@ interface Props {
 
 export const ItemPersistentData = ({ item }: Props) => {
   const deskproData = useDeskpro();
-  const { theme } = useDeskproAppTheme();
-
   const usedColorsTags = useMemo(() => {
     return new Array(item.fields["System.Tags"]?.split("; ")?.length)
       .fill(1)
       .map(() => colors[Math.floor(Math.random() * colors?.length)]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item.id]);
-
+  }, [item]);
   const assignedTo = item.fields["System.AssignedTo"];
 
   const avatar = useQueryWithClient(
@@ -58,12 +55,9 @@ export const ItemPersistentData = ({ item }: Props) => {
 
   return (
     <Stack vertical style={{ width: "100%" }} gap={12}>
-      <TwoColumn
+      <TwoProperties
         leftLabel="State"
         leftText={
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          // I dont need the close icon
           <RoundedLabelTag
             key={1}
             label={item.fields["System.State"]}
@@ -80,45 +74,37 @@ export const ItemPersistentData = ({ item }: Props) => {
         }
         rightLabel="Iteration"
         rightText={item.fields["System.IterationPath"]}
-      ></TwoColumn>
-      <TwoColumn
+      />
+      <TwoProperties
         leftLabel="Area"
         leftText={item.fields["System.AreaPath"]}
         rightLabel="Reason"
         rightText={item.fields["System.Reason"]}
-      ></TwoColumn>
+      />
       {assignedTo && (
-        <Stack vertical>
-          <GreyTitle theme={theme}>Assignee</GreyTitle>
-          <Stack gap={5} align="center">
-            {avatar.data ? (
-              <img
-                src={`data:image/jpeg;base64,${avatar.data.value}`}
-                style={{ width: "20px", height: "20px", borderRadius: "100%" }}
-              />
-            ) : (
-              <Avatar />
-            )}
-            <P1>{assignedTo.displayName}</P1>
-          </Stack>
-        </Stack>
+        <Property
+          label="Assignee"
+          text={(
+            <Member
+              name={assignedTo.displayName}
+              {...(!avatar.data ? {} : { avatarUrl: `data:image/jpeg;base64,${avatar.data.value}` })}
+            />
+          )}
+        />
       )}
       {item.fields["System.Tags"] && (
-        <Stack vertical>
-          <GreyTitle>Tags</GreyTitle>
-          <Stack gap={5} style={{ marginTop: "2px", flexWrap: "wrap" }}>
-            {item.fields["System.Tags"]
-              ?.split("; ")
-              ?.map((tag: string, k: number) => {
-                return (
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  // I dont need the close icon
+        <Property
+          label="Tags"
+          text={(
+            <Stack gap={5} wrap="wrap">
+              {item.fields["System.Tags"]
+                ?.split("; ")
+                ?.map((tag: string, k: number) => (
                   <Tag color={usedColorsTags[k]} label={tag} key={k}></Tag>
-                );
-              })}
-          </Stack>
-        </Stack>
+                ))}
+            </Stack>
+          )}
+        />
       )}
     </Stack>
   );

@@ -13,9 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, ResolverOptions } from "react-hook-form/dist/types";
 import { Tag, AnyIcon, Input, Button, H1, Stack } from "@deskpro/deskpro-ui";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { Dropdown } from "../Components/Dropdown";
-import { RequiredInput } from "../Components/RequiredInput";
+import { Container } from "../components/common";
+import { Dropdown } from "../components/Dropdown";
+import { RequiredInput } from "../components/RequiredInput";
 import { useDeskpro } from "../hooks/deskproContext";
 import {
   getIterationList,
@@ -316,218 +316,220 @@ export const EditItem = () => {
   });
 
   return (
-    <form onSubmit={handleSubmit(submit)} style={{ width: "100%" }}>
-      <Stack vertical style={{ width: "100%" }} gap={12}>
-        {areBaseFieldsLoading ? (
-          <Stack justify="center" style={{ width: "100%" }}>
-            <LoadingSpinner />
-          </Stack>
-        ) : (
-          <Stack vertical style={{ width: "100%" }} gap={12}>
-            <RequiredInput
-              title="Title"
-              required
-              error={Boolean(errors?.["System.Title"])}
-              register={register("System.Title", { required: true })}
-            ></RequiredInput>
-            {deskproData?.settings.type === "cloud" && (
+    <Container>
+      <form onSubmit={handleSubmit(submit)} style={{width: "100%"}}>
+        <Stack vertical style={{width: "100%"}} gap={12}>
+          {areBaseFieldsLoading ? (
+            <Stack justify="center" style={{width: "100%"}}>
+              <LoadingSpinner/>
+            </Stack>
+          ) : (
+            <Stack vertical style={{width: "100%"}} gap={12}>
+              <RequiredInput
+                title="Title"
+                required
+                error={Boolean(errors?.["System.Title"])}
+                register={register("System.Title", {required: true})}
+              ></RequiredInput>
+              {deskproData?.settings.type === "cloud" && (
+                <Dropdown
+                  title="Assignee"
+                  data={userList.data?.value}
+                  value={user}
+                  onChange={(e) =>
+                    setValue("System.AssignedTo" as keyof IAzureWorkItemFields, e)
+                  }
+                  error={false}
+                  keyName="displayName"
+                  valueName="displayName"
+                />
+              )}
               <Dropdown
-                title="Assignee"
-                data={userList.data?.value}
-                value={user}
+                title="Area"
+                data={teamFieldValues.data?.values}
+                value={areaPath}
                 onChange={(e) =>
-                  setValue("System.AssignedTo" as keyof IAzureWorkItemFields, e)
+                  setValue("System.AreaPath" as keyof IAzureWorkItemFields, e)
                 }
                 error={false}
-                keyName="displayName"
-                valueName="displayName"
+                keyName="value"
+                valueName="value"
               />
-            )}
-            <Dropdown
-              title="Area"
-              data={teamFieldValues.data?.values}
-              value={areaPath}
-              onChange={(e) =>
-                setValue("System.AreaPath" as keyof IAzureWorkItemFields, e)
-              }
-              error={false}
-              keyName="value"
-              valueName="value"
-            />
-            <Dropdown
-              title="State"
-              data={states}
-              value={state}
-              onChange={(e) =>
-                setValue("System.State" as keyof IAzureWorkItemFields, e)
-              }
-              error={false}
-              keyName="name"
-              valueName="name"
-            />
-            <Dropdown
-              title="Iteration"
-              data={iterationList.data?.value}
-              value={iteration}
-              onChange={(e) =>
-                setValue(
-                  "System.IterationPath" as keyof IAzureWorkItemFields,
-                  e
-                )
-              }
-              error={false}
-              keyName="name"
-              valueName="name"
-            />
-            {workItemFields?.map((field, i) => {
-              const fieldData = workItemTypeFields.data?.value?.find(
-                (e) => e.referenceName === field.field
-              );
-
-              if (!fieldData) return <div></div>;
-
-              if (fieldData?.allowedValues.length === 0) {
-                const fieldType = workItemFieldsData.data?.value.find(
-                  (fieldData) => fieldData.referenceName === field.field
-                )?.type;
-                switch (fieldType) {
-                  case "dateTime": {
-                    return (
-                      <DateInput
-                        key={i}
-                        label={field.name}
-                        error={Boolean(
-                          errors?.[field.field as keyof IAzureWorkItemFields]
-                        )}
-                        value={watch(field.field as keyof IAzureWorkItemFields)}
-                        {...register(field.field as keyof IAzureWorkItemFields)}
-                        onChange={(e: [Date]) =>
-                          setValue(
-                            field.field as keyof IAzureWorkItemFields,
-                            e[0].toISOString()
-                          )
-                        }
-                      />
-                    );
-                  }
-                  case "html":
-                    return;
-                  case "plainText":
-                  case "integer":
-                  case "double": {
-                    return (
-                      <RequiredInput
-                        key={i}
-                        title={field.name}
-                        error={Boolean(
-                          errors?.[field.field as keyof IAzureWorkItemFields]
-                        )}
-                        register={register(
-                          field.field as keyof IAzureWorkItemFields
-                        )}
-                        type={
-                          ["integer", "double"].includes(fieldType)
-                            ? "number"
-                            : "title"
-                        }
-                      />
-                    );
-                  }
+              <Dropdown
+                title="State"
+                data={states}
+                value={state}
+                onChange={(e) =>
+                  setValue("System.State" as keyof IAzureWorkItemFields, e)
                 }
-                return (
-                  <RequiredInput
-                    key={i}
-                    title={field.name}
-                    error={Boolean(
-                      errors?.[field.field as keyof IAzureWorkItemFields]
-                    )}
-                    register={register(
-                      field.field as keyof IAzureWorkItemFields
-                    )}
-                  ></RequiredInput>
+                error={false}
+                keyName="name"
+                valueName="name"
+              />
+              <Dropdown
+                title="Iteration"
+                data={iterationList.data?.value}
+                value={iteration}
+                onChange={(e) =>
+                  setValue(
+                    "System.IterationPath" as keyof IAzureWorkItemFields,
+                    e
+                  )
+                }
+                error={false}
+                keyName="name"
+                valueName="name"
+              />
+              {workItemFields?.map((field, i) => {
+                const fieldData = workItemTypeFields.data?.value?.find(
+                  (e) => e.referenceName === field.field
                 );
-              } else {
-                return (
-                  <Dropdown
-                    key={i}
-                    title={field.name}
-                    data={fieldData.allowedValues.map((e) => ({ name: e }))}
-                    value={
-                      watch(field.field as keyof IAzureWorkItemFields) as string
+
+                if (!fieldData) return <div></div>;
+
+                if (fieldData?.allowedValues.length === 0) {
+                  const fieldType = workItemFieldsData.data?.value.find(
+                    (fieldData) => fieldData.referenceName === field.field
+                  )?.type;
+                  switch (fieldType) {
+                    case "dateTime": {
+                      return (
+                        <DateInput
+                          key={i}
+                          label={field.name}
+                          error={Boolean(
+                            errors?.[field.field as keyof IAzureWorkItemFields]
+                          )}
+                          value={watch(field.field as keyof IAzureWorkItemFields)}
+                          {...register(field.field as keyof IAzureWorkItemFields)}
+                          onChange={(e: [Date]) =>
+                            setValue(
+                              field.field as keyof IAzureWorkItemFields,
+                              e[0].toISOString()
+                            )
+                          }
+                        />
+                      );
                     }
-                    onChange={(e) =>
-                      setValue(field.field as keyof IAzureWorkItemFields, e)
+                    case "html":
+                      return;
+                    case "plainText":
+                    case "integer":
+                    case "double": {
+                      return (
+                        <RequiredInput
+                          key={i}
+                          title={field.name}
+                          error={Boolean(
+                            errors?.[field.field as keyof IAzureWorkItemFields]
+                          )}
+                          register={register(
+                            field.field as keyof IAzureWorkItemFields
+                          )}
+                          type={
+                            ["integer", "double"].includes(fieldType)
+                              ? "number"
+                              : "title"
+                          }
+                        />
+                      );
                     }
-                    error={false}
-                    keyName="name"
-                    valueName="name"
-                  />
-                );
-              }
-            })}
-            {/* not working fix tags*/}
-            <Stack vertical style={{ width: "100%" }}>
-              <Stack vertical style={{ color: theme.colors.grey80 }} gap={5}>
-                <H1>Tags</H1>
-                <Stack gap={5} style={{ flexWrap: "wrap" }}>
-                  {tags.map((tag, i) => (
-                    <Tag
-                      closeIcon={faTimes as AnyIcon}
-                      color={usedColorsTags[i]}
-                      onCloseClick={() =>
-                        setTags((prev) => prev.filter((e) => e !== tag))
-                      }
-                      label={tag}
+                  }
+                  return (
+                    <RequiredInput
                       key={i}
-                      withClose
-                    ></Tag>
-                  ))}
+                      title={field.name}
+                      error={Boolean(
+                        errors?.[field.field as keyof IAzureWorkItemFields]
+                      )}
+                      register={register(
+                        field.field as keyof IAzureWorkItemFields
+                      )}
+                    ></RequiredInput>
+                  );
+                } else {
+                  return (
+                    <Dropdown
+                      key={i}
+                      title={field.name}
+                      data={fieldData.allowedValues.map((e) => ({name: e}))}
+                      value={
+                        watch(field.field as keyof IAzureWorkItemFields) as string
+                      }
+                      onChange={(e) =>
+                        setValue(field.field as keyof IAzureWorkItemFields, e)
+                      }
+                      error={false}
+                      keyName="name"
+                      valueName="name"
+                    />
+                  );
+                }
+              })}
+              {/* not working fix tags*/}
+              <Stack vertical style={{width: "100%"}}>
+                <Stack vertical style={{color: theme.colors.grey80}} gap={5}>
+                  <H1>Tags</H1>
+                  <Stack gap={5} style={{flexWrap: "wrap"}}>
+                    {tags.map((tag, i) => (
+                      <Tag
+                        closeIcon={faTimes as AnyIcon}
+                        color={usedColorsTags[i]}
+                        onCloseClick={() =>
+                          setTags((prev) => prev.filter((e) => e !== tag))
+                        }
+                        label={tag}
+                        key={i}
+                        withClose
+                      ></Tag>
+                    ))}
+                  </Stack>
+                </Stack>
+                <Stack gap={5} style={{width: "100%", alignItems: "center"}}>
+                  <Button
+                    text="Add"
+                    icon={faPlus as AnyIcon}
+                    minimal
+                    onClick={() => {
+                      if (!tagText) return;
+
+                      setTags([...tags, tagText]);
+                      setTagText("");
+                    }}
+                    style={{
+                      width: "30%",
+                      borderBottom: `1px solid ${theme.colors.grey20}`,
+                    }}
+                  />
+                  <Input
+                    value={tagText}
+                    onChange={(e) => setTagText(e.target.value)}
+                    variant="inline"
+                    placeholder="Enter value"
+                    style={{
+                      marginBottom: "5px",
+                    }}
+                  />
                 </Stack>
               </Stack>
-              <Stack gap={5} style={{ width: "100%", alignItems: "center" }}>
+              <Stack
+                style={{justifyContent: "space-between", width: "100%"}}
+                gap={5}
+              >
                 <Button
-                  text="Add"
-                  icon={faPlus as AnyIcon}
-                  minimal
-                  onClick={() => {
-                    if (!tagText) return;
-
-                    setTags([...tags, tagText]);
-                    setTagText("");
-                  }}
-                  style={{
-                    width: "30%",
-                    borderBottom: `1px solid ${theme.colors.grey20}`,
-                  }}
-                />
-                <Input
-                  value={tagText}
-                  onChange={(e) => setTagText(e.target.value)}
-                  variant="inline"
-                  placeholder="Enter value"
-                  style={{
-                    marginBottom: "5px",
-                  }}
-                />
+                  type="submit"
+                  text={isSubmitting ? "Saving..." : "Save"}
+                ></Button>
+                <Button
+                  text="Cancel"
+                  onClick={() => navigate(-1)}
+                  intent="secondary"
+                ></Button>
               </Stack>
             </Stack>
-            <Stack
-              style={{ justifyContent: "space-between", width: "100%" }}
-              gap={5}
-            >
-              <Button
-                type="submit"
-                text={isSubmitting ? "Saving..." : "Save"}
-              ></Button>
-              <Button
-                text="Cancel"
-                onClick={() => navigate(-1)}
-                intent="secondary"
-              ></Button>
-            </Stack>
-          </Stack>
-        )}
-      </Stack>
-    </form>
+          )}
+        </Stack>
+      </form>
+    </Container>
   );
 };

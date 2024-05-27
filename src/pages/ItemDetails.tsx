@@ -20,23 +20,24 @@ import {
   getWorkItemById,
   getWorkItemTypes,
 } from "../api/api";
-import { ItemPersistentData } from "../Components/Items/ItemPersistentData";
+import { ItemPersistentData } from "../components/Items/ItemPersistentData";
 import { useDeskpro } from "../hooks/deskproContext";
 import { GreyTitle } from "../styles";
+import { Container } from "../components/common";
 import { useQueryWithClient } from "../utils/query";
 import { timeSince } from "../utils/utils";
 import { workItemFieldsItemDetails } from "../utils/workItemFieldsItemDetails";
 import { IAzureProject } from "../types/azure/project";
 import { IAzureWorkItem, IAzureWorkItemFields } from "../types/azure/workItem";
 
-import { HorizontalDivider } from "../Components/HorizontalDivider";
-import { MultipleFields } from "../Components/MultipleFields";
+import { HorizontalDivider } from "../components/HorizontalDivider";
+import { MultipleFields } from "../components/MultipleFields";
 import { workItemFields } from "../utils/workItemFields";
 import { BiggerH1 } from "../styles";
 
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
-import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
+import { LogoAndLinkButton } from "../components/LogoAndLinkButton";
 import { Settings } from "../types";
 
 const POSSIBLE_BOTTOM_FIELDS = [
@@ -231,172 +232,174 @@ export const ItemDetails = () => {
       <LoadingSpinner />
     </Stack>
   ) : (
-    <Stack vertical style={{ width: "100%" }} gap={8}>
-      <Stack
-        justify={"space-between"}
-        style={{ width: "100%", alignItems: "center" }}
-      >
-        <H1>{itemData?.fields["System.Title"]}</H1>
-        <div style={{ marginRight: "8px" }}>
-          <LogoAndLinkButton
-            settings={deskproData?.settings as Settings}
-            itemId={Number(itemId as string)}
-            projectId={projectId as string}
-          />
-        </div>
-      </Stack>
-
-      {itemData?.fields["System.Description"] && (
-        <Stack vertical gap={2}>
-          <GreyTitle theme={theme}>Description</GreyTitle>
-          <H2>{parse(itemData?.fields["System.Description"] ?? "")}</H2>
+    <Container>
+      <Stack vertical style={{ width: "100%" }} gap={8}>
+        <Stack
+          justify={"space-between"}
+          style={{ width: "100%", alignItems: "center" }}
+        >
+          <H1>{itemData?.fields["System.Title"]}</H1>
+          <div style={{ marginRight: "8px" }}>
+            <LogoAndLinkButton
+              settings={deskproData?.settings as Settings}
+              itemId={Number(itemId as string)}
+              projectId={projectId as string}
+            />
+          </div>
         </Stack>
-      )}
-      {workItemFieldDetails?.Top &&
-        workItemFieldDetails.Top.map((fieldName, i) => {
-          const htmlFromAzure = item.data.fields[
-            workItemFieldNames?.find((e) => e.name === fieldName)
-              ?.field as keyof IAzureWorkItemFields
-          ] as string;
-          if (fieldName === "Steps") {
-            const x2jsClass = new x2js();
-            const document = x2jsClass.xml2js(htmlFromAzure);
 
-            return (
-              <Stack vertical style={{ width: "100%" }} key={i}>
-                <HorizontalDivider />
-                <Stack vertical gap={5}>
-                  <BiggerH1>Steps</BiggerH1>
-                  <Stack vertical gap={5}>
-                    {(
-                      document as {
-                        steps: {
-                          step: {
-                            parameterizedString: { __text: string }[];
-                          }[];
-                        };
-                      }
-                    ).steps.step.map((e, k: number) => (
-                      <Stack vertical key={k}>
-                        <GreyTitle>Step {++k}</GreyTitle>
-                        <Stack
-                          style={{
-                            fontSize: "12px",
-                            color: theme.colors.grey_black100,
-                          }}
-                        >
-                          {parse(
-                            e.parameterizedString[0].__text
-                              .toLowerCase()
-                              .replaceAll("<p>", "")
-                              .replaceAll("</p>", "") ?? ""
-                          )}
-                        </Stack>
-                      </Stack>
-                    ))}
-                  </Stack>
-                </Stack>
-              </Stack>
-            );
-          } else {
-            return (
-              <Stack vertical key={i}>
-                <GreyTitle>{fieldName}</GreyTitle>
-                <Stack
-                  vertical
-                  style={{
-                    fontSize: "12px",
-                    color: theme.colors.grey_black100,
-                  }}
-                >
-                  {parse(htmlFromAzure ?? "")}
-                </Stack>
-              </Stack>
-            );
-          }
-        })}
-      <Stack vertical style={{ width: "100%" }}>
-        <ItemPersistentData item={itemData}></ItemPersistentData>
-      </Stack>
-      {POSSIBLE_BOTTOM_FIELDS.map((fieldName, i) => {
-        return (
-          workItemFieldDetails?.[fieldName] && (
-            <Stack vertical style={{ width: "100%" }} key={i}>
-              <HorizontalDivider />
-              <MultipleFields
-                fieldName={fieldName}
-                item={item?.data}
-                processName={processName}
-                data={workItemFieldDetails?.[fieldName]}
-                workItemTypeName={workItemTypeName}
-              />
-            </Stack>
-          )
-        );
-      })}
-      {<HorizontalDivider />}
-      {commentsReq.data?.comments && (
-        <Stack vertical gap={5} style={{ width: "100%" }}>
-          <Stack
-            gap={5}
-            style={{
-              verticalAlign: "baseline",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <H1>Comments ({commentsReq.data.comments.length})</H1>
-            <FontAwesomeIcon
-              icon={faPlus as IconProp}
-              size="sm"
-              style={{
-                alignSelf: "center",
-                cursor: "pointer",
-                marginBottom: "2px",
-              }}
-              onClick={() =>
-                navigate(`/addcomment?itemId=${itemId}&projectId=${projectId}`)
-              }
-            ></FontAwesomeIcon>
+        {itemData?.fields["System.Description"] && (
+          <Stack vertical gap={2}>
+            <GreyTitle theme={theme}>Description</GreyTitle>
+            <H2>{parse(itemData?.fields["System.Description"] ?? "")}</H2>
           </Stack>
-          <Stack vertical style={{ width: "100%" }}>
-            {commentsReq.data.comments.map((comment, i) => {
+        )}
+        {workItemFieldDetails?.Top &&
+          workItemFieldDetails.Top.map((fieldName, i) => {
+            const htmlFromAzure = item.data.fields[
+              workItemFieldNames?.find((e) => e.name === fieldName)
+                ?.field as keyof IAzureWorkItemFields
+              ] as string;
+            if (fieldName === "Steps") {
+              const x2jsClass = new x2js();
+              const document = x2jsClass.xml2js(htmlFromAzure);
+
               return (
-                <Stack
-                  key={i}
-                  vertical
-                  gap={5}
-                  style={{ width: "100%", marginTop: "10px" }}
-                >
-                  <Stack
-                    style={{ alignItems: "flex-start", marginTop: "10px" }}
-                  >
-                    <Stack
-                      vertical
-                      gap={3}
-                      style={{
-                        marginLeft: "5px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        size={22}
-                        imageUrl={comment.createdBy.imageUrl}
-                      ></Avatar>
-                      <H2>
-                        {timeSince(new Date(comment.createdDate)).slice(0, 5)}
-                      </H2>
+                <Stack vertical style={{ width: "100%" }} key={i}>
+                  <HorizontalDivider />
+                  <Stack vertical gap={5}>
+                    <BiggerH1>Steps</BiggerH1>
+                    <Stack vertical gap={5}>
+                      {(
+                        document as {
+                          steps: {
+                            step: {
+                              parameterizedString: { __text: string }[];
+                            }[];
+                          };
+                        }
+                      ).steps.step.map((e, k: number) => (
+                        <Stack vertical key={k}>
+                          <GreyTitle>Step {++k}</GreyTitle>
+                          <Stack
+                            style={{
+                              fontSize: "12px",
+                              color: theme.colors.grey_black100,
+                            }}
+                          >
+                            {parse(
+                              e.parameterizedString[0].__text
+                                .toLowerCase()
+                                .replaceAll("<p>", "")
+                                .replaceAll("</p>", "") ?? ""
+                            )}
+                          </Stack>
+                        </Stack>
+                      ))}
                     </Stack>
-                    <div style={{ maxWidth: "20ch", marginLeft: "10px" }}>
-                      <H2>{parse(comment.text ?? "")}</H2>
-                    </div>
                   </Stack>
                 </Stack>
               );
-            })}
-          </Stack>
+            } else {
+              return (
+                <Stack vertical key={i}>
+                  <GreyTitle>{fieldName}</GreyTitle>
+                  <Stack
+                    vertical
+                    style={{
+                      fontSize: "12px",
+                      color: theme.colors.grey_black100,
+                    }}
+                  >
+                    {parse(htmlFromAzure ?? "")}
+                  </Stack>
+                </Stack>
+              );
+            }
+          })}
+        <Stack vertical style={{ width: "100%" }}>
+          <ItemPersistentData item={itemData}></ItemPersistentData>
         </Stack>
-      )}
-    </Stack>
+        {POSSIBLE_BOTTOM_FIELDS.map((fieldName, i) => {
+          return (
+            workItemFieldDetails?.[fieldName] && (
+              <Stack vertical style={{ width: "100%" }} key={i}>
+                <HorizontalDivider />
+                <MultipleFields
+                  fieldName={fieldName}
+                  item={item?.data}
+                  processName={processName}
+                  data={workItemFieldDetails?.[fieldName]}
+                  workItemTypeName={workItemTypeName}
+                />
+              </Stack>
+            )
+          );
+        })}
+        {<HorizontalDivider />}
+        {commentsReq.data?.comments && (
+          <Stack vertical gap={5} style={{ width: "100%" }}>
+            <Stack
+              gap={5}
+              style={{
+                verticalAlign: "baseline",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <H1>Comments ({commentsReq.data.comments.length})</H1>
+              <FontAwesomeIcon
+                icon={faPlus as IconProp}
+                size="sm"
+                style={{
+                  alignSelf: "center",
+                  cursor: "pointer",
+                  marginBottom: "2px",
+                }}
+                onClick={() =>
+                  navigate(`/addcomment?itemId=${itemId}&projectId=${projectId}`)
+                }
+              ></FontAwesomeIcon>
+            </Stack>
+            <Stack vertical style={{ width: "100%" }}>
+              {commentsReq.data.comments.map((comment, i) => {
+                return (
+                  <Stack
+                    key={i}
+                    vertical
+                    gap={5}
+                    style={{ width: "100%", marginTop: "10px" }}
+                  >
+                    <Stack
+                      style={{ alignItems: "flex-start", marginTop: "10px" }}
+                    >
+                      <Stack
+                        vertical
+                        gap={3}
+                        style={{
+                          marginLeft: "5px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          size={22}
+                          imageUrl={comment.createdBy.imageUrl}
+                        ></Avatar>
+                        <H2>
+                          {timeSince(new Date(comment.createdDate)).slice(0, 5)}
+                        </H2>
+                      </Stack>
+                      <div style={{ maxWidth: "20ch", marginLeft: "10px" }}>
+                        <H2>{parse(comment.text ?? "")}</H2>
+                      </div>
+                    </Stack>
+                  </Stack>
+                );
+              })}
+            </Stack>
+          </Stack>
+        )}
+      </Stack>
+    </Container>
   );
 };

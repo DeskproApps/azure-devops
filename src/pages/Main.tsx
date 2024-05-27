@@ -5,32 +5,34 @@ import {
   useDeskproAppClient,
   useDeskproAppEvents,
   useDeskproAppTheme,
+  useDeskproLatestAppContext,
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Container } from "../components/common";
 import { getWorkItemListByIds } from "../api/api";
 import { useDeskpro } from "../hooks/deskproContext";
 import { IAzureWorkItem } from "../types/azure/workItem";
-import { ItemPersistentData } from "../Components/Items/ItemPersistentData";
-import { HorizontalDivider } from "../Components/HorizontalDivider";
+import { ItemPersistentData } from "../components/Items/ItemPersistentData";
+import { HorizontalDivider } from "../components/HorizontalDivider";
 import { GreyTitle } from "../styles";
 import { useQueryWithClient } from "../utils/query";
 import { IAzureArrayResponse } from "../types/azure/azure";
-import { LogoAndLinkButton } from "../Components/LogoAndLinkButton";
+import { LogoAndLinkButton } from "../components/LogoAndLinkButton";
 import { Settings } from "../types";
 
 export const Main = () => {
   const navigate = useNavigate();
   const { client } = useDeskproAppClient();
   const { theme } = useDeskproAppTheme();
+  const { context } = useDeskproLatestAppContext();
   const [itemIds, setItemIds] = useState<number[]>([]);
   const [linkedCountArr, setLinkedCountArr] = useState<number[]>([]);
   const deskproData = useDeskpro();
 
   useInitialisedDeskproAppClient((client) => {
-    if (!deskproData) return;
+    if (!context?.data?.ticket) return;
 
     client.setTitle("Work Items");
 
@@ -43,7 +45,7 @@ export const Main = () => {
 
     (async () => {
       const items = (
-        await client.getEntityAssociation("linkedAzureItems", deskproData.ticket.id).list()
+        await client.getEntityAssociation("linkedAzureItems", context?.data?.ticket?.id).list()
       )?.map((e) => Number(e));
 
       if (!items || items.length === 0) {
@@ -52,7 +54,7 @@ export const Main = () => {
 
       setItemIds(items);
     })();
-  }, [deskproData]);
+  }, [context?.data]);
 
   useDeskproAppEvents({
     onElementEvent(id) {
@@ -117,44 +119,46 @@ export const Main = () => {
     );
   }
   return (
-    <Stack vertical style={{ width: "100%" }}>
-      <Stack gap={5} style={{ width: "100%", marginTop: "5px" }} vertical>
-        {tickets.data?.value.map((item, i) => (
-          <Stack vertical style={{ width: "100%" }} gap={12} key={i}>
-            <Stack
-              style={{
-                alignItems: "center",
-                width: "100%",
-                justifyContent: "space-between",
-              }}
-            >
-              <h1
+    <Container>
+      <Stack vertical style={{ width: "100%" }}>
+        <Stack gap={5} style={{ width: "100%", marginTop: "5px" }} vertical>
+          {tickets.data?.value.map((item, i) => (
+            <Stack vertical style={{ width: "100%" }} gap={12} key={i}>
+              <Stack
                 style={{
-                  color: "#3A8DDE",
-                  fontSize: "12px",
-                  cursor: "pointer",
+                  alignItems: "center",
+                  width: "100%",
+                  justifyContent: "space-between",
                 }}
-                onClick={() =>
-                  navigate(`/itemdetails?itemId=${item.id}&projectId=${item.fields["System.TeamProject"]}`)
-                }
               >
-                <b>{item.fields["System.Title"]}</b>
-              </h1>
-              <LogoAndLinkButton
-                settings={deskproData?.settings as Settings}
-                itemId={item.id}
-                projectId={item.fields["System.TeamProject"]}
-              />
+                <h1
+                  style={{
+                    color: "#3A8DDE",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    navigate(`/itemdetails?itemId=${item.id}&projectId=${item.fields["System.TeamProject"]}`)
+                  }
+                >
+                  <b>{item.fields["System.Title"]}</b>
+                </h1>
+                <LogoAndLinkButton
+                  settings={deskproData?.settings as Settings}
+                  itemId={item.id}
+                  projectId={item.fields["System.TeamProject"]}
+                />
+              </Stack>
+              <ItemPersistentData item={item} />
+              <Stack vertical>
+                <GreyTitle theme={theme}>Deskpro Tickets</GreyTitle>
+                <H2>{linkedCountArr[i]}</H2>
+              </Stack>
+              <HorizontalDivider />
             </Stack>
-            <ItemPersistentData item={item} />
-            <Stack vertical>
-              <GreyTitle theme={theme}>Deskpro Tickets</GreyTitle>
-              <H2>{linkedCountArr[i]}</H2>
-            </Stack>
-            <HorizontalDivider />
-          </Stack>
-        ))}
+          ))}
+        </Stack>
       </Stack>
-    </Stack>
+    </Container>
   );
 };

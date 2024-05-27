@@ -1,35 +1,34 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-//Added this because the DeskproContextProvider was erroring, had to update react version because generics crashed
-import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
-import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
-
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./Components/ErrorFallback";
-import { FindOrCreateItems } from "./pages/FindOrCreateItems";
-import { ItemDetails } from "./pages/ItemDetails";
-import { Main } from "./pages/Main";
-import { Redirect } from "./pages/Redirect";
-import { EditItem } from "./pages/EditItem";
-import { AddComment } from "./pages/AddComment";
+import { useMemo } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { QueryErrorResetBoundary } from "react-query";
-import { Stack } from "@deskpro/deskpro-ui";
-import { PageType } from "./pages/Admin/PageType";
-import { GlobalAuth } from "./pages/Admin/GlobalAuth";
-import { Organization } from "./pages/Admin/Organization";
-import { AccountNamePatToken } from "./pages/Admin/AccountNamePatToken";
-import { InstanceURL } from "./pages/Admin/InstanceURL";
-import { AppId } from "./pages/Admin/AppId";
-import { ClientSecret } from "./pages/Admin/ClientSecret";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorFallback } from "./components/ErrorFallback";
+import {
+  Main,
+  AppId,
+  Redirect,
+  PageType,
+  EditItem,
+  AddComment,
+  GlobalAuth,
+  InstanceURL,
+  ItemDetails,
+  ClientSecret,
+  Organization,
+  FindOrCreateItems,
+  AccountNamePatToken,
+} from "./pages";
+import { AppContainer } from "./components/common";
 
-function App() {
+const App = () => {
+  const { pathname } = useLocation();
+  const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
+
   return (
-    <HashRouter>
+    <AppContainer isAdmin={isAdmin}>
       <QueryErrorResetBoundary>
         {({ reset }) => (
-          <Stack>
-            {/* @ts-ignore */}
-            <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
+          <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
               <Routes>
                 <Route index path="/" element={<Main />} />
                 <Route path="/itemdetails" element={<ItemDetails />} />
@@ -47,12 +46,11 @@ function App() {
                 <Route path="edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />
               </Routes>
-            </ErrorBoundary>
-          </Stack>
+          </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>
-    </HashRouter>
+    </AppContainer>
   );
 }
 
-export default App;
+export { App };

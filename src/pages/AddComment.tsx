@@ -7,10 +7,10 @@ import {
 } from "@deskpro/app-sdk";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { Container } from "../components/common";
 import { postComment } from "../api/api";
 import { useDeskpro } from "../hooks/deskproContext";
-import { RequiredInput } from "../Components/RequiredInput";
+import { RequiredInput } from "../components/RequiredInput";
 
 export const AddComment = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -63,24 +63,26 @@ export const AddComment = () => {
   };
 
   return (
-    <Stack vertical gap={12} style={{ width: "100%" }}>
-      <RequiredInput
-        title="Add Comment"
-        register={register("comment", { required: true })}
-        error={!!errors.comment}
-      ></RequiredInput>
-      <Stack style={{ justifyContent: "space-between", width: "100%" }} gap={5}>
-        <Button
-          type="submit"
-          text={isSubmitting ? "Creating..." : "Create"}
-          onClick={submit}
-        ></Button>
-        <Button
-          text="Cancel"
-          onClick={() => navigate(-1)}
-          intent="secondary"
-        ></Button>
+    <Container>
+      <Stack vertical gap={12} style={{ width: "100%" }}>
+        <RequiredInput
+          title="Add Comment"
+          register={register("comment", { required: true })}
+          error={!!errors.comment}
+        ></RequiredInput>
+        <Stack style={{ justifyContent: "space-between", width: "100%" }} gap={5}>
+          <Button
+            type="submit"
+            text={isSubmitting ? "Creating..." : "Create"}
+            onClick={submit}
+          ></Button>
+          <Button
+            text="Cancel"
+            onClick={() => navigate(-1)}
+            intent="secondary"
+          ></Button>
+        </Stack>
       </Stack>
-    </Stack>
+    </Container>
   );
 };

@@ -1,14 +1,12 @@
-import { createContext, useContext, useState } from "react";
-
+import { createContext, useContext, useState, FC, PropsWithChildren } from "react";
 import { useDeskproAppEvents, Context } from "@deskpro/app-sdk";
-
 import IDeskproContext from "../types/deskproContext";
 
 const DeskproContext = createContext<IDeskproContext | null>(null);
 
 export const useDeskpro = () => useContext(DeskproContext);
 
-export const DeskproContextProvider: React.FC = ({ children }) => {
+export const DeskproContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [deskproData, setDeskproData] = useState<IDeskproContext | null>(null);
 
   useDeskproAppEvents({

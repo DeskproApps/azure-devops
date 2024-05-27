@@ -1,24 +1,29 @@
-import { DeskproAppProvider } from "@deskpro/app-sdk";
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import { QueryClientProvider } from "react-query";
+import { HashRouter } from "react-router-dom";
+import { DeskproAppProvider } from "@deskpro/app-sdk";
+import { queryClient } from "./utils/query";
+import { DeskproContextProvider } from "./hooks/deskproContext";
+import { App } from "./App";
+
+import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import "virtual:windi.css";
 import "./main.css";
-import "iframe-resizer/js/iframeResizer.contentWindow.js";
+import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
+import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
 
-import App from "./App";
-import { DeskproContextProvider } from "./hooks/deskproContext";
-import { queryClient } from "./utils/query";
-
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+root.render(
   <React.StrictMode>
-    <DeskproContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <DeskproAppProvider>
-          <App />
-        </DeskproAppProvider>
-      </QueryClientProvider>
-    </DeskproContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <DeskproAppProvider>
+        <DeskproContextProvider>
+          <HashRouter>
+            <App />
+          </HashRouter>
+        </DeskproContextProvider>
+      </DeskproAppProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
-  document.getElementById("root")
 );
