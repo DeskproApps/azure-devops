@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { QueryErrorResetBoundary } from "react-query";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { useDeskproElements } from "@deskpro/app-sdk";
 import { ErrorFallback } from "./components/ErrorFallback";
 import {
-  Main,
   AppId,
   Redirect,
   PageType,
@@ -17,6 +16,7 @@ import {
   ClientSecret,
   Organization,
   LoadingAppPage,
+  HomePage,
   FindOrCreateItems,
   AccountNamePatToken,
 } from "./pages";
@@ -50,7 +50,8 @@ const App = () => {
                 <Route path="/itemmenu" element={<FindOrCreateItems />} />
                 <Route path="/edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />
-                <Route path="/home" element={<Main />} />
+
+                <Route path="/home" element={<HomePage />} />
                 <Route index path="/" element={<LoadingAppPage />} />
               </Routes>
           </ErrorBoundary>

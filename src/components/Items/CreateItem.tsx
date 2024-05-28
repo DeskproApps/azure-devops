@@ -96,22 +96,19 @@ export const CreateItem = () => {
   });
 
   const projectList = useQueryWithClient(
-    ["projectList", deskproData],
+    ["projectList"],
     (client) => getProjectList(client, deskproData?.settings || {}),
     { enabled: !!deskproData }
   );
 
   const specificProject = useQueryWithClient(
-    ["specificProject", deskproData, project],
-    (client) =>
-      getProjectPropertiesById(client, deskproData?.settings || {}, project),
-    {
-      enabled: !!deskproData && !!project,
-    }
+    ["specificProject", project],
+    (client) => getProjectPropertiesById(client, deskproData?.settings || {}, project),
+    { enabled: !!deskproData && !!project }
   );
 
   const specificProcess = useQueryWithClient(
-    ["specificProcess", deskproData, specificProject],
+    ["specificProcess", `${specificProject?.data?.value.find((e) => e.name === "System.ProcessTemplateType")?.value}`],
     (client) => getProcessById(
       client,
       deskproData?.settings || {},
@@ -121,7 +118,7 @@ export const CreateItem = () => {
   );
 
   const workItemTypeList = useQueryWithClient(
-    ["workItemTypeList", deskproData, specificProcess],
+    ["workItemTypeList", `${specificProcess.data?.typeId}`],
     (client) => getWorkItemTypes(client, deskproData?.settings || {}, specificProcess.data?.typeId as string),
     { enabled: !!deskproData && !!specificProcess.isSuccess }
   );
@@ -136,31 +133,31 @@ export const CreateItem = () => {
     ];
 
   const userList = useQueryWithClient(
-    ["userList", deskproData],
+    ["userList"],
     (client) => getUsersList(client, deskproData?.settings || {}),
     { enabled: !!deskproData && deskproData.settings.type === "cloud" }
   );
 
   const iterationList = useQueryWithClient(
-    ["iterationList", deskproData, project],
+    ["iterationList", project],
     (client) => getIterationList(client, deskproData?.settings || {}, project),
     { enabled: !!deskproData && !!project }
   );
 
   const workItemFieldsData = useQueryWithClient(
-    ["workItemFieldsData", deskproData, project],
+    ["workItemFieldsData", project],
     (client) => getWorkItemFieldsData(client, deskproData?.settings || {}, project),
     { enabled: !!deskproData && !!project }
   );
 
   const teamFieldValues = useQueryWithClient(
-    ["teamFieldValues", deskproData, project],
+    ["teamFieldValues", project],
     (client) => getTeamFieldValues(client, deskproData?.settings || {}, project),
     { enabled: !!deskproData && !!project }
   );
 
   const workItemTypeFields = useQueryWithClient(
-    ["workItemTypeFields", deskproData, project, workItem],
+    ["workItemTypeFields", project, workItem],
     (client) => getWorkItemTypeFields(client, deskproData?.settings || {}, project, workItem),
     { enabled: !!deskproData && !!project && !!workItem }
   );
@@ -249,7 +246,7 @@ export const CreateItem = () => {
     teamFieldValues,
     workItemTypeFields,
     workItemFieldsData,
-  ].some((query) => query.isIdle);
+  ].some(({ isFetching }) => isFetching);
 
   return (
     <Container>
@@ -271,7 +268,7 @@ export const CreateItem = () => {
             <Stack justify="center" style={{width: "100%"}}>
               <LoadingSpinner/>
             </Stack>
-          ) : workItemTypeList.isIdle ? (
+          ) : workItemTypeList.isFetching ? (
             <div></div>
           ) : (
             <Stack vertical style={{width: "100%"}} gap={12}>

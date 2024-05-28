@@ -1,17 +1,16 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import parse from "html-react-parser";
+import x2js from "x2js";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { H1, H2, Stack, Avatar } from "@deskpro/deskpro-ui";
 import {
   LoadingSpinner,
   useDeskproAppClient,
   useDeskproAppEvents,
   useDeskproAppTheme,
-  useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
-import parse from "html-react-parser";
-import { H1, H2, Stack, Avatar } from "@deskpro/deskpro-ui";
-import { useLocation, useNavigate } from "react-router-dom";
-import x2js from "x2js";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
   getCommentsByItemId,
   getProcessById,
@@ -21,7 +20,7 @@ import {
   getWorkItemTypes,
 } from "../api/api";
 import { ItemPersistentData } from "../components/Items/ItemPersistentData";
-import { useDeskpro } from "../hooks/deskproContext";
+import { useDeskpro, useRegisterElements, useSetTitle } from "../hooks";
 import { GreyTitle } from "../styles";
 import { Container } from "../components/common";
 import { useQueryWithClient } from "../utils/query";
@@ -29,14 +28,10 @@ import { timeSince } from "../utils/utils";
 import { workItemFieldsItemDetails } from "../utils/workItemFieldsItemDetails";
 import { IAzureProject } from "../types/azure/project";
 import { IAzureWorkItem, IAzureWorkItemFields } from "../types/azure/workItem";
-
 import { HorizontalDivider } from "../components/HorizontalDivider";
 import { MultipleFields } from "../components/MultipleFields";
 import { workItemFields } from "../utils/workItemFields";
 import { BiggerH1 } from "../styles";
-
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-
 import { LogoAndLinkButton } from "../components/LogoAndLinkButton";
 import { Settings } from "../types";
 
@@ -64,31 +59,18 @@ export const ItemDetails = () => {
     new URLSearchParams(search).get("projectId"),
   ];
 
-  useInitialisedDeskproAppClient((client) => {
-    client.setTitle("Work Item Details");
+  useSetTitle("Work Item Details");
 
-    client.registerElement("azureHomeButton", {
+  useRegisterElements(({ registerElement }) => {
+    registerElement("azureHomeButton", {
       type: "home_button",
-      payload: {
-        type: "changePage",
-        page: "/",
-      },
+      payload: { type: "changePage", page: "/" },
     });
-
-    client.deregisterElement("azurePlusButton");
-
-    client.registerElement("azureMenuButton", {
+    registerElement("azureMenuButton", {
       type: "menu",
-      items: [
-        {
-          title: "Unlink Item",
-        },
-      ],
+      items: [{ title: "Unlink Item" }],
     });
-
-    client.registerElement("azureEditButton", {
-      type: "edit_button",
-    });
+    registerElement("azureEditButton", { type: "edit_button" });
   });
 
   useDeskproAppEvents({
@@ -122,7 +104,7 @@ export const ItemDetails = () => {
   });
 
   const item = useQueryWithClient(
-    ["item", deskproData],
+    ["item", `${itemId}`],
     (client) =>
       getWorkItemById(
         client,
@@ -136,7 +118,7 @@ export const ItemDetails = () => {
   );
 
   const project = useQueryWithClient(
-    ["specificProject", deskproData, projectId],
+    ["specificProject", `${projectId}`],
     (client) =>
       getProjectByName(
         client,
@@ -149,7 +131,7 @@ export const ItemDetails = () => {
   );
 
   const projectProperties = useQueryWithClient(
-    ["projectProperties", deskproData, projectId],
+    ["projectProperties", `${projectId}`],
     (client) =>
       getProjectPropertiesById(
         client,
@@ -162,7 +144,7 @@ export const ItemDetails = () => {
   );
 
   const specificProcess = useQueryWithClient(
-    ["specificProcess", deskproData, projectProperties],
+    ["specificProcess", `${projectProperties}`],
     (client) =>
       getProcessById(
         client,
@@ -177,7 +159,7 @@ export const ItemDetails = () => {
   );
 
   const commentsReq = useQueryWithClient(
-    ["comments", deskproData, projectId, itemId],
+    ["comments", `${projectId}`, `${itemId}`],
     (client) =>
       getCommentsByItemId(
         client,
@@ -191,7 +173,7 @@ export const ItemDetails = () => {
   );
 
   const workItemTypeList = useQueryWithClient(
-    ["workItemTypeList", deskproData, specificProcess],
+    ["workItemTypeList", specificProcess as unknown as string],
     (client) =>
       getWorkItemTypes(
         client,
@@ -362,7 +344,7 @@ export const ItemDetails = () => {
               ></FontAwesomeIcon>
             </Stack>
             <Stack vertical style={{ width: "100%" }}>
-              {commentsReq.data.comments.map((comment, i) => {
+              {commentsReq.data.comments.map((comment, i: number) => {
                 return (
                   <Stack
                     key={i}

@@ -2,7 +2,6 @@ import {
   useDeskproAppTheme,
   LoadingSpinner,
   useDeskproAppClient,
-  useInitialisedDeskproAppClient,
   useDeskproAppEvents,
   DateInput,
 } from "@deskpro/app-sdk";
@@ -16,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Container } from "../components/common";
 import { Dropdown } from "../components/Dropdown";
 import { RequiredInput } from "../components/RequiredInput";
-import { useDeskpro } from "../hooks/deskproContext";
+import { useDeskpro, useRegisterElements } from "../hooks";
 import {
   getIterationList,
   getProcessById,
@@ -50,16 +49,13 @@ const useCustomResolver: Resolver<any, any> = (
 
 export const EditItem = () => {
   const navigate = useNavigate();
-
   const [tags, setTags] = useState<string[]>([]);
   const [tagText, setTagText] = useState<string>("");
   const search = useLocation().search;
-
   const [itemId, projectId] = [
     new URLSearchParams(search).get("itemId"),
     new URLSearchParams(search).get("projectId"),
   ];
-
   const {
     handleSubmit,
     register,
@@ -85,10 +81,7 @@ export const EditItem = () => {
     register("System.WorkItemType", { required: true });
   }, [register]);
 
-  useInitialisedDeskproAppClient((client) => {
-    client.deregisterElement("azureEditButton");
-    client.deregisterElement("azureMenuButton");
-  });
+  useRegisterElements();
 
   useDeskproAppEvents({
     onElementEvent(id) {
@@ -105,7 +98,7 @@ export const EditItem = () => {
   const deskproData = useDeskpro();
 
   const fetchedProject = useQueryWithClient(
-    ["fetchedProject", deskproData, projectId],
+    ["fetchedProject", `${projectId}`],
     (client) =>
       getProjectByName(
         client,
@@ -118,7 +111,7 @@ export const EditItem = () => {
   );
 
   const projectProperties = useQueryWithClient(
-    ["projectProperties", deskproData, projectId],
+    ["projectProperties", `${projectId}`],
     (client) =>
       getProjectPropertiesById(
         client,
@@ -131,7 +124,7 @@ export const EditItem = () => {
   );
 
   useQueryWithClient(
-    ["item", deskproData],
+    ["item", `${itemId}`, `${projectId}`],
     (client) =>
       getWorkItemById(
         client,
@@ -173,7 +166,7 @@ export const EditItem = () => {
   );
 
   const specificProcess = useQueryWithClient(
-    ["specificProcess", deskproData, projectProperties],
+    ["specificProcess", `${projectProperties?.data?.value.find((e) => e.name === "System.ProcessTemplateType")?.value}`],
     (client) =>
       getProcessById(
         client,
@@ -188,7 +181,7 @@ export const EditItem = () => {
   );
 
   const workItemTypeList = useQueryWithClient(
-    ["workItemTypeList", deskproData, specificProcess],
+    ["workItemTypeList", specificProcess.data?.typeId as string],
     (client) =>
       getWorkItemTypes(
         client,
@@ -210,7 +203,7 @@ export const EditItem = () => {
     ];
 
   const userList = useQueryWithClient(
-    ["userList", deskproData],
+    ["userList"],
     (client) => getUsersList(client, deskproData?.settings || {}),
     {
       enabled: !!deskproData && deskproData.settings.type === "cloud",
@@ -218,7 +211,7 @@ export const EditItem = () => {
   );
 
   const iterationList = useQueryWithClient(
-    ["iterationList", deskproData, project],
+    ["iterationList", project],
     (client) => getIterationList(client, deskproData?.settings || {}, project),
     {
       enabled: !!deskproData && !!project,
@@ -232,7 +225,7 @@ export const EditItem = () => {
   );
 
   const workItemFieldsData = useQueryWithClient(
-    ["workItemFieldsData", deskproData, project],
+    ["workItemFieldsData", project],
     (client) =>
       getWorkItemFieldsData(client, deskproData?.settings || {}, project),
     {
@@ -241,7 +234,7 @@ export const EditItem = () => {
   );
 
   const teamFieldValues = useQueryWithClient(
-    ["teamFieldValues", deskproData, project],
+    ["teamFieldValues", project],
     (client) =>
       getTeamFieldValues(client, deskproData?.settings || {}, project),
     {
@@ -250,7 +243,7 @@ export const EditItem = () => {
   );
 
   const workItemTypeFields = useQueryWithClient(
-    ["workItemTypeFields", deskproData, project, workItem],
+    ["workItemTypeFields", project, workItem],
     (client) =>
       getWorkItemTypeFields(
         client,

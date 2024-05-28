@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter } from "react-router-dom";
 import { DeskproAppProvider } from "@deskpro/app-sdk";
 import { queryClient } from "./utils/query";
-import { DeskproContextProvider } from "./hooks/deskproContext";
+import { DeskproContextProvider } from "./hooks";
 import { App } from "./App";
 
 import "iframe-resizer/js/iframeResizer.contentWindow.js";

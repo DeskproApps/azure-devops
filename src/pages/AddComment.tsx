@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { Button, Stack } from "@deskpro/deskpro-ui";
-import {
-  useDeskproAppClient,
-  useDeskproAppEvents,
-  useInitialisedDeskproAppClient,
-} from "@deskpro/app-sdk";
+import { useDeskproAppClient, useDeskproAppEvents } from "@deskpro/app-sdk";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Container } from "../components/common";
 import { postComment } from "../api/api";
-import { useDeskpro } from "../hooks/deskproContext";
+import { useDeskpro, useSetTitle, useRegisterElements } from "../hooks";
 import { RequiredInput } from "../components/RequiredInput";
 
 export const AddComment = () => {
@@ -26,18 +22,17 @@ export const AddComment = () => {
 
   const text = watch("comment");
 
-  useInitialisedDeskproAppClient((client) => {
-    client.setTitle("Add Comment");
+  useSetTitle("Add Comment");
 
-    client.deregisterElement("azureEditButton");
-    client.deregisterElement("azureMenuButton");
+  useRegisterElements(({ registerElement }) => {
+    registerElement("azureHomeButton", { type: "home_button" });
   });
 
   useDeskproAppEvents({
     onElementEvent(id) {
       switch (id) {
         case "azureHomeButton":
-          navigate(`/redirect`);
+          navigate(`/home`);
           break;
       }
     },
@@ -69,18 +64,18 @@ export const AddComment = () => {
           title="Add Comment"
           register={register("comment", { required: true })}
           error={!!errors.comment}
-        ></RequiredInput>
+        />
         <Stack style={{ justifyContent: "space-between", width: "100%" }} gap={5}>
           <Button
             type="submit"
             text={isSubmitting ? "Creating..." : "Create"}
             onClick={submit}
-          ></Button>
+          />
           <Button
             text="Cancel"
             onClick={() => navigate(-1)}
             intent="secondary"
-          ></Button>
+          />
         </Stack>
       </Stack>
     </Container>

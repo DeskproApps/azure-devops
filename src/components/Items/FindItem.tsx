@@ -15,6 +15,7 @@ import {
   getWorkItemListByTitle,
   getWorkItemsByIds,
 } from "../../api/api";
+import { useSetTitle, useRegisterElements } from "../../hooks";
 import { IAzureWorkItem } from "../../types/azure/workItem";
 import { CheckedList } from "../../types/checkedList";
 import useDebounce from "../../utils/debounce";
@@ -36,34 +37,29 @@ export const FindItem = () => {
   const [inputText, setInputText] = useState<string>("");
   const { debouncedValue } = useDebounce(inputText, 300);
 
-  useInitialisedDeskproAppClient((client) => {
-    client.setTitle("Find Items");
+  useSetTitle("Find Items");
 
-    client.deregisterElement("azureEditButton");
-    client.deregisterElement("azurePlusButton");
-    client.registerElement("azureHomeButton", {
-      type: "home_button",
-      payload: { type: "changePage", page: "/" },
-    });
+  useRegisterElements(({ registerElement }) => {
+    registerElement("azureHomeButton", { type: "home_button" });
   });
 
   useDeskproAppEvents({
     onElementEvent(id) {
       switch (id) {
         case "azureHomeButton":
-          navigate("/redirect");
+          navigate("/home");
       }
     },
   });
 
   const projectList = useQueryWithClient(
-    ["projectList", context],
+    ["projectList"],
     (client) => getProjectList(client, context?.settings || {}),
     { enabled: !!context }
   );
 
   const workItemsByTitleQuery = useQueryWithClient(
-    ["itemsList", context, debouncedValue, selectedProject],
+    ["itemsList", debouncedValue, selectedProject as string],
     (client) => getWorkItemListByTitle(
       client,
       context?.settings || {},
@@ -87,7 +83,7 @@ export const FindItem = () => {
   );
 
   const workItemsQuery = useQueryWithClient(
-    ["workItems", context, selectedProject, workItemList],
+    ["workItems", selectedProject as string, ...(Array.isArray(workItemList) ? workItemList : []) as unknown as string],
     (client) =>
       getWorkItemsByIds(
         client,

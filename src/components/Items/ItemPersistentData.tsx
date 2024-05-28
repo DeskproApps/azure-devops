@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import { Tag, RoundedLabelTag, Stack } from "@deskpro/deskpro-ui";
 import {
   Member,
@@ -26,7 +27,7 @@ export const ItemPersistentData = ({ item }: Props) => {
   const assignedTo = item.fields["System.AssignedTo"];
 
   const avatar = useQueryWithClient(
-    ["avatar", assignedTo?.descriptor],
+    ["avatar", assignedTo?.descriptor as string],
     (client) =>
       getAvatar(
         client,
@@ -87,7 +88,7 @@ export const ItemPersistentData = ({ item }: Props) => {
           text={(
             <Member
               name={assignedTo.displayName}
-              {...(!avatar.data ? {} : { avatarUrl: `data:image/jpeg;base64,${avatar.data.value}` })}
+              {...(!avatar.data ? {} : { avatarUrl: `data:image/jpeg;base64,${get(avatar, ["data", "value"])}` })}
             />
           )}
         />
