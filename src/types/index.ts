@@ -3,3 +3,4 @@ import { Status } from "./status";
 import { RequestMethods } from "./requestMethod";
 
 export type { Settings, Status, RequestMethods, AuthTokens };
+export type { Maybe } from "./common";

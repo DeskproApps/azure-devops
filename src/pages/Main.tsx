@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container } from "../components/common";
 import { getWorkItemListByIds } from "../api/api";
-import { useDeskpro } from "../hooks/deskproContext";
+import { useDeskpro } from "../hooks";
 import { IAzureWorkItem } from "../types/azure/workItem";
 import { ItemPersistentData } from "../components/Items/ItemPersistentData";
 import { HorizontalDivider } from "../components/HorizontalDivider";
@@ -39,7 +39,6 @@ export const Main = () => {
     client.deregisterElement("azureHomeButton");
     client.deregisterElement("azureMenuButton");
 
-    client.registerElement("azureRefreshButton", { type: "refresh_button" });
     client.registerElement("azurePlusButton", { type: "plus_button" });
     client.deregisterElement("azureEditButton");
 
@@ -47,10 +46,6 @@ export const Main = () => {
       const items = (
         await client.getEntityAssociation("linkedAzureItems", context?.data?.ticket?.id).list()
       )?.map((e) => Number(e));
-
-      if (!items || items.length === 0) {
-        navigate("/itemmenu");
-      }
 
       setItemIds(items);
     })();
@@ -113,9 +108,7 @@ export const Main = () => {
 
   if (itemIds.length === 0) {
     return (
-      <Stack justify="center" style={{ width: "100%" }}>
-        <LoadingSpinner />
-      </Stack>
+      <LoadingSpinner />
     );
   }
   return (

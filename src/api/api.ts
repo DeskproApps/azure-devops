@@ -486,6 +486,8 @@ const defaultRequest = async (
   return await response.json();
 };
 
+const checkAuth = getProjectList;
+
 export {
   defaultRequest,
   getAvatar,
@@ -515,4 +517,5 @@ export {
   getWorkItemsByProject,
   getWorkItemListByTitle,
   getWorkItemsByIds,
+  checkAuth,
 };

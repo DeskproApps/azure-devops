@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { QueryErrorResetBoundary } from "react-query";
 import { ErrorBoundary } from "react-error-boundary";
+import { useDeskproElements } from "@deskpro/app-sdk";
 import { ErrorFallback } from "./components/ErrorFallback";
 import {
   Main,
@@ -15,6 +16,7 @@ import {
   ItemDetails,
   ClientSecret,
   Organization,
+  LoadingAppPage,
   FindOrCreateItems,
   AccountNamePatToken,
 } from "./pages";
@@ -24,15 +26,16 @@ const App = () => {
   const { pathname } = useLocation();
   const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
 
+  useDeskproElements(({ registerElement }) => {
+    registerElement("azureRefreshButton", { type: "refresh_button" });
+  });
+
   return (
     <AppContainer isAdmin={isAdmin}>
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
               <Routes>
-                <Route index path="/" element={<Main />} />
-                <Route path="/itemdetails" element={<ItemDetails />} />
-                <Route path="/redirect" element={<Redirect />} />
                 <Route path="/admin">
                   <Route path="accountnamepattoken" element={<AccountNamePatToken />}/>
                   <Route path="appid" element={<AppId />} />
@@ -42,9 +45,13 @@ const App = () => {
                   <Route path="pagetype" element={<PageType />} />
                   <Route path="organization" element={<Organization />} />
                 </Route>
-                <Route path="itemmenu" element={<FindOrCreateItems />} />
-                <Route path="edititem" element={<EditItem />} />
+                <Route path="/itemdetails" element={<ItemDetails />} />
+                <Route path="/redirect" element={<Redirect />} />
+                <Route path="/itemmenu" element={<FindOrCreateItems />} />
+                <Route path="/edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />
+                <Route path="/home" element={<Main />} />
+                <Route index path="/" element={<LoadingAppPage />} />
               </Routes>
           </ErrorBoundary>
         )}

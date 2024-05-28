@@ -11,3 +11,4 @@ export { AccountNamePatToken } from "./Admin/AccountNamePatToken";
 export { InstanceURL } from "./Admin/InstanceURL";
 export { AppId } from "./Admin/AppId";
 export { ClientSecret } from "./Admin/ClientSecret";
+export { LoadingAppPage } from "./LoadingAppPage";

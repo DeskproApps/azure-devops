@@ -41,7 +41,6 @@ export const FindItem = () => {
 
     client.deregisterElement("azureEditButton");
     client.deregisterElement("azurePlusButton");
-    client.registerElement("azureRefreshButton", {type: "refresh_button" });
     client.registerElement("azureHomeButton", {
       type: "home_button",
       payload: { type: "changePage", page: "/" },
