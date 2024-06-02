@@ -9,6 +9,7 @@ import { App } from "./App";
 
 import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import "virtual:windi.css";
+import "flatpickr/dist/flatpickr.min.css";
 import "./main.css";
 import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
 import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";

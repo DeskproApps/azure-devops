@@ -15,10 +15,12 @@ import {
   ItemDetails,
   ClientSecret,
   Organization,
-  LoadingAppPage,
-  HomePage,
-  FindOrCreateItems,
   AccountNamePatToken,
+
+  HomePage,
+  LoadingAppPage,
+  LinkWorkItemsPage,
+  CreateWorkItemPage,
 } from "./pages";
 import { AppContainer } from "./components/common";
 
@@ -47,11 +49,12 @@ const App = () => {
                 </Route>
                 <Route path="/itemdetails" element={<ItemDetails />} />
                 <Route path="/redirect" element={<Redirect />} />
-                <Route path="/itemmenu" element={<FindOrCreateItems />} />
                 <Route path="/edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />
 
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/work-items/link" element={<LinkWorkItemsPage />} />
+                <Route path="/work-items/create" element={<CreateWorkItemPage />} />
                 <Route index path="/" element={<LoadingAppPage />} />
               </Routes>
           </ErrorBoundary>

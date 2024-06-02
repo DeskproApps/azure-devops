@@ -30,7 +30,7 @@ const HomePage = () => {
     onElementEvent(id) {
       switch (id) {
         case "azurePlusButton":
-          navigate("/itemmenu");
+          navigate("/work-items/link");
           break;
         case "azureHomeButton":
           navigate("/redirect");

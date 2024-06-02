@@ -1,4 +1,3 @@
-export { FindOrCreateItems } from "./FindOrCreateItems";
 export { ItemDetails } from "./ItemDetails";
 export { Redirect } from "./Redirect";
 export { EditItem } from "./EditItem";
@@ -12,3 +11,5 @@ export { AppId } from "./Admin/AppId";
 export { ClientSecret } from "./Admin/ClientSecret";
 export { LoadingAppPage } from "./LoadingAppPage";
 export { HomePage } from "./HomePage";
+export { LinkWorkItemsPage } from "./LinkWorkItemsPage";
+export { CreateWorkItemPage } from "./CreateWorkItemPage";

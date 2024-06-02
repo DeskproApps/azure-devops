@@ -1,23 +1,23 @@
 import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
-
-import { Settings, RequestMethods } from "../types/";
-import { IAzureAvatar } from "../types/azure/avatar";
-import { IAzureArrayResponse } from "../types/azure/azure";
-import { IAzureComment } from "../types/azure/comment";
-import { IAzureFieldValues } from "../types/azure/fieldValues";
-import { IAzureIteration } from "../types/azure/iteration";
-import { IAzureProcess } from "../types/azure/process";
-import { IAzureProject } from "../types/azure/project";
-import { IAzureState } from "../types/azure/state";
-import { IAzureTeam } from "../types/azure/team";
-import { IAzureUser } from "../types/azure/user";
-import {
+import type { Settings, RequestMethods } from "../types/";
+import type {
+  IAzureAvatar,
+  IAzureArrayResponse,
+  IAzureComment,
+  IAzureFieldValues,
+  IAzureIteration,
+  IAzureProcess,
+  IAzureProject,
+  IAzureState,
+  IAzureTeam,
+  IAzureUser,
   IAzureWorkItem,
   IAzureWorkItemFieldsData,
   IAzureWorkItemType,
   IAzureWorkItemTypeFields,
   IAzureWorkItemWiql,
-} from "../types/azure/workItem";
+  IAzureWorkItemInput,
+} from "../types/azure";
 
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
@@ -98,7 +98,7 @@ const getWorkItemTypeStates = async (
   settings: Settings,
   processId: string,
   witRefName: string
-) => {
+): Promise<IAzureArrayResponse<IAzureState[]>> => {
   return defaultRequest(
     client,
     `/_apis/work/processes/${processId}/workItemTypes/${witRefName}/states?api-version=7.0`,
@@ -163,12 +163,7 @@ const postWorkItem = async (
   settings: Settings,
   project: string,
   workItemType: string,
-  data: {
-    op: string;
-    path: string;
-    value: string;
-    from: string | null;
-  }[]
+  data: IAzureWorkItemInput[],
 ): Promise<IAzureWorkItem> => {
   const url = `/${project}/_apis/wit/workitems/$${
     workItemType.split(".").at(-1)
