@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import { QueryClientProvider } from "react-query";
 import "virtual:windi.css";
 import "./main.css";
-import "iframe-resizer/js/iframeResizer.contentWindow.js";
 
 import App from "./App";
 import { DeskproContextProvider } from "./hooks/deskproContext";
