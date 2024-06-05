@@ -1,7 +1,7 @@
-import { get, map, find, filter, isNil } from "lodash";
+import { get, isNil } from "lodash";
 import { Controller } from "react-hook-form";
-import { DEFAULT_FIELDS, EXCLUDE_FIELDS } from "../constants";
 import { mapFields } from "./mapFields";
+import { getRequiredFields } from "../utils";
 import { Label } from "../../common";
 import type { FC } from "react";
 import type { Control } from "react-hook-form";
@@ -14,22 +14,8 @@ type Props = {
   workItemFieldsMeta: IAzureWorkItemFieldsData[];
 };
 
-const isDefault = (referenceName: string) => {
-  return Object.values(DEFAULT_FIELDS).includes(referenceName)
-};
-
-const isExcluded = (referenceName: string) => {
-  return EXCLUDE_FIELDS.includes(referenceName)
-};
-
 const DynamicFields: FC<Props> = ({ control, workItemFieldsMeta, workItemTypeFields }) => {
-  const requiredFields = filter(workItemTypeFields, (field) => (
-    field.alwaysRequired && !isDefault(field.referenceName) && !isExcluded(field.referenceName)
-  ));
-  const fields = map(requiredFields, (field) => {
-    const meta = find(workItemFieldsMeta, { referenceName: field.referenceName });
-    return { field, meta };
-  });
+  const fields = getRequiredFields(workItemTypeFields, workItemFieldsMeta);
 
   return (
     <>

@@ -64,7 +64,7 @@ const HomePage = () => {
               label="Deskpro Tickets"
               text={<DeskproTickets entityId={item.id}/>}
             />
-            <HorizontalDivider />
+            <HorizontalDivider style={{ marginBottom: 10 }} />
           </>
         ))}
     </Container>

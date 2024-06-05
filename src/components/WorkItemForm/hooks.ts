@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { get, find, isEmpty } from "lodash";
+import { get, map, find, isEmpty } from "lodash";
 import { useQueryWithClient, useDeskproLatestAppContext } from "@deskpro/app-sdk";
-import { getOptions, QueryKey } from "../../utils";
+import { getOption, getOptions, QueryKey } from "../../utils";
 import {
   getUsersList,
   getProjectList,
@@ -10,14 +10,12 @@ import {
   getIterationList,
   getTeamFieldValues,
   getWorkItemFieldsData,
-  getWorkItemTypeStates,
   getWorkItemTypeFields,
   getProjectPropertiesById,
 } from "../../api/api";
 import {
   getAreaOptions,
   getUserOptions,
-  getStateOptions,
   getIterationOptions,
 } from "./utils";
 import type { Option } from "../../types";
@@ -25,7 +23,6 @@ import type {
   IAzureUser,
   IAzureState,
   IAzureProject,
-  IAzureProcess,
   IAzureWorkItem,
   IAzureIteration,
   IAzureFieldValues,
@@ -50,7 +47,7 @@ export type UseFormDeps = (
   workItemFieldsMeta: IAzureWorkItemFieldsData[];
 };
 
-const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
+const useFormDeps: UseFormDeps = (rawProject, workItemTypeId) => {
   const { context } = useDeskproLatestAppContext();
   const settings = useMemo(() => get(context, ["settings"]), [context]);
 
@@ -60,16 +57,23 @@ const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
     { enabled: !isEmpty(settings) },
   );
 
+  const projectId = useMemo(() => {
+    const foundProject = find(get(projects.data, ["value"], []), ({ id, name }) => {
+      return id === rawProject || name === rawProject;
+    });
+    return get(foundProject, ["id"]);
+  }, [rawProject, projects.data]);
+
   const project = useQueryWithClient(
     [QueryKey.PROJECT, projectId as IAzureProject["id"]],
     (client) => getProjectPropertiesById(client, settings || {}, projectId as IAzureProject["id"]),
     { enabled: !isEmpty(settings) && Boolean(projectId) },
   );
 
-  const processId = useMemo(() => get(
-    find(project.data?.value, { name: "System.ProcessTemplateType" }),
-    ["value"],
-  ), [project.data?.value]);
+  const processId = useMemo(() => {
+    const process = find(project.data?.value, { name: "System.ProcessTemplateType" });
+    return get(process, ["value"]);
+  }, [project.data?.value]);
 
   const process = useQueryWithClient(
     [QueryKey.PROCESS, `${processId}`],
@@ -88,17 +92,6 @@ const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
     [QueryKey.USERS],
     (client) => getUsersList(client, settings || {}),
     { enabled: !isEmpty(settings) && get(settings, ["type"]) === "cloud" },
-  );
-
-  const states = useQueryWithClient(
-    [QueryKey.STATE, `${processId}`, `${workItemTypeId}`],
-    (client) => getWorkItemTypeStates(
-      client,
-      settings || {},
-      processId as IAzureProcess["id"],
-      workItemTypeId as IAzureWorkItemType["id"],
-    ),
-    { enabled: !isEmpty(settings) && Boolean(processId) && Boolean(workItemTypeId) },
   );
 
   const teams = useQueryWithClient(
@@ -124,6 +117,11 @@ const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
     { enabled: !isEmpty(settings) && Boolean(projectId) && Boolean(workItemTypeId) },
   );
 
+  const states = useMemo(() => {
+    const stateField = find(get(workItemTypeFields.data, ["value"]), { referenceName: "System.State" });
+    return get(stateField, ["allowedValues"], []);
+  }, [workItemTypeFields.data]);
+
   const workItemFieldsMeta = useQueryWithClient(
     [QueryKey.WORK_ITEM_FIELDS_META, projectId as IAzureProject["id"]],
     (client) => getWorkItemFieldsData(client, settings || {}, projectId as IAzureProject["id"]),
@@ -133,7 +131,6 @@ const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
   return {
     isLoading: [
       teams,
-      states,
       project,
       process,
       projects,
@@ -143,10 +140,10 @@ const useFormDeps: UseFormDeps = (projectId, workItemTypeId) => {
       workItemFieldsMeta,
     ].some(({ isLoading }) => isLoading),
     isCloud: useMemo(() => get(settings, ["type"]) === "cloud", [settings]),
-    projectOptions: useMemo(() => getOptions(projects.data?.value), [projects.data?.value]),
-    workItemTypeOptions: useMemo(() => getOptions(workItemTypes.data?.value), [workItemTypes.data?.value]),
+    projectOptions: useMemo(() => getOptions(projects.data?.value, "name", "name"), [projects.data?.value]),
+    workItemTypeOptions: useMemo(() => getOptions(workItemTypes.data?.value, "name", "name"), [workItemTypes.data?.value]),
     userOptions: useMemo(() => getUserOptions(users.data?.value), [users.data?.value]),
-    stateOptions: useMemo(() => getStateOptions(states.data?.value), [states.data?.value]),
+    stateOptions: useMemo(() => map(states, (state) => getOption(state, state)), [states]),
     areaOptions: useMemo(() => getAreaOptions(teams.data?.values), [teams.data?.values]),
     iterationOptions: useMemo(() => getIterationOptions(iterations.data?.value), [iterations.data?.value]),
     workItemTypeFields: get(workItemTypeFields, ["data", "value"]) || [],

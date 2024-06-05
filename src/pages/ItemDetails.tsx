@@ -97,7 +97,7 @@ export const ItemDetails = () => {
           navigate("/redirect");
           break;
         case "azureEditButton":
-          navigate(`/edititem?itemId=${itemId}&projectId=${projectId}`);
+          navigate(`/work-items/edit?itemId=${itemId}&projectId=${projectId}`);
           break;
       }
     },
@@ -110,7 +110,7 @@ export const ItemDetails = () => {
         client,
         deskproData?.settings || {},
         projectId as string,
-        Number(itemId) as number
+        itemId as string,
       ),
     {
       enabled: !!deskproData && !!itemId && !!projectId,

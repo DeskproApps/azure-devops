@@ -8,6 +8,7 @@ import type {
 } from "react-hook-form";
 import type {
   IAzureProject,
+  IAzureWorkItem,
   IAzureWorkItemType,
   IAzureWorkItemInput,
   IAzureWorkItemTypeFields,
@@ -23,13 +24,16 @@ export type Props = {
     project: IAzureProject["id"],
     workItemType: IAzureWorkItemType["id"],
     values: IAzureWorkItemInput[],
-  ) => Promise<void>,
-  onCancel?: () => void,
-  isEditMode?: boolean,
-  error?: Maybe<string|string[]>,
+  ) => Promise<void>;
+  onCancel?: () => void;
+  error?: Maybe<string|string[]>;
+  isEditMode?: boolean;
+  workItem?: Maybe<IAzureWorkItem>;
+  fields?: IAzureWorkItemTypeFields[];
+  meta?: IAzureWorkItemFieldsData[];
 };
 
-// eslint-disable-next-link @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type DynamicFieldProps<T extends Dict<any> = Dict<any>> = {
   field: IAzureWorkItemTypeFields;
   meta: IAzureWorkItemFieldsData;

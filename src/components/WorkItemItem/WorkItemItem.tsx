@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { get } from "lodash";
 import { Link, Title, Property } from "@deskpro/app-sdk";
 import { useExternalLinks } from "../../hooks";
 import { DeskproTickets } from "../common";

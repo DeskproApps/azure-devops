@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { has } from "lodash";
+import { has, get } from "lodash";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Stack } from "@deskpro/deskpro-ui";
@@ -10,23 +10,24 @@ import {
   getRequiredValues,
   getDefaultInitValues,
   getProjectFromValues,
+  getRequiredInitValues,
   defaultValidationSchema,
   getWorkItemTypeFromValues,
 } from "./utils";
-import { Input, Label, Button, TextArea, ErrorBlock } from "../common";
+import { Input, Label, Button, TextArea, ErrorBlock, FieldHint } from "../common";
 import { DynamicFields } from "./DynamicFields";
 import type { FC } from "react";
 import type { IAzureProject, IAzureState, IAzureUser, IAzureWorkItem } from "../../types/azure";
 import type { Props, DefaultFormValidationSchema, RequiredValidationSchema } from "./types";
 
-const WorkItemForm: FC<Props> = ({ error, onSubmit, onCancel, isEditMode }) => {
+const WorkItemForm: FC<Props> = ({ error, onSubmit, onCancel, isEditMode, workItem, meta, fields }) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>();
   const defaultForm = useForm<DefaultFormValidationSchema>({
-    defaultValues: getDefaultInitValues(),
+    defaultValues: getDefaultInitValues(workItem),
     resolver: zodResolver(defaultValidationSchema),
   });
   const requiredFieldsForm = useForm<RequiredValidationSchema>({
-    defaultValues: {},
+    defaultValues: getRequiredInitValues(workItem, fields, meta),
     shouldUnregister: true,
   });
   const projectId = defaultForm.watch("project");
@@ -56,16 +57,18 @@ const WorkItemForm: FC<Props> = ({ error, onSubmit, onCancel, isEditMode }) => {
       getWorkItemTypeFromValues(defaultForm.getValues()),
       [
         ...getDefaultValues(defaultForm.getValues()),
-        ...getRequiredValues(requiredFieldsForm.getValues()),
-      ]
+        ...getRequiredValues(requiredFieldsForm.getValues(), workItemFieldsMeta),
+      ],
     )
       .finally(() => setIsSubmitting(false));
-  }, [onSubmit, defaultForm, requiredFieldsForm]);
+  }, [onSubmit, defaultForm, requiredFieldsForm, workItemFieldsMeta]);
 
-  /* Reset workItemType if changed project */
+  /* Reset workItemType if project changed */
   useEffect(() => {
-    defaultForm.setValue("workItemType", "");
-  }, [projectId, defaultForm]);
+    if (!isEditMode) {
+      defaultForm.setValue("workItemType", "");
+    }
+  }, [projectId, defaultForm, isEditMode]);
 
   return (
     <>
@@ -73,23 +76,37 @@ const WorkItemForm: FC<Props> = ({ error, onSubmit, onCancel, isEditMode }) => {
         {error && <ErrorBlock text={error}/>}
 
         <Label htmlFor="project" label="Project" required>
-          <Select
-            id="project"
-            initValue={defaultForm.watch("project")}
-            options={projectOptions}
-            error={has(defaultForm, ["formState", "errors", "project", "message"])}
-            onChange={(value) => defaultForm.setValue("project", value as IAzureProject["id"])}
-          />
+          {isEditMode
+            ? (
+              <Input id="project" value={get(workItem, ["fields", "System.TeamProject"])} disabled />
+            )
+            : (
+              <Select
+                id="project"
+                initValue={defaultForm.watch("project")}
+                options={projectOptions}
+                error={has(defaultForm, ["formState", "errors", "project", "message"])}
+                onChange={(value) => defaultForm.setValue("project", value as IAzureProject["id"])}
+              />
+            )
+          }
         </Label>
 
         <Label htmlFor="workItemType" label="Work item" required>
-          <Select
-            id="workItemType"
-            options={workItemTypeOptions}
-            initValue={defaultForm.watch("workItemType")}
-            error={has(defaultForm, ["formState", "errors", "workItemType", "message"])}
-            onChange={(value) => defaultForm.setValue("workItemType", value as IAzureWorkItem["id"])}
-          />
+          {isEditMode
+            ? (
+              <Input id="" value={get(workItem, ["fields", "System.WorkItemType"])} disabled/>
+            )
+            : (
+              <Select
+                id="workItemType"
+                options={workItemTypeOptions}
+                initValue={defaultForm.watch("workItemType")}
+                error={has(defaultForm, ["formState", "errors", "workItemType", "message"])}
+                onChange={(value) => defaultForm.setValue("workItemType", value as IAzureWorkItem["id"])}
+              />
+            )
+          }
         </Label>
 
         <Label htmlFor="title" label="Title" required>
@@ -108,6 +125,7 @@ const WorkItemForm: FC<Props> = ({ error, onSubmit, onCancel, isEditMode }) => {
             error={has(defaultForm, ["formState", "errors", "description", "message"])}
             {...defaultForm.register("description")}
           />
+          <FieldHint>Markdown formatting is supported</FieldHint>
         </Label>
 
         <Label htmlFor="assignee" label="Assignee">

@@ -2,7 +2,6 @@ import { size } from "lodash";
 import { Stack } from "@deskpro/deskpro-ui";
 import { Button } from "../../common";
 import type { FC } from "react";
-import type { Maybe } from "../../../types";
 import type { IAzureWorkItem } from "../../../types/azure";
 
 export type Props = {

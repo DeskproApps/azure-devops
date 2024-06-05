@@ -111,7 +111,7 @@ const getWorkItemById = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
-  id: number
+  id: string,
 ): Promise<IAzureWorkItem> => {
   return defaultRequest(
     client,
@@ -294,7 +294,7 @@ const getWorkItemListByTitle = async (
     "POST",
     settings,
     {
-      query: `SELECT [System.Title] FROM workitems WHERE [System.Title] CONTAINS '${query}' AND [System.TeamProject] = '${projectName}'`,
+      query: `SELECT [System.Title] FROM workitems WHERE [System.Title] CONTAINS "${query}" AND [System.TeamProject] = "${projectName}"`,
     }
   );
 };

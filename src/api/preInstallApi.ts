@@ -104,6 +104,7 @@ const preInstallDefaultRequest = async (
   }
 
   if (isResponseError(response)) {
+    // eslint-disable-next-line no-console
     console.error(
       `Request failed: [${response.status}] ${await response.text()}`
     );
