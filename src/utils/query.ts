@@ -21,11 +21,13 @@ const QueryKey = {
   WORK_ITEM_TYPES: "work_item_types",
   PROCESS: "process",
   STATE: "state",
+  STATES: "states",
   TEAM_VALUES: "team_values",
   ITERATIONS: "iterations",
   WORK_ITEM_TYPE_FIELDS: "workItemTypeFields",
   WORK_ITEM_FIELDS_META: "workItemFieldsMeta",
   USERS: "users",
+  COMMENTS: "comments",
 };
 
 export { queryClient, QueryKey, useQueryWithClient };

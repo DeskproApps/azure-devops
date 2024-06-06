@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
+import type { FC } from "react";
 
-export const AzureIcon = () => (
+const AzureIcon: FC = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="14px"
@@ -14,3 +13,5 @@ export const AzureIcon = () => (
     />
   </svg>
 );
+
+export { AzureIcon };

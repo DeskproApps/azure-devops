@@ -1,3 +1,5 @@
+import type {IAzureWorkItemFieldsData, IAzureWorkItemTypeFields} from "./azure";
+
 export interface IWorkItem {
   id: string;
   state: "New" | "Closed";
@@ -14,4 +16,10 @@ interface IAssignees {
   id: string;
   name: string;
   avatar: string;
+}
+
+export interface DynamicFieldProps<T = string> {
+  value: T;
+  field?: IAzureWorkItemTypeFields;
+  meta?: IAzureWorkItemFieldsData;
 }

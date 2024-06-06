@@ -6,12 +6,10 @@ import { useDeskproElements } from "@deskpro/app-sdk";
 import { ErrorFallback } from "./components/ErrorFallback";
 import {
   AppId,
-  Redirect,
   PageType,
   AddComment,
   GlobalAuth,
   InstanceURL,
-  ItemDetails,
   ClientSecret,
   Organization,
   AccountNamePatToken,
@@ -21,6 +19,7 @@ import {
   EditWorkItemPage,
   LinkWorkItemsPage,
   CreateWorkItemPage,
+  WorkItemDetailsPage,
 } from "./pages";
 import { AppContainer } from "./components/common";
 
@@ -47,14 +46,13 @@ const App = () => {
                   <Route path="pagetype" element={<PageType />} />
                   <Route path="organization" element={<Organization />} />
                 </Route>
-                <Route path="/itemdetails" element={<ItemDetails />} />
-                <Route path="/redirect" element={<Redirect />} />
                 <Route path="/addcomment" element={<AddComment />} />
 
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/work-items/link" element={<LinkWorkItemsPage />} />
                 <Route path="/work-items/create" element={<CreateWorkItemPage />} />
                 <Route path="/work-items/edit" element={<EditWorkItemPage />} />
+                <Route path="/work-items/details" element={<WorkItemDetailsPage />} />
                 <Route index path="/" element={<LoadingAppPage />} />
               </Routes>
           </ErrorBoundary>

@@ -1,7 +1,7 @@
 import { get, isNil } from "lodash";
 import { Controller } from "react-hook-form";
 import { mapFields } from "./mapFields";
-import { getRequiredFields } from "../utils";
+import { getRequiredFields } from "../../../utils";
 import { Label } from "../../common";
 import type { FC } from "react";
 import type { Control } from "react-hook-form";

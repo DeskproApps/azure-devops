@@ -1,11 +1,10 @@
 import { createElement } from "react";
-import { map, get, set, keys, find, reduce, filter, isEmpty, forEach, isPlainObject } from "lodash";
+import { map, get, set, keys, find, reduce, isEmpty, forEach, isPlainObject } from "lodash";
 import { P, match } from "ts-pattern";
 import { z } from "zod";
 import { Member } from "@deskpro/app-sdk";
 import { toMarkdown, toHTML } from "../common/Markdown";
-import { getOption } from "../../utils";
-import { DEFAULT_FIELDS, EXCLUDE_FIELDS } from "./constants";
+import { getOption, getRequiredFields } from "../../utils";
 import type { Dict, Maybe } from "../../types";
 import type {
   IAzureUser,
@@ -40,30 +39,6 @@ const normalizeFormValues = (obj: object): Dict<any> => {
   recurse(obj, "");
 
   return result;
-};
-
-const isDefault = (referenceName: string) => {
-  return Object.values(DEFAULT_FIELDS).includes(referenceName)
-};
-
-const isExcluded = (referenceName: string) => {
-  return EXCLUDE_FIELDS.includes(referenceName)
-};
-
-const filterRequiredFields = (field: IAzureWorkItemTypeFields): boolean => {
-  return field.alwaysRequired && !isDefault(field.referenceName) && !isExcluded(field.referenceName)
-};
-
-const getRequiredFields = (
-  workItemTypeFields: IAzureWorkItemTypeFields[],
-  workItemFieldsMeta: IAzureWorkItemFieldsData[],
-) => {
-  const requiredFields = filter(workItemTypeFields, filterRequiredFields);
-
-  return map(requiredFields, (field) => {
-    const meta = find(workItemFieldsMeta, { referenceName: field.referenceName });
-    return { field, meta };
-  });
 };
 
 const defaultValidationSchema = z.object({
@@ -218,13 +193,10 @@ const getIterationOptions = (iterations?: IAzureIteration[]) => {
 };
 
 export {
-  isDefault,
-  isExcluded,
   getAreaOptions,
   getUserOptions,
   getDefaultValues,
   getRequiredValues,
-  getRequiredFields,
   normalizeFormValues,
   getIterationOptions,
   getDefaultInitValues,
