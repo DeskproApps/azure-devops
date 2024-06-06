@@ -3,11 +3,10 @@ import ReactDOM from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter } from "react-router-dom";
 import { DeskproAppProvider } from "@deskpro/app-sdk";
-import { queryClient } from "./utils/query";
+import { queryClient } from "./utils";
 import { DeskproContextProvider } from "./hooks";
 import { App } from "./App";
 
-import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import "virtual:windi.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "./main.css";
