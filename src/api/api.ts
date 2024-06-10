@@ -230,7 +230,7 @@ const getCommentsByItemId = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
-  workItemId: number
+  workItemId: string,
 ): Promise<IAzureComment> => {
   return defaultRequest(
     client,

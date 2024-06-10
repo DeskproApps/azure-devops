@@ -30,7 +30,7 @@ const EditWorkItemPage: FC = () => {
   const settings = useMemo(() => get(context, ["settings"]), [context]);
 
   const onCancel = useCallback(() => {
-    navigate(`/itemdetails?itemId=${workItemId}&projectId=${projectId}`);
+    navigate(`/work-items/details?itemId=${workItemId}&projectId=${projectId}`);
   }, [navigate, workItemId, projectId]);
 
   const onSubmit: FormProps["onSubmit"] = useCallback((_, __, values) => {
@@ -41,7 +41,7 @@ const EditWorkItemPage: FC = () => {
     setError(null);
 
     return editWorkItem(client, settings || {}, projectId, workItemId, values)
-      .then(() => navigate(`/itemdetails?itemId=${workItemId}&projectId=${projectId}`))
+      .then(() => navigate(`/work-items/details?itemId=${workItemId}&projectId=${projectId}`))
       .then(() => queryClient.invalidateQueries())
       .catch((err) => {
         const error = getError(err);
@@ -64,7 +64,7 @@ const EditWorkItemPage: FC = () => {
     onElementEvent(id) {
       switch (id) {
         case "azureHomeButton":
-          navigate(`/redirect`);
+          navigate(`/home`);
           break;
       }
     },

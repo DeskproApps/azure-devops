@@ -7,3 +7,4 @@ export { workItemFieldsItemDetails } from "./workItemFieldsItemDetails";
 export * from "./utils";
 export { getError } from "./getError";
 export { addBlankTargetToLinks } from "./addBlankTargetToLinks";
+export { getRequiredFields } from "./getRequiredFields";

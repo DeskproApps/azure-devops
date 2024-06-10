@@ -1,34 +1,29 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { get } from "lodash";
-import { Link, Title, Member, Property, TwoProperties } from "@deskpro/app-sdk";
-import { useExternalLinks } from "../../hooks";
-import { State, AzureIcon, DeskproTickets } from "../common";
-import type { FC, MouseEventHandler } from "react";
-import type { IAzureWorkItem } from "../../types/azure";
+import { Title, Property, TwoProperties, Member } from "@deskpro/app-sdk";
+import { State, AzureIcon, DPNormalize, DeskproTickets } from "../../common";
+import { useExternalLinks } from "../../../hooks";
+import type { FC } from "react";
+import type { IAzureWorkItem } from "../../../types/azure";
 
 type Props = {
   workItem: IAzureWorkItem;
-  onClickTitle?: () => void;
 };
 
-const WorkItemItem: FC<Props> = ({ workItem, onClickTitle }) => {
+const Details: FC<Props> = ({ workItem }) => {
   const { getItemWorkLink } = useExternalLinks();
   const assignedTo = useMemo(() => workItem.fields["System.AssignedTo"], [workItem]);
-
-  const onClick:  MouseEventHandler<HTMLAnchorElement> = useCallback((e) => {
-    e.preventDefault();
-    onClickTitle && onClickTitle();
-  }, [onClickTitle]);
 
   return (
     <>
       <Title
-        title={!onClickTitle
-          ? workItem.fields["System.Title"]
-          : (<Link href="#" onClick={onClick}>{workItem.fields["System.Title"]}</Link>)
-        }
+        title={get(workItem, ["fields", "System.Title"])}
         icon={<AzureIcon/>}
         link={getItemWorkLink(workItem) || "#"}
+      />
+      <Property
+        label="Description"
+        text={<DPNormalize text={get(workItem, ["fields", "System.Description"])}/>}
       />
       <TwoProperties
         leftLabel="Type"
@@ -48,14 +43,12 @@ const WorkItemItem: FC<Props> = ({ workItem, onClickTitle }) => {
         rightLabel="Deskpro Tickets"
         rightText={<DeskproTickets entityId={workItem.id}/>}
       />
-      {assignedTo && (
-        <Property
-          label="Assignee"
-          text={<Member name={assignedTo.displayName} />}
-        />
-      )}
+      <Property
+        label="Assignee"
+        text={!assignedTo ? null : <Member name={assignedTo.displayName} />}
+      />
     </>
   );
 };
 
-export { WorkItemItem };
+export { Details };

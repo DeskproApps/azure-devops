@@ -1,5 +1,3 @@
-export { ItemDetails } from "./ItemDetails";
-export { Redirect } from "./Redirect";
 export { AddComment } from "./AddComment";
 export { PageType } from "./Admin/PageType";
 export { GlobalAuth } from "./Admin/GlobalAuth";
@@ -14,3 +12,4 @@ export { HomePage } from "./HomePage";
 export { LinkWorkItemsPage } from "./LinkWorkItemsPage";
 export { CreateWorkItemPage } from "./CreateWorkItemPage";
 export { EditWorkItemPage } from "./EditWorkItemPage";
+export { WorkItemDetailsPage } from "./WorkItemDetailsPage";

@@ -9,3 +9,6 @@ export { Input } from "./Input";
 export { TextArea } from "./TextArea";
 export { Navigation } from "./Navigation";
 export { NoFound } from "./NoFound";
+export { AzureIcon } from "./AzureIcon";
+export { State } from "./State";
+export { Comment } from "./Comment";

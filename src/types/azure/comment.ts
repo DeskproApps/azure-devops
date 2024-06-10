@@ -1,3 +1,5 @@
+import type { IAzureWorkItem } from "./workItem";
+
 export interface IAzureComment {
   totalCount: number;
   count: number;
@@ -7,16 +9,18 @@ export interface IAzureComment {
 }
 
 export interface Comment {
-  workItemId: number;
-  commentId: number;
-  version: number;
-  text: string;
-  createdBy: EdBy;
+  format: "html";
+  id: number;
+  mentions: [];
+  createdBy:EdBy;
   createdDate: string;
   modifiedBy: EdBy;
   modifiedDate: string;
-  isDeleted: boolean;
+  renderedText: string;
+  text: string;
   url: string;
+  version: number;
+  workItemId: IAzureWorkItem["id"];
 }
 
 export interface EdBy {
