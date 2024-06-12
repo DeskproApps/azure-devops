@@ -1,5 +1,5 @@
 export interface IAzureWorkItem {
-  id: number;
+  id: string;
   rev: number;
   fields: IAzureWorkItemFields;
   url: string;
@@ -159,4 +159,11 @@ export interface DependentField {
   referenceName: string;
   name: string;
   url: string;
+}
+
+export interface IAzureWorkItemInput {
+  op: string;
+  path: string;
+  value: string;
+  from: string | null;
 }

@@ -1,0 +1,1 @@
+export { WorkItemDetailsPage } from "./WorkItemDetailsPage";

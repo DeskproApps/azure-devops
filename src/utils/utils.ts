@@ -29,9 +29,7 @@ export const timeSince = (date: Date) => {
 
 export const toDotList = (obj: object) => {
   const walk = (
-    into: {
-      [key: string]: number | string;
-    },
+    into: { [key: string]: number | string },
     obj: object,
     prefix: string[] = []
   ) => {

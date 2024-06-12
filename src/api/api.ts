@@ -1,23 +1,23 @@
 import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
-
-import { Settings, RequestMethods } from "../types/";
-import { IAzureAvatar } from "../types/azure/avatar";
-import { IAzureArrayResponse } from "../types/azure/azure";
-import { IAzureComment } from "../types/azure/comment";
-import { IAzureFieldValues } from "../types/azure/fieldValues";
-import { IAzureIteration } from "../types/azure/iteration";
-import { IAzureProcess } from "../types/azure/process";
-import { IAzureProject } from "../types/azure/project";
-import { IAzureState } from "../types/azure/state";
-import { IAzureTeam } from "../types/azure/team";
-import { IAzureUser } from "../types/azure/user";
-import {
+import type { Settings, RequestMethods } from "../types/";
+import type {
+  IAzureAvatar,
+  IAzureArrayResponse,
+  IAzureComment,
+  IAzureFieldValues,
+  IAzureIteration,
+  IAzureProcess,
+  IAzureProject,
+  IAzureState,
+  IAzureTeam,
+  IAzureUser,
   IAzureWorkItem,
   IAzureWorkItemFieldsData,
   IAzureWorkItemType,
   IAzureWorkItemTypeFields,
   IAzureWorkItemWiql,
-} from "../types/azure/workItem";
+  IAzureWorkItemInput,
+} from "../types/azure";
 
 const isResponseError = (response: Response) =>
   response.status < 200 || response.status >= 400;
@@ -98,7 +98,7 @@ const getWorkItemTypeStates = async (
   settings: Settings,
   processId: string,
   witRefName: string
-) => {
+): Promise<IAzureArrayResponse<IAzureState[]>> => {
   return defaultRequest(
     client,
     `/_apis/work/processes/${processId}/workItemTypes/${witRefName}/states?api-version=7.0`,
@@ -111,7 +111,7 @@ const getWorkItemById = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
-  id: number
+  id: string,
 ): Promise<IAzureWorkItem> => {
   return defaultRequest(
     client,
@@ -163,22 +163,13 @@ const postWorkItem = async (
   settings: Settings,
   project: string,
   workItemType: string,
-  data: {
-    op: string;
-    path: string;
-    value: string;
-    from: string | null;
-  }[]
+  data: IAzureWorkItemInput[],
 ): Promise<IAzureWorkItem> => {
-  return defaultRequest(
-    client,
-    `/${project}/_apis/wit/workitems/$${workItemType
-      .split(".")
-      .at(-1)}?api-version=7.0`,
-    "POST",
-    settings,
-    data
-  );
+  const url = `/${project}/_apis/wit/workitems/$${
+    workItemType.split(".").at(-1)
+  }?api-version=7.0`;
+
+  return defaultRequest(client, url, "POST", settings, data);
 };
 
 const getTeamFieldValues = async (
@@ -239,7 +230,7 @@ const getCommentsByItemId = async (
   client: IDeskproClient,
   settings: Settings,
   project: string,
-  workItemId: number
+  workItemId: string,
 ): Promise<IAzureComment> => {
   return defaultRequest(
     client,
@@ -303,7 +294,7 @@ const getWorkItemListByTitle = async (
     "POST",
     settings,
     {
-      query: `SELECT [System.Title] FROM workitems WHERE [System.Title] CONTAINS '${query}' AND [System.TeamProject] = '${projectName}'`,
+      query: `SELECT [System.Title] FROM workitems WHERE [System.Title] CONTAINS "${query}" AND [System.TeamProject] = "${projectName}"`,
     }
   );
 };
@@ -425,15 +416,12 @@ const defaultRequest = async (
       "Content-Type": endpoint.includes("/_apis/wit/workitems/")
         ? "application/json-patch+json"
         : "application/json",
-      Authorization:
-        settings.type === "cloud"
-          ? `Bearer [[oauth/global/access_token]]`
-          : `Basic __account_name_pat_token__`,
+      Authorization: settings.type === "cloud"
+        ? `Bearer [[oauth/global/access_token]]`
+        : `Basic __account_name_pat_token__`,
       ...(settings.type === "cloud"
         ? {}
-        : {
-            "X-Proxy-SSL-No-Verify": "1",
-          }),
+        : { "X-Proxy-SSL-No-Verify": "1" }),
     },
   };
 
@@ -493,6 +481,8 @@ const defaultRequest = async (
   return await response.json();
 };
 
+const checkAuth = getProjectList;
+
 export {
   defaultRequest,
   getAvatar,
@@ -522,4 +512,5 @@ export {
   getWorkItemsByProject,
   getWorkItemListByTitle,
   getWorkItemsByIds,
+  checkAuth,
 };

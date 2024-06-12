@@ -1,44 +1,44 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-//Added this because the DeskproContextProvider was erroring, had to update react version because generics crashed
-import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
-import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
-
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { useMemo } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./Components/ErrorFallback";
-import { FindOrCreateItems } from "./pages/FindOrCreateItems";
-import { ItemDetails } from "./pages/ItemDetails";
-import { Main } from "./pages/Main";
-import { Redirect } from "./pages/Redirect";
-import { EditItem } from "./pages/EditItem";
-import { AddComment } from "./pages/AddComment";
-import { QueryErrorResetBoundary } from "react-query";
-import { Stack } from "@deskpro/deskpro-ui";
-import { PageType } from "./pages/Admin/PageType";
-import { GlobalAuth } from "./pages/Admin/GlobalAuth";
-import { Organization } from "./pages/Admin/Organization";
-import { AccountNamePatToken } from "./pages/Admin/AccountNamePatToken";
-import { InstanceURL } from "./pages/Admin/InstanceURL";
-import { AppId } from "./pages/Admin/AppId";
-import { ClientSecret } from "./pages/Admin/ClientSecret";
+import { useDeskproElements } from "@deskpro/app-sdk";
+import { ErrorFallback } from "./components/ErrorFallback";
+import {
+  AppId,
+  PageType,
+  AddComment,
+  GlobalAuth,
+  InstanceURL,
+  ClientSecret,
+  Organization,
+  AccountNamePatToken,
 
-function App() {
+  HomePage,
+  LoadingAppPage,
+  EditWorkItemPage,
+  LinkWorkItemsPage,
+  CreateWorkItemPage,
+  WorkItemDetailsPage,
+} from "./pages";
+import { AppContainer } from "./components/common";
+
+const App = () => {
+  const { pathname } = useLocation();
+  const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
+
+  useDeskproElements(({ registerElement }) => {
+    registerElement("azureRefreshButton", { type: "refresh_button" });
+  });
+
   return (
-    <HashRouter>
+    <AppContainer isAdmin={isAdmin}>
       <QueryErrorResetBoundary>
         {({ reset }) => (
-          <Stack>
-            {/* @ts-ignore */}
-            <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
+          <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
               <Routes>
-                <Route index path="/" element={<Main />} />
-                <Route path="/itemdetails" element={<ItemDetails />} />
-                <Route path="/redirect" element={<Redirect />} />
                 <Route path="/admin">
-                  <Route
-                    path="accountnamepattoken"
-                    element={<AccountNamePatToken />}
-                  />
+                  <Route path="accountnamepattoken" element={<AccountNamePatToken />}/>
                   <Route path="appid" element={<AppId />} />
                   <Route path="clientSecret" element={<ClientSecret />} />
                   <Route path="instanceurl" element={<InstanceURL />} />
@@ -46,16 +46,20 @@ function App() {
                   <Route path="pagetype" element={<PageType />} />
                   <Route path="organization" element={<Organization />} />
                 </Route>
-                <Route path="itemmenu" element={<FindOrCreateItems />} />
-                <Route path="edititem" element={<EditItem />} />
                 <Route path="/addcomment" element={<AddComment />} />
+
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/work-items/link" element={<LinkWorkItemsPage />} />
+                <Route path="/work-items/create" element={<CreateWorkItemPage />} />
+                <Route path="/work-items/edit" element={<EditWorkItemPage />} />
+                <Route path="/work-items/details" element={<WorkItemDetailsPage />} />
+                <Route index path="/" element={<LoadingAppPage />} />
               </Routes>
-            </ErrorBoundary>
-          </Stack>
+          </ErrorBoundary>
         )}
       </QueryErrorResetBoundary>
-    </HashRouter>
+    </AppContainer>
   );
 }
 
-export default App;
+export { App };

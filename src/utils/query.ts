@@ -1,52 +1,33 @@
-import { IDeskproClient, useDeskproAppClient } from "@deskpro/app-sdk";
-import {
-  QueryClient,
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from "react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { useQueryWithClient } from "@deskpro/app-sdk";
 
-export const queryClient = new QueryClient({
+const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      suspense: false,
       useErrorBoundary: true,
       refetchOnWindowFocus: false,
+      retry: 1,
+      retryDelay: 2000,
     },
   },
 });
 
-export function useQueryWithClient<TQueryFnData = unknown>(
-  queryKey: string | readonly unknown[],
-  queryFn: (client: IDeskproClient) => Promise<TQueryFnData>,
-  options?: Omit<
-    UseQueryOptions<
-      TQueryFnData,
-      unknown,
-      TQueryFnData,
-      string | readonly unknown[]
-    >,
-    "queryKey" | "queryFn"
-  >
-): UseQueryResult<TQueryFnData> {
-  const { client } = useDeskproAppClient();
+const QueryKey = {
+  LINKED_WORK_ITEMS: "linked_work_items",
+  WORK_ITEMS: "work_items",
+  PROJECTS: "projects",
+  PROJECT: "project",
+  WORK_ITEM_TYPES: "work_item_types",
+  PROCESS: "process",
+  STATE: "state",
+  STATES: "states",
+  TEAM_VALUES: "team_values",
+  ITERATIONS: "iterations",
+  WORK_ITEM_TYPE_FIELDS: "workItemTypeFields",
+  WORK_ITEM_FIELDS_META: "workItemFieldsMeta",
+  USERS: "users",
+  COMMENTS: "comments",
+};
 
-  const key = Array.isArray(queryKey) ? queryKey : [queryKey];
-
-  return useQuery(
-    key,
-    () => (client && queryFn(client)) as Promise<TQueryFnData>,
-    {
-      ...(options ?? {}),
-      enabled: options?.enabled ? !!client : !!client && options?.enabled,
-      suspense: false,
-    } as Omit<
-      UseQueryOptions<
-        TQueryFnData,
-        unknown,
-        TQueryFnData,
-        string | readonly unknown[]
-      >,
-      "queryKey" | "queryFn"
-    >
-  );
-}
+export { queryClient, QueryKey, useQueryWithClient };

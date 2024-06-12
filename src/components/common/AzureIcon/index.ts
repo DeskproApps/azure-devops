@@ -1,0 +1,1 @@
+export { AzureIcon } from "./AzureIcon";

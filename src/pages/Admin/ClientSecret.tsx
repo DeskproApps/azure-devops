@@ -4,7 +4,7 @@ import {
   useInitialisedDeskproAppClient,
 } from "@deskpro/app-sdk";
 import { useEffect, useState } from "react";
-import { Input } from "../../Components/Input";
+import { Input } from "../../components/Input";
 import { Settings } from "../../types";
 
 export const ClientSecret = () => {

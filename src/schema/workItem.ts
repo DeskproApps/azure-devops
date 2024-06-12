@@ -14,6 +14,7 @@ export const IAzureWorkItemFieldsSchema = z
     "System.ChangedDate": z.string().optional(),
     "System.ChangedBy": z.string().optional(),
     "System.CommentCount": z.number().optional(),
+    "System.Description": z.string().optional(),
     "System.Title": z.string(),
     "Microsoft.VSTS.Common.Priority": z.string().optional(),
     "Microsoft.VSTS.Common.Severity": z.string().optional(),
