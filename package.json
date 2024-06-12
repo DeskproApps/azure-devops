@@ -26,7 +26,6 @@
     "@tanstack/react-query": "^4.36.1",
     "flatpickr": "^4.6.13",
     "html-react-parser": "^3.0.4",
-    "iframe-resizer": "^4.4.2",
     "javascript-time-ago": "^2.5.10",
     "lodash": "^4.17.21",
     "lodash.chunk": "^4.2.0",

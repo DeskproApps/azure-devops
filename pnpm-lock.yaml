@@ -38,9 +38,6 @@ dependencies:
   html-react-parser:
     specifier: ^3.0.4
     version: 3.0.16(react@18.3.1)
-  iframe-resizer:
-    specifier: ^4.4.2
-    version: 4.4.2
   javascript-time-ago:
     specifier: ^2.5.10
     version: 2.5.10
@@ -3448,12 +3445,6 @@ packages:
     dependencies:
       safer-buffer: 2.1.2
     dev: true
-
-  /iframe-resizer@4.4.2:
-    resolution: {integrity: sha512-2SupFCq9V9osWac4q+PodF0E9QdWY5A9VdCpKrrE7HlDrcIsaTp7D6k14mkGXWoWMS9jCavYusik25wTc0YB2Q==}
-    engines: {node: '>=0.8.0'}
-    requiresBuild: true
-    dev: false
 
   /ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
