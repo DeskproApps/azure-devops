@@ -8,6 +8,7 @@ import { DeskproAppProvider } from "@deskpro/app-sdk";
 import { queryClient } from "./utils";
 import { DeskproContextProvider } from "./hooks";
 import { App } from "./App";
+import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import "virtual:windi.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "./main.css";
