@@ -13,6 +13,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import "./main.css";
 import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
 import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
+import "iframe-resizer/js/iframeResizer.contentWindow.js";
 
 TimeAgo.addDefaultLocale(en);
 
