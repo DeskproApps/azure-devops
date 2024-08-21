@@ -13,21 +13,24 @@ import "flatpickr/dist/flatpickr.min.css";
 import "./main.css";
 import "@deskpro/deskpro-ui/dist/deskpro-ui.css";
 import "@deskpro/deskpro-ui/dist/deskpro-custom-icons.css";
-import "iframe-resizer/js/iframeResizer.contentWindow.js";
+import "simplebar/dist/simplebar.min.css";
+import { Scrollbar } from "@deskpro/deskpro-ui";
 
 TimeAgo.addDefaultLocale(en);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <DeskproAppProvider>
-        <DeskproContextProvider>
-          <HashRouter>
-            <App />
-          </HashRouter>
-        </DeskproContextProvider>
-      </DeskproAppProvider>
-    </QueryClientProvider>
+    <Scrollbar style={{ height: "100%", width: "100%" }}>
+      <QueryClientProvider client={queryClient}>
+        <DeskproAppProvider>
+          <DeskproContextProvider>
+            <HashRouter>
+              <App />
+            </HashRouter>
+          </DeskproContextProvider>
+        </DeskproAppProvider>
+      </QueryClientProvider>
+    </Scrollbar>
   </React.StrictMode>,
 );

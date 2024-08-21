@@ -1,5 +1,5 @@
 {
-  "name": "horizon-vite-app-template",
+  "name": "@deskpro-apps/azure-devops",
   "version": "0.0.0",
   "license": "BSD-3-Clause",
   "scripts": {
@@ -26,7 +26,6 @@
     "@tanstack/react-query": "^4.36.1",
     "flatpickr": "^4.6.13",
     "html-react-parser": "^3.0.4",
-    "iframe-resizer": "^4.3.11",
     "javascript-time-ago": "^2.5.10",
     "lodash": "^4.17.21",
     "lodash.chunk": "^4.2.0",
