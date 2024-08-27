@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,7 +24,7 @@ import { AppContainer } from "./components/common";
 
 const App = () => {
   const { pathname } = useLocation();
-  const isAdmin = useMemo(() => pathname.includes("/admin/"), [pathname]);
+  const isAdmin = pathname.includes("/admin/");
 
   useDeskproElements(({ registerElement }) => {
     registerElement("azureRefreshButton", { type: "refresh_button" });
