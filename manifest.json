@@ -20,7 +20,7 @@
     "type": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/pagetype" },
+      "options": { "entrypoint": "#/admin/pagetype", "height": "20px" },
       "isRequired": true,
       "isBackendOnly": false,
       "order": 10
@@ -28,7 +28,7 @@
     "organization_collection": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/organization" },
+      "options": { "entrypoint": "#/admin/organization", "height": "55px" },
       "isRequired": true,
       "isBackendOnly": false,
       "order": 20
@@ -36,7 +36,7 @@
     "app_id": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/appid" },
+      "options": { "entrypoint": "#/admin/appid", "height": "55px" },
       "isRequired": false,
       "isBackendOnly": false,
       "order": 30
@@ -44,7 +44,7 @@
     "client_secret": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/clientsecret" },
+      "options": { "entrypoint": "#/admin/clientsecret", "height": "55px" },
       "isRequired": false,
       "isBackendOnly": true,
       "order": 40
@@ -52,7 +52,7 @@
     "global_settings": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/globalauth" },
+      "options": { "entrypoint": "#/admin/globalauth", "height": "172px" },
       "isRequired": false,
       "isBackendOnly": true,
       "order": 50
@@ -60,7 +60,7 @@
     "instance_url": {
       "title": "",
       "type": "app_embedded",
-      "options": { "entrypoint": "#/admin/instanceUrl" },
+      "options": { "entrypoint": "#/admin/instanceUrl", "height": "90px" },
       "isRequired": false,
       "isBackendOnly": false,
       "order": 60

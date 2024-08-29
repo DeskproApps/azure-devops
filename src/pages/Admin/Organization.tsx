@@ -39,8 +39,6 @@ export const Organization = () => {
     [organizationName]
   );
 
-  if (!settings?.type) return null;
-
   return (
     <Input
       name="Organization/Collection Name"

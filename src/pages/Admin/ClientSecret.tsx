@@ -44,12 +44,10 @@ export const ClientSecret = () => {
     [clientSecret]
   );
 
-  if (settings?.type !== "cloud") return null;
-
   return (
     <Stack vertical style={{ width: "100%" }} gap={20}>
       <Input
-        name="Azure Client Secret"
+        name="Azure Client Secret (only for Cloud)"
         value={clientSecret}
         onChange={(value) => setClientSecret(value as string)}
       />

@@ -63,21 +63,19 @@ export const AccountNamePatToken = () => {
     }
   };
 
-  if (settings?.type !== "premise") return null;
-
   return (
     <Stack vertical style={{ width: "100%" }} gap={20}>
       <Input
-        name="Account Name"
+        name="Account Name (only for On Prem)"
         value={accountName}
         onChange={(value) => setAccountName(value as string)}
       />
       <Input
-        name="PAT Token"
+        name="PAT Token (only for On Prem)"
         value={PATToken}
         onChange={(value) => setPATToken(value as string)}
       />
-      <Stack style={{ width: "100%" }} vertical gap={10}>
+      <Stack style={{ width: "100%" }} gap={5} align="center">
         <Button
           text="Test"
           onClick={async () => {

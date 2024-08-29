@@ -42,12 +42,10 @@ export const AppId = () => {
     [appId]
   );
 
-  if (settings?.type !== "cloud") return null;
-
   return (
     <Stack vertical style={{ width: "100%" }} gap={20}>
       <Input
-        name="Azure App Id"
+        name="Azure App Id (only for Cloud)"
         value={appId}
         onChange={(value) => setAppId(value as string)}
       />

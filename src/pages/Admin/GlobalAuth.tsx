@@ -3,6 +3,7 @@ import {
   useDeskproAppEvents,
   useDeskproAppTheme,
   useInitialisedDeskproAppClient,
+  HorizontalDivider,
 } from "@deskpro/app-sdk";
 import { H1, H2, P1, Stack, Button } from "@deskpro/deskpro-ui";
 import { useState } from "react";
@@ -32,23 +33,23 @@ export const GlobalAuth = () => {
 
   return (
     <Stack vertical gap={10} style={{ width: "100%" }}>
-      {settings?.type === "cloud" && (
-        <Stack style={{ width: "100%" }} vertical gap={10}>
-          {callbackUrl && (
-            <>
-              <H2 style={{ marginBottom: "5px" }}>Callback URL</H2>
-              <CopyToClipboardInput value={callbackUrl} />
-              <P1
-                style={{
-                  marginBottom: "16px",
-                  marginTop: "8px",
-                  color: theme.colors.grey80,
-                }}
-              >
-                The callback URL will be required during Azure app setup
-              </P1>
-            </>
-          )}
+      <Stack style={{ width: "100%" }} vertical gap={10}>
+        {callbackUrl && (
+          <>
+            <H2 style={{ marginBottom: "5px" }}>Callback URL (only for Cloud)</H2>
+            <CopyToClipboardInput value={callbackUrl} />
+            <P1
+              style={{
+                marginBottom: "16px",
+                marginTop: "8px",
+                color: theme.colors.grey80,
+              }}
+            >
+              The callback URL will be required during Azure app setup
+            </P1>
+          </>
+        )}
+        <Stack gap={5} align="center">
           <Button
             text="Sign In"
             onClick={async () => {
@@ -58,7 +59,8 @@ export const GlobalAuth = () => {
           ></Button>
           {completed && <H1>Authorization has been completed</H1>}
         </Stack>
-      )}
+      </Stack>
+      <HorizontalDivider style={{ width: "100%", marginTop: "8px", marginBottom: "8px" }} />
     </Stack>
   );
 };
