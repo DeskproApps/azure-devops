@@ -58,19 +58,22 @@ export const InstanceURL = () => {
     [instanceUrl]
   );
 
-  if (settings?.type !== "premise") return null;
-
   return (
     <Stack vertical style={{ width: "100%" }} gap={20}>
       <Input
-        name="Azure Instance URL"
+        name="Azure Instance URL (only for On Prem)"
         value={instanceUrl}
         onChange={(value) => setInstanceUrl(value as string)}
       />
-      <H4 style={{ color: theme.colors.grey40 }}>
-        Example: https://azure.deskpro.com
-      </H4>
-      {!!error && <P5 style={{ color: "red" }}>{error}</P5>}
+      {error
+        ? (
+          <P5 style={{ color: "red" }}>{error}</P5>
+        )
+        : (
+          <H4 style={{ color: theme.colors.grey40 }}>
+            Example: https://azure.deskpro.com
+          </H4>
+        )}
     </Stack>
   );
 };

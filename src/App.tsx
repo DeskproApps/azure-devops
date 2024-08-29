@@ -37,16 +37,16 @@ const App = () => {
           <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
               <Routes>
                 <Route path="/admin">
-                  <Route path="accountnamepattoken" element={<AccountNamePatToken />}/>
-                  <Route path="appid" element={<AppId />} />
-                  <Route path="clientSecret" element={<ClientSecret />} />
-                  <Route path="instanceurl" element={<InstanceURL />} />
-                  <Route path="globalauth" element={<GlobalAuth />} />
                   <Route path="pagetype" element={<PageType />} />
                   <Route path="organization" element={<Organization />} />
+                  <Route path="appid" element={<AppId />} />
+                  <Route path="clientSecret" element={<ClientSecret />} />
+                  <Route path="globalauth" element={<GlobalAuth />} />
+                  <Route path="instanceurl" element={<InstanceURL />} />
+                  <Route path="accountnamepattoken" element={<AccountNamePatToken />}/>
                 </Route>
-                <Route path="/addcomment" element={<AddComment />} />
 
+                <Route path="/addcomment" element={<AddComment />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/work-items/link" element={<LinkWorkItemsPage />} />
                 <Route path="/work-items/create" element={<CreateWorkItemPage />} />
