@@ -1,4 +1,4 @@
-import { IDeskproClient, proxyFetch } from "@deskpro/app-sdk";
+import { IDeskproClient, V2ProxyRequestInit, proxyFetch } from "@deskpro/app-sdk";
 import type { Settings, RequestMethods } from "../types/";
 import type {
   IAzureAvatar,
@@ -18,9 +18,6 @@ import type {
   IAzureWorkItemWiql,
   IAzureWorkItemInput,
 } from "../types/azure";
-
-const isResponseError = (response: Response) =>
-  response.status < 200 || response.status >= 400;
 
 const getWorkItemFieldsData = async (
   client: IDeskproClient,
@@ -410,7 +407,7 @@ const defaultRequest = async (
   const initialDomainName =
     endpoint.includes("/users") || endpoint.includes("/avatar") ? "vssps." : "";
 
-  const options: RequestInit = {
+  const options: V2ProxyRequestInit = {
     method,
     headers: {
       "Content-Type": endpoint.includes("/_apis/wit/workitems/")
@@ -437,7 +434,7 @@ const defaultRequest = async (
   let response = await fetch(url, options);
 
   if ([401, 403, 203].includes(response.status) && settings.type === "cloud") {
-    const refreshRequestOptions: RequestInit = {
+    const refreshRequestOptions: V2ProxyRequestInit = {
       method: "POST",
       body: `client_assertion_type=${encodeURIComponent(
         "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
@@ -469,7 +466,7 @@ const defaultRequest = async (
     );
   }
 
-  if (isResponseError(response)) {
+  if (response.status < 200 || response.status >= 400) {
     throw new Error(
       JSON.stringify({
         status: response.status,
