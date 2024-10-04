@@ -1,9 +1,6 @@
-import { adminGenericProxyFetch, IDeskproClient } from "@deskpro/app-sdk";
+import { adminGenericProxyFetch, IDeskproClient, V2ProxyRequestInit } from "@deskpro/app-sdk";
 
 import { RequestMethods, Settings } from "../types/";
-
-const isResponseError = (response: Response) =>
-  response.status < 200 || response.status >= 400;
 
 export const preInstallGetCurrentUserPremise = (
   client: IDeskproClient,
@@ -32,7 +29,7 @@ const preInstallDefaultRequest = async (
 
   const fetch = await adminGenericProxyFetch(client);
 
-  const options: RequestInit = {
+  const options: V2ProxyRequestInit = {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -69,7 +66,7 @@ const preInstallDefaultRequest = async (
       ).toString(),
     });
 
-    const refreshRequestOptions: RequestInit = {
+    const refreshRequestOptions: V2ProxyRequestInit = {
       method: "POST",
       body: params.toString(),
       headers: {
@@ -103,12 +100,12 @@ const preInstallDefaultRequest = async (
     );
   }
 
-  if (isResponseError(response)) {
+  if (response.status < 200 || response.status >= 400) {
     // eslint-disable-next-line no-console
     console.error(
       `Request failed: [${response.status}] ${await response.text()}`
     );
   }
 
-  return response.json();
+  return await response.json();
 };
