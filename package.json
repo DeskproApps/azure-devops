@@ -18,7 +18,7 @@
     "@deskpro/app-sdk": "2.1.12",
     "@deskpro/deskpro-ui": "^7.18.6",
     "@fortawesome/fontawesome-svg-core": "1.2.36",
-    "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "0.1.16",
     "@heroicons/react": "1.0.6",
