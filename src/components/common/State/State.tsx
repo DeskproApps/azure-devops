@@ -20,7 +20,7 @@ const State: FC<Props> = ({ workItem }) => {
 
   const states = useQueryWithClient(
     [QueryKey.STATES, projectId, workItemType],
-    (client) => getStateDefinitionList(client, settings, projectId, workItemType),
+    (client) => getStateDefinitionList(client, settings ?? {}, projectId, workItemType),
     { enabled: !isEmpty(settings) && Boolean(projectId) && Boolean(workItemType) },
   );
 

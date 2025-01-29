@@ -7,6 +7,9 @@ import WindiCSS from "vite-plugin-windicss";
 export default defineConfig({
   base: "",
   plugins: [react(), WindiCSS()],
+  server:{
+    allowedHosts: true,
+  },
   build: {
     rollupOptions: {
       onwarn(warning, warn) {

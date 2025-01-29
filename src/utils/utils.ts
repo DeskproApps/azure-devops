@@ -46,7 +46,7 @@ export const toDotList = (obj: object) => {
 
 export const defaultInitialDataArr = {
   initialData: {
-    value: [] || {},
+    value: [] ,
     count: 0,
   },
 };
