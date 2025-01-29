@@ -1,4 +1,5 @@
 import { H2, Stack, Input as InputSDK } from "@deskpro/deskpro-ui";
+import { ChangeEvent } from "react";
 
 export const Input = ({
   name,
@@ -16,6 +17,6 @@ export const Input = ({
       {name}
       {required && "*"}
     </H2>
-    <InputSDK onChange={(e) => onChange(e.target.value)} value={value} />
+    <InputSDK onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)} value={value} />
   </Stack>
 );
