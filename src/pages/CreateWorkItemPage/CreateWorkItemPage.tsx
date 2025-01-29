@@ -35,7 +35,7 @@ const CreateWorkItemPage: FC = () => {
 
     setError(null);
 
-    return postWorkItem(client, settings, projectId, workItemType, values)
+    return postWorkItem(client, settings ?? {}, projectId, workItemType, values)
       .then((workItem) => setEntityService(client, ticketId, workItem.id))
       .then(() => navigate("/home"))
       .catch((err) => {

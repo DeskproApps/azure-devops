@@ -27,7 +27,7 @@ const useLoadingApp: UseLoadingApp = () => {
 
     setError(null);
 
-    checkAuth(client, settings)
+    checkAuth(client, settings?? {})
       .then(() => client.getEntityAssociation("linkedAzureItems", ticketId).list())
       .then((entityIds) => navigate(size(entityIds) ? "/home" : "/work-items/link"))
       .catch(() => setError(AUTH_ERROR));
