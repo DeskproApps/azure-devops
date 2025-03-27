@@ -11,7 +11,7 @@ const PORT = process.env.VITE_DEV_SERVER_PORT
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "",
-  plugins: [react()],
+  plugins: [react(), WindiCSS()],
   server: {
     host: true,
     port: PORT,
