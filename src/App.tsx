@@ -1,6 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { ErrorBoundary } from "react-error-boundary";
 import { useDeskproElements } from "@deskpro/app-sdk";
 import { ErrorFallback } from "./components/ErrorFallback";
 import {
@@ -21,6 +20,7 @@ import {
   WorkItemDetailsPage,
 } from "./pages";
 import { AppContainer } from "./components/common";
+import { ErrorBoundary } from "@sentry/react";
 
 const App = () => {
   const { pathname } = useLocation();
@@ -34,7 +34,7 @@ const App = () => {
     <AppContainer isAdmin={isAdmin}>
       <QueryErrorResetBoundary>
         {({ reset }) => (
-          <ErrorBoundary onReset={reset} FallbackComponent={ErrorFallback}>
+          <ErrorBoundary onReset={reset} fallback={ErrorFallback}>
               <Routes>
                 <Route path="/admin">
                   <Route path="pagetype" element={<PageType />} />
