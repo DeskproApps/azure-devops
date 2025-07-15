@@ -3,12 +3,13 @@ import { P5 } from "@deskpro/deskpro-ui";
 import { DEFAULT_ERROR } from "../../../constants";
 import type { FC, JSX } from "react";
 import type { Maybe } from "../../../types";
+import type { DeskproAppTheme } from "@deskpro/app-sdk";
 
 export type Props = {
   text?: Maybe<string|JSX.Element|Array<string|JSX.Element>>,
 }
 
-const StyledErrorBlock = styled(P5)`
+const StyledErrorBlock = styled(P5)<DeskproAppTheme>`
   margin-bottom: 8px;
   padding: 4px 6px;
   border-radius: 4px;
