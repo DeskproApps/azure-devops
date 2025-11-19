@@ -77,9 +77,56 @@
   "proxy": {
     "whitelist": [
       {
-        "url": "https://.*",
+        "url": "https://dev.azure.com/.*",
         "methods": ["GET", "POST", "PUT", "PATCH"],
-        "timeout": 10
+        "timeout": 10,
+        "settingsInjection": {
+          "account_name_pat_token": {
+            "header": ["Authorization"]
+          },
+          "global_settings": {
+            "header": ["Authorization"]
+          }
+        }
+      },
+      {
+        "url": "https://vssps.dev.azure.com/.*",
+        "methods": ["GET", "POST", "PUT", "PATCH"],
+        "timeout": 10,
+        "settingsInjection": {
+          "account_name_pat_token": {
+            "header": ["Authorization"]
+          },
+          "global_settings": {
+            "header": ["Authorization"]
+          }
+        }
+      },
+      {
+        "url": "https://app.vssps.visualstudio.com/oauth2/.*",
+        "methods": ["GET", "POST", "PUT", "PATCH"],
+        "timeout": 10,
+        "settingsInjection": {
+          "client_secret": {
+            "body": ["client_assertion"]
+          },
+          "global_settings": {
+            "body": ["assertion"]
+          }
+        }
+      },
+      {
+        "url": "https://__instance_url__/.*",
+        "methods": ["GET", "POST", "PUT", "PATCH"],
+        "timeout": 10,
+        "settingsInjection": {
+          "account_name_pat_token": {
+            "header": ["Authorization"]
+          },
+          "global_settings": {
+            "header": ["Authorization"]
+          }
+        }
       }
     ]
   }
