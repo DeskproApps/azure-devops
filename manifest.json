@@ -54,7 +54,7 @@
       "type": "app_embedded",
       "options": { "entrypoint": "#/admin/globalauth", "height": "172px" },
       "isRequired": false,
-      "isBackendOnly": true,
+      "isBackendOnly": false,
       "order": 50
     },
     "instance_url": {
